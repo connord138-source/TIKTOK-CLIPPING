@@ -4,7 +4,7 @@
 - Environment network: **OPEN** (Full) — verified; `clipper.py doctor` re-checks each session
 - Editing pipeline: **built + validated E2E** (`scripts/clipper.py`, see CAPABILITY-NOTES)
 - Higgsfield: Plus plan, ~461 credits (unused by clipping; garnish only)
-- TikTok: **account created 2026-09-22** (handle to confirm — record in account.json);
+- TikTok: **@chat.clip.that created + confirmed 2026-09-22**;
   `tiktok_connect` not run (optional)
 - Whop: **account created 2026-09-22** (org "CHAT CLIP THAT" on the business dashboard);
   no campaign joined yet → `config/campaigns.json` empty — THE current blocker

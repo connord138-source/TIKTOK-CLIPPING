@@ -18,9 +18,11 @@
     "manual_review_every_video": true
   },
   "tiktok": {
+    "account_created": "2026-09-22",
+    "handle_confirmed": "@chat.clip.that",
     "connected": false,
     "connector_id": null,
-    "ai_generated_label": true
+    "ai_generated_label": "only_when_ai_element_added"
   },
   "style": {
     "hook_style": "payoff line, <=6 words, caps, top-center burned",
