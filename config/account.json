@@ -1,7 +1,8 @@
 {
-  "account_handle": null,
-  "niche": "pov-history",
-  "niche_status": "proposed_awaiting_user_confirmation",
+  "account_handle": "chatclipthat",
+  "display_name": "CHAT, CLIP THAT 🎬",
+  "niche": "streamer-clipping",
+  "niche_status": "confirmed_2026-09-22_full_restructure_pending_network_flip",
   "publish_mode": "draft_only",
   "cadence_per_day": 2,
   "video_length_target_seconds": [60, 75],

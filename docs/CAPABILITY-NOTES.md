@@ -32,11 +32,45 @@ Connectivity matrix (via agent proxy; 000 = CONNECT denied by policy):
 | huggingface.co (whisper models) | 000 blocked |
 | cdn.higgsfield.ai (!) | 000 blocked — can't download Higgsfield outputs locally either |
 
-**Fix (user action):** claude.ai/code → environment settings → network access. Either
-full access, or allowlist at minimum: `youtube.com, *.googlevideo.com, twitch.tv,
-*.ttvnw.net, kick.com, drive.google.com, *.googleusercontent.com, whop.com,
-contentrewards.com, huggingface.co, *.hf.co, cdn.higgsfield.ai`.
-Docs: https://code.claude.com/docs/en/claude-code-on-the-web
+**Fix (user action), verified against docs 2026-09-22:** at claude.ai/code, click the
+cloud icon showing the environment name in the row above the message box (no settings
+page/URL exists for this) → hover the environment → gear icon → **Network access**
+selector. Four levels exist: None / Trusted (current) / **Full** (any domain) / Custom.
+**Recommended: Full** — media CDNs rotate hostnames (`*.googlevideo.com`,
+`*.cloudfront.net`, `*.googleusercontent.com`), so Custom lists leak 403s. If Custom:
+paste the list below one-per-line AND tick **"Also include default list of common
+package managers"** (else apt/pip break):
+```
+youtube.com
+*.youtube.com
+*.googlevideo.com
+*.ytimg.com
+twitch.tv
+*.twitch.tv
+*.ttvnw.net
+*.cloudfront.net
+kick.com
+*.kick.com
+drive.google.com
+docs.google.com
+*.googleusercontent.com
+storage.googleapis.com
+commondatastorage.googleapis.com
+dropbox.com
+*.dropbox.com
+*.dropboxusercontent.com
+whop.com
+*.whop.com
+contentrewards.com
+huggingface.co
+*.hf.co
+cdn.higgsfield.ai
+*.higgsfield.ai
+```
+**The change applies to sessions started AFTER saving** — running sessions keep the old
+policy, so start a fresh session on this repo/branch after flipping (repo state carries
+everything). First new session may start slower: changing allowed hosts rebuilds the
+environment snapshot. Docs: https://code.claude.com/docs/en/cloud-environments#network-access
 
 ## Residual risks after policy opens (validate on first real campaign)
 - YouTube/Twitch may bot-check datacenter IPs (yt-dlp cookies/PO-token workarounds exist).
