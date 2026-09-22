@@ -35,5 +35,19 @@ the production work (generate → review → prepare draft → log → push).
 - Account: `balance`, `show_plans_and_credits` (only when user wants to buy)
 
 ## Current phase
-Bootstrap complete; awaiting user confirmation of niche + TikTok account connection.
-See `docs/SETUP.md` for the user checklist and account status snapshot.
+**PIVOTED to streamer-clipping (2026-09-22).** Handle: **@chat.clip.that** (see
+`config/account.json`). Editing pipeline validated in-container; ingest blocked until
+the user flips the environment network policy — steps and validated ffmpeg recipes in
+`docs/CAPABILITY-NOTES.md`. STRATEGY/OPERATIONS/SETUP docs still describe the legacy
+POV-history plan; restructure them for the clipping model during the next work session.
+
+First session after the network flip:
+1. Re-run the connectivity matrix from CAPABILITY-NOTES (curl loop) and record results.
+2. Build `scripts/clipper.py` around the validated recipe: ingest (campaign source /
+   yt-dlp) → transcript (platform subs, else faster-whisper) → moment selection → cut →
+   9:16 blur-pad → ASS captions → loudnorm → frame-grid QC → deliver via file send.
+3. Restructure docs for clipping; retool ledger fields for per-campaign earnings.
+4. Still user-gated: Whop signup + campaign selection, TikTok account creation +
+   `tiktok_connect`, posting (drafts/files only — user posts).
+Money model: Whop-style campaign bounties (~$0.20–$6 per 1k verified views). Clip ONLY
+campaign-authorized material — never freelance-clip a creator without a program.
