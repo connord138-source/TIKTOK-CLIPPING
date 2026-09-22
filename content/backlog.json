@@ -1,0 +1,152 @@
+[
+  {
+    "id": "idea-001",
+    "hook": "POV: It's 1347 and your village just got its first case of the plague",
+    "premise": "Day-by-day escalation from one cough at the market to quarantine, first-person dread throughout.",
+    "beats": ["Day 1: market, one merchant coughing, life normal", "Day 3: church bells won't stop, doors marked", "Day 6: your street, your neighbor, your door", "cliffhanger: someone knocks"],
+    "format": "day-by-day",
+    "priority": 5,
+    "status": "idea",
+    "notes": "Launch video candidate. Part 2/3 built in. Visuals: medieval village, candlelight, fog — very generative-friendly."
+  },
+  {
+    "id": "idea-002",
+    "hook": "POV: You just boarded the Titanic in third class. You know the date. They don't.",
+    "premise": "April 10, 1912 boarding day wonder → dramatic irony carries retention; ends night of the 14th, first shudder.",
+    "beats": ["gangway, luggage, awe at the ship", "third-class bunks, party below deck", "on-screen date creeping forward", "cliffhanger: the engines stop"],
+    "format": "countdown",
+    "priority": 5,
+    "status": "idea",
+    "notes": "Known ending = retention magnet. Launch candidate."
+  },
+  {
+    "id": "idea-003",
+    "hook": "POV: You survive Pompeii — hour by hour, August 24, 79 AD",
+    "premise": "Timestamped countdown from a normal Roman morning to the pyroclastic flow; you make it out by boat.",
+    "beats": ["8am: bakery, forum, dogs barking oddly", "1pm: the mountain opens, day turns to night", "5pm: ash like snow, roofs collapsing", "escape by sea, looking back"],
+    "format": "countdown",
+    "priority": 5,
+    "status": "idea",
+    "notes": "Iconic, visually spectacular. Launch candidate."
+  },
+  {
+    "id": "idea-004",
+    "hook": "POV: You're a plague doctor doing your rounds in 1665 London",
+    "premise": "Inside the beaked mask for one night shift; what the herbs were for, what you could and couldn't do.",
+    "beats": ["dressing ritual: waxed coat, mask, herbs", "first house call, chalk cross on the door", "what you actually prescribe (and why it fails)", "dawn: tally of the night"],
+    "format": "shift",
+    "priority": 4,
+    "status": "idea",
+    "notes": "The mask is a thumbnail/hook gift. Launch candidate."
+  },
+  {
+    "id": "idea-005",
+    "hook": "POV: A sword is forged for you, start to finish, in 1350",
+    "premise": "Satisfying-process hybrid: ore to blade in first person, hammer rhythm as the audio spine.",
+    "beats": ["charcoal furnace, bloom of iron", "folding and hammering, sparks", "quench hiss, edge grinding", "it's placed in your hands"],
+    "format": "process",
+    "priority": 4,
+    "status": "idea",
+    "notes": "Tests the 'satisfying history' differentiator. Strong native-audio candidate."
+  },
+  {
+    "id": "idea-006",
+    "hook": "POV: You're a Roman legionary the night before the Teutoburg Forest",
+    "premise": "9 AD, rain, wrong roads, German scouts in the trees; dread build to the first arrow.",
+    "beats": ["marching camp, wet everything", "veteran mutters about the guide Arminius", "night watch, shapes between trees", "dawn: the forest goes silent"],
+    "format": "night-before",
+    "priority": 4,
+    "status": "idea",
+    "notes": "History nerds amplify in comments (free engagement)."
+  },
+  {
+    "id": "idea-007",
+    "hook": "POV: You're the food taster for a paranoid Roman emperor",
+    "premise": "One banquet, every dish a coin flip; darkly comic tension format.",
+    "beats": ["morning briefing: who wants him dead this week", "first course, the room watches you", "a dish smells wrong", "you look at the cupbearer"],
+    "format": "shift",
+    "priority": 3,
+    "status": "idea",
+    "notes": "Loopable ending. Series potential: taster's diary."
+  },
+  {
+    "id": "idea-008",
+    "hook": "POV: You wake up as a Victorian chimney sweep. You're nine.",
+    "premise": "One brutal workday, matter-of-fact tone doing the emotional work.",
+    "beats": ["4am cold, soot cough", "first flue: too narrow, climb anyway", "the master's rules", "night: counting pennies, one bed, four boys"],
+    "format": "day-in-life",
+    "priority": 3,
+    "status": "idea",
+    "notes": "Empathy engagement; pair with 'this was legal until 1875' overlay."
+  },
+  {
+    "id": "idea-009",
+    "hook": "POV: You're an Aztec merchant and Spanish ships just appeared on the horizon",
+    "premise": "1519 Veracruz coast; wonder before dread — floating mountains, men on deer.",
+    "beats": ["dawn market on the coast", "runner arrives breathless", "first sight of the ships", "you're chosen to carry word to Tenochtitlan"],
+    "format": "first-contact",
+    "priority": 3,
+    "status": "idea",
+    "notes": "Underserved POV; strong international pull."
+  },
+  {
+    "id": "idea-010",
+    "hook": "POV: Putting on a knight's armor takes 30 minutes. You have five.",
+    "premise": "Process format with a clock: squires strapping you in as the battle starts without you.",
+    "beats": ["alarm: banners on the ridge", "layer by layer, buckle by buckle", "horns outside, hands shaking", "visor down, world narrows to a slit"],
+    "format": "process",
+    "priority": 3,
+    "status": "idea",
+    "notes": "Satisfying-process hybrid #2 with built-in urgency."
+  },
+  {
+    "id": "idea-011",
+    "hook": "POV: You're a Viking on your first raid — and it goes wrong",
+    "premise": "Lindisfarne-style landing subverted: fog, a bell, and the defenders were warned.",
+    "beats": ["longship in fog, oar rhythm", "beach landing, too quiet", "the bell starts ringing", "shield wall forms ahead of you"],
+    "format": "mission",
+    "priority": 3,
+    "status": "idea",
+    "notes": "Subversion beats the saturated 'viking raid' baseline."
+  },
+  {
+    "id": "idea-012",
+    "hook": "POV: You're building the Great Pyramid — and you're not a slave",
+    "premise": "Myth-busting day-in-life of a paid, fed, rotated laborer; bread-and-beer wages.",
+    "beats": ["work gang wakes, team names painted on stones", "the ramp, the sledge, the water trick", "lunch: bread, beer, fish", "your gang's stone slots in — 2.3 million to go"],
+    "format": "day-in-life",
+    "priority": 3,
+    "status": "idea",
+    "notes": "Myth-busting drives shares + comment fights (engagement)."
+  },
+  {
+    "id": "idea-013",
+    "hook": "POV: You're a 1920s bootlegger and the bar just got raided",
+    "premise": "One night: false wall, password door, whistle, cellar escape through tunnels.",
+    "beats": ["speakeasy hums behind the laundry", "cop at the peephole says the wrong word", "lights, whistles, bottles smashing", "tunnel exit into the alley — truck's waiting"],
+    "format": "mission",
+    "priority": 2,
+    "status": "idea",
+    "notes": "Action pacing test; jazz-era audio."
+  },
+  {
+    "id": "idea-014",
+    "hook": "POV: The last day of a samurai, 1877",
+    "premise": "Satsuma Rebellion's end; quiet ritual morning before the final charge at Shiroyama.",
+    "beats": ["dawn tea, armor older than you", "letter home, folded twice", "the hill, 500 against 30,000", "you walk forward"],
+    "format": "last-day",
+    "priority": 2,
+    "status": "idea",
+    "notes": "Emotional register test — saves/shares over laughs."
+  },
+  {
+    "id": "idea-015",
+    "hook": "POV: You're a medieval executioner and it's your first day",
+    "premise": "The job nobody chose: inherited role, town that needs you and shuns you.",
+    "beats": ["father's ledger of names and prices", "the crowd gathers, you check the blade twice", "the signal", "walking home alone, doors close as you pass"],
+    "format": "day-in-life",
+    "priority": 2,
+    "status": "idea",
+    "notes": "Dark but historically grounded; strong comment bait ('the executioner also set bones — read more')."
+  }
+]

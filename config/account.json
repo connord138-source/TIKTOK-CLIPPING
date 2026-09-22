@@ -1,0 +1,30 @@
+{
+  "account_handle": null,
+  "niche": "pov-history",
+  "niche_status": "proposed_awaiting_user_confirmation",
+  "publish_mode": "draft_only",
+  "cadence_per_day": 2,
+  "video_length_target_seconds": [60, 75],
+  "aspect_ratio": "9:16",
+  "resolution": "720p",
+  "budget": {
+    "balance_floor_credits": 150,
+    "session_cap_credits": 250,
+    "max_retries_per_idea": 1
+  },
+  "quality_gates": {
+    "virality_predictor": true,
+    "manual_review_every_video": true
+  },
+  "tiktok": {
+    "connected": false,
+    "connector_id": null,
+    "ai_generated_label": true
+  },
+  "style": {
+    "shorts_studio_preset": null,
+    "caption_template": "{hook}\n\n{cta} #history #pov #fyp {topic_hashtags}",
+    "cta_default": "Follow for Part 2 — daily POV history.",
+    "on_screen_captions": true
+  }
+}
