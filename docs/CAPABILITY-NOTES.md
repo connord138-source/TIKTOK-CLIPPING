@@ -46,6 +46,16 @@ Validated filter chain (lives in `cmd_cut`):
 - **YouTube:** auto-sub VTT with word timings when media access exists (`parse_vtt_words`).
 - Word timestamps drive the caption cards; segment text drives moment selection.
 
+## Headless browsing (tested 2026-09-22): cert-blocked, don't re-burn time
+Playwright + preinstalled Chromium (`/opt/pw-browsers/chromium`) fails all HTTPS with
+`ERR_CERT_AUTHORITY_INVALID` — the agent proxy's CA is not honored even after adding it
+to the NSS store (`certutil -d sql:/root/.pki/nssdb -A -t "C,," -n agentproxy-ca -i
+/root/.ccr/ca-bundle.crt`; this build seems to use its own root store exclusively).
+Never disable TLS verification. Consequence: JS-rendered pages (Whop discover, TikTok
+web) can't be scraped headlessly for now; curl/yt-dlp/pip/ffmpeg trust the proxy fine.
+Whop discover HTML is a client-rendered shell with no campaign data server-side —
+campaign details come from the user pasting them (OPERATIONS §C).
+
 ## Residual risks / open items
 - Kick media download not yet exercised (listing works) — validate on first Kick campaign.
 - Twitch sub-only VODs exist on some channels; campaign material usually comes with
