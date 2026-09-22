@@ -70,3 +70,21 @@ hard rule 2 applies first (`balance`, floor 150, session cap 250).
 - TikTok connect (`tiktok_connect`) is optional QoL for `tiktok_prepare_publish`
   drafts later; the file-send loop works without it.
 - Scheduled/recurring sessions stay OFF until the user opts in.
+
+## Automation ladder (agreed direction, 2026-09-22)
+Target end state: user approves campaigns and taps post; everything between is
+automatic. Two human touchpoints by design.
+1. **NOW (manual trigger):** user-run clip sessions → files delivered → user posts.
+2. **Scheduled production** (user opt-in, ready to enable): daily Routine wakes a
+   session → full clip flow → files + ledger + push. No credits burned.
+3. **Staged drafts:** after user runs `tiktok_connect` once, deliver via
+   `tiktok_prepare_publish` → clips wait in the user's TikTok inbox; user taps post.
+   Metrics sessions then pull views automatically.
+4. **Campaign auto-discovery** (needs one investigation session): Whop developer API
+   key (dashboard → Developer) or user-exported cookies → poll Content Rewards →
+   filter by STRATEGY §3 criteria → write PROPOSED entries to campaigns.json. User
+   still clicks Join (terms/applications are theirs to accept).
+5. **NOT planned near-term — full auto-post:** technically feasible once connected,
+   but new-account distribution risk + "mass-produced content" flag risk + many
+   campaigns require account-holder posting. User decision per hard rule 6; revisit
+   only once the account is established and a campaign's terms allow it.
