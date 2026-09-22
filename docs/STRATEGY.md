@@ -1,84 +1,82 @@
-# Strategy
+# Strategy — streamer clipping (pivot locked 2026-09-22)
 
-Goal: build a TikTok account into an income-producing asset using AI-generated
-short-form video, with Claude doing ~99% of the operating work.
+Goal: turn @chat.clip.that into an income-producing clipping operation, with Claude
+doing ~99% of the work: find the moment, cut it, caption it, hand the user a
+ready-to-post file. Money comes from **campaign bounties**, not from TikTok's own
+monetization (that's a later bonus).
 
-## 1. How the money actually arrives (honest version)
+## 1. How the money arrives
 
 | Path | Requirements | Timeline | Expected value |
 |---|---|---|---|
-| **Creator Rewards Program** | 10k followers, 100k views in last 30 days, videos **>1 min**, eligible region, "original content" review | realistically weeks 4–10 with 2/day consistency and 1–2 breakout videos | ~$0.40–$1.20 RPM on qualified views. 1M qualified views ≈ $400–$1,200 |
-| **TikTok Shop affiliate** | ~5k followers (open collab, US) | after growth phase | commission per sale; needs product-fit (for history niche: books, replicas, decor — workable but secondary) |
-| **Clipping bounties** (Whop-style creator programs) | none — pay per view from day 1 | immediate, but it's a *different* content stream (promoting a specific creator with their material, per their rules) | $0.20–$2.00 per 1k views paid by the creator |
-| **UGC/ad creation for brands** | a portfolio, not followers | as soon as we have 10–15 strong videos | $50–$300+ per deliverable; Higgsfield's marketing studio is literally built for this |
-| **Account sale / brand deals** | an audience | long game | exit option |
+| **Campaign bounties** (Whop "Content Rewards", contentrewards.com, creator Discords) | join a campaign; follow its rules; post from our account; views get verified | **from the first posted clip** | ~$0.20–$6.00 per 1k verified views depending on campaign; pools cap totals |
+| Account growth → Creator Rewards | 10k followers, 100k views/30d, >1min videos | months; clips are usually <1min so this stays secondary | RPM bonus on qualifying content |
+| Account as asset / paid clipping retainers | track record | after consistent results | retainers of $500–$2k/mo exist for proven clippers |
 
-**Plan of record:** grow one account toward Creator Rewards (the compounding asset),
-treat UGC-for-brands as the near-term cash option once we have a portfolio, and keep
-clipping bounties as an optional parallel motion if you join a program. Expect **$0 for
-the first 4–8 weeks**. Anyone promising faster is selling a course.
+**Plan of record:** bounty campaigns are the business. Everything else is optional
+upside. Marginal cost per clip ≈ $0 (ffmpeg in the container; no generation credits),
+so any verified payout is profit against time.
 
-**Break-even math (fill in real numbers after batch 1):** if a finished 60–75s video
-costs `C` credits and credits cost ~`$P` each, a video needs roughly `(C × P) / (RPM/1000)`
-qualified views to pay for itself. This math lives here so spending decisions stay grounded.
+**The math that matters:** a $1.50/1k campaign paying on 100k verified views = $150 for
+work that costs us nothing but minutes. The KPIs are (a) verified views per clip,
+(b) campaign acceptance rate (clips not rejected), (c) clips shipped per session.
 
-## 2. Niche
+## 2. Positioning
+- Handle: **@chat.clip.that** — "CHAT, CLIP THAT 🎬". The name IS the niche: the
+  moments chat begs to have clipped.
+- Content: highlight clips of campaign-authorized streamers/creators. Bias campaign
+  selection toward gaming/streamer culture so the account stays coherent.
+- Editing signature (originality defense + brand): burned hook line top-center,
+  big two-tone caption cards, tight cuts that start mid-action. Our edit, our
+  moment-picking — never a re-upload of someone else's clip.
 
-### Recommended: POV History ("You wake up in 1347…")
-Immersive first-person historical experiences, 60–75s, era-accurate visuals, scripted
-voiceover, on-screen captions, cliffhanger endings.
+## 3. Campaign selection rules
+1. **Only campaign-authorized material.** No campaign = no clip, however viral the
+   streamer. (Freelance clipping breaks TikTok originality rules AND earns $0.)
+2. Prefer campaigns with: clear rate + verification method, big/replenishing budget
+   pool, source folders or permissive VOD access, rules we can automate (length,
+   hashtags, required @tags).
+3. Read every campaign's fine print before the first cut; encode its rules in the
+   job's `meta.json` (`campaign` field) and the ledger entry.
+4. One niche-coherent set of campaigns at a time; drop campaigns whose payouts
+   stall or whose pools drain.
 
-Why this wins for us specifically:
-- **>1 min watchable** → Creator Rewards eligible from day one (most "satisfying"-style
-  AI content can't hold 60s honestly).
-- **Original scripting + multi-shot editing** → defensible against TikTok's
-  "unoriginal content" rejection, which kills most raw-AI-spam accounts at review time.
-- **Built-in tension formats** (countdown to Vesuvius, night before the battle, day-by-day
-  plague spread) → completion rate, which is the single strongest ranking signal.
-- **Evergreen** → old videos keep earning views; the library compounds.
-- **Higgsfield fit:** cinematic text-to-video with native audio (Seedance 2.5 / FLUX 3),
-  consistent look via a Shorts Studio style preset, VO via generate_audio.
-- **Differentiator to develop:** "satisfying history" hybrids — process videos with era
-  POV (a sword forged for you in 1350, armor assembled piece by piece). Merges the two
-  highest-performing AI formats without inheriting the spam-flag risk of pure ASMR loops.
+## 4. Algorithm playbook (clipping edition)
+- **Hook in <1s:** burned text top-center states the payoff ("HE CALLED THE ONE-SHOT").
+  Start the cut mid-action, ~1s before the peak line.
+- **15–45s sweet spot** for pure highlights; completion rate is the ranking signal.
+  Longer (60s+) only when the arc genuinely holds.
+- **Captions always** — sound-off viewers; our accent-word cards double as brand.
+- **End on the reaction, not after it.** Cut hard ~0.5s after the payoff lands.
+- **2+/day cadence**, ≥4h apart; consistency beats bursts.
+- **Hashtags:** campaign-required tags first, then 2–3 topical. No soup.
+- **Series consistency:** same caption style + hook grammar every clip → profile
+  visits convert to follows.
 
-### Alternates considered
-- **Oddly-satisfying / AI-ASMR physics** (glass fruit, hydraulic press): fastest raw
-  follower growth and cheapest per video, but low RPM, weak >1min eligibility, and the
-  highest "mass-produced content" rejection risk. Verdict: growth engine, not income
-  engine; borrow its visual language inside POV History instead.
-- **Character vlog** (creature/persona daily vlogs, Bigfoot-style): brandable with merch
-  upside, but saturated since 2025 and success hinges on comedy writing consistency.
-  Verdict: viable pivot if POV History stalls; Higgsfield character sheets make it cheap
-  to test later.
+## 5. Risks & rules (account + payout survival)
+1. **TikTok "unoriginal content" flags** — the clip-account killer. Mitigation: real
+   editorial (our hooks, captions, cut points), varied sources, never watermarked
+   re-uploads. Human posts from the app (drafts/files), never API auto-posting.
+2. **Campaign rejection / view-fraud suspicion:** no engagement pods, no bought views,
+   follow rules to the letter, keep VOD-timestamp records in the ledger for disputes.
+3. **AI-label** whenever an AI element is visibly added (AI VO, generated b-roll).
+   A plain human-made edit of human footage needs no label — don't mislabel.
+4. **Copyright:** campaign authorization covers the creator's footage; background
+   music in VODs can still trip Content ID — prefer moments where speech carries, or
+   replace/duck music via TikTok's licensed library at post time.
+5. **Payout mechanics:** Whop payouts have thresholds/timelines; track
+   `payout_status` per clip in the ledger; screenshot campaign dashboards when views
+   get verified.
+6. **Platform concentration:** same clips repost to YT Shorts/IG Reels when campaign
+   rules allow — free distribution, sometimes separately paid.
 
-One account, one niche until Creator Rewards is unlocked. Multi-account splits focus and
-trips TikTok's mass-production heuristics.
-
-## 3. Algorithm playbook (bake into every video)
-- **Hook in <1s:** open mid-action + text overlay question ("Why did everyone fear the
-  water in 1347?"). No logos, no intros.
-- **Completion beats everything:** 60–75s sweet spot — rewards-eligible but short enough
-  to finish. End on a loop or an explicit Part 2 cliffhanger.
-- **On-screen captions always** (sound-off viewers) + VO + subtle music under.
-- **Series structure:** numbered ("1347, Day 4"), consistent title card style → binge
-  behavior + profile visits, which drive follows.
-- **Post at audience peak:** 7–10pm ET for US-heavy history audience; 2/day, ≥6h apart.
-- **Hashtags:** 3–5 total — #history #pov + 1–2 topic tags. Skip hashtag soup.
-- **Reply to top comments with videos** — comment-reply videos get boosted distribution
-  and write our backlog for us.
-- **Seed the account right:** first 5 posts are the audition; lead with the 5 strongest
-  concepts, not a warm-up.
-
-## 4. Risks & rules (account survival)
-1. **Unoriginal-content rejection at Creator Rewards review** — the #1 killer of AI
-   accounts. Mitigation: original scripts, multi-shot edits, consistent branded series
-   style, VO + captions. Never repost-style content.
-2. **AI labeling:** TikTok requires labeling realistic AIGC. Label ON for every post —
-   it does not meaningfully hurt distribution; getting caught without it can.
-3. **No real-person likenesses, no copyrighted characters/music.** Use TikTok's licensed
-   sound library at post time if we want trending audio under our VO.
-4. **Credit burn without feedback:** never spend past the session cap before metrics
-   from prior posts justify the next batch. The ledger's cost-per-1k-views is the KPI.
-5. **Platform concentration:** all repurposable to YouTube Shorts + Reels later (a
-   distribution-only motion, near-zero extra production cost — phase 2).
+## 6. Archived: POV-history plan (pre-pivot)
+The original plan (AI-generated first-person history shorts via Higgsfield; Creator
+Rewards as the income path) is preserved for reference: niche analysis and algorithm
+notes remain valid if we ever run an owned-content account alongside clipping.
+- Idea backlog archived at `content/archive-pov-history.json` (15 scored ideas).
+- Key learnings kept: >1min for Creator Rewards; originality review is the choke
+  point for AI content; completion rate beats everything; 60–75s sweet spot there.
+- Higgsfield toolchain (Seedance 2.5 / FLUX 3 / Shorts Studio) stays available for
+  optional garnish on clips (AI b-roll, VO) and for any future owned-content lane —
+  budget rules in `config/account.json` still govern any credit spend.

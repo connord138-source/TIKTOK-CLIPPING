@@ -1,34 +1,43 @@
 # tiktok-clipping
 
-An AI-operated TikTok short-form content business. Higgsfield generates the videos,
-Claude runs the pipeline, this repo keeps the state so every session picks up exactly
-where the last one left off.
+An AI-operated streamer-clipping business. Claude cuts campaign-authorized VOD moments
+into captioned 9:16 clips in the cloud container; campaign bounties pay per verified
+view; this repo keeps the state so every session picks up exactly where the last one
+left off.
 
 ## How it works
-1. **Ideas** live in `content/backlog.json`, scored and pre-planned.
-2. **Production sessions** (Claude + Higgsfield MCP): pick top ideas → script → generate
-   9:16 video with native audio → quality-gate with the virality predictor → prepare as a
-   TikTok **draft** → log everything in the ledger.
-3. **You** tap "post" on drafts from the TikTok app (keeps a human on the trigger),
-   and the next metrics session pulls performance back into the ledger.
-4. **Iterate:** double down on the top-performing formats, kill the rest.
+1. **Campaigns** (Whop-style creator programs) live in `config/campaigns.json` with
+   their rates and rules. No campaign → no clip.
+2. **Clip sessions** (Claude + `scripts/clipper.py`): ingest a VOD section → whisper
+   transcript → pick the moment editorially → cut to 9:16 with blur-pad, burned hook +
+   accent caption cards, loudnorm → QC via frame grid → deliver finished MP4 + post
+   text to the user.
+3. **You** post from the TikTok app (@chat.clip.that) — human on the trigger, and
+   campaigns require account-holder posting anyway.
+4. **Ledger** tracks every clip: source VOD window, campaign, views, verified views,
+   USD earned/paid. Metrics sessions tune the campaign mix.
 
 ## Layout
 ```
-CLAUDE.md            operator brief + hard rules for Claude sessions
-docs/STRATEGY.md     monetization paths, niche analysis, algorithm playbook, risks
-docs/OPERATIONS.md   the production/metrics session runbook + cost table
-docs/SETUP.md        one-time setup checklist + account status
-config/account.json  operating config (niche, cadence, budget caps, publish mode)
-content/backlog.json scored idea backlog
-ledger/              videos.json = every video: lifecycle, credits, metrics
-scripts/ledger.py    CLI for the ledger (add / set / list / report)
+CLAUDE.md             operator brief + hard rules for Claude sessions
+docs/STRATEGY.md      money model, campaign selection, algorithm playbook, risks
+docs/OPERATIONS.md    clip/metrics/onboarding session runbooks
+docs/SETUP.md         one-time checklist (what only the user can do)
+docs/CAPABILITY-NOTES.md  validated pipeline recipes + connectivity matrix
+config/account.json   operating config (cadence, budget caps, publish mode, style)
+config/campaigns.json joined campaigns + rules (the authorization list)
+content/              clip queue + archived POV-history backlog
+ledger/               videos.json = every clip: lifecycle, earnings, metrics
+scripts/clipper.py    the pipeline CLI (doctor/probe/ingest/transcribe/moments/cut/qc/pack)
+scripts/ledger.py     ledger CLI (add / set / list / report, campaign-aware)
+work/                 (gitignored) per-job media: sources, clips, grids, transcripts
 ```
 
 ## Status
-- Phase: bootstrap complete, pre-launch
-- Recommended niche: **POV History** (immersive first-person 60–75s) — awaiting confirmation
-- TikTok: not yet connected · Higgsfield: Plus plan, 461 credits (2026-09-22)
+- Phase: **pipeline validated end-to-end** (2026-09-22) — network open, Twitch ingest +
+  whisper + render proven on real material
+- Waiting on user: join first Whop campaign(s) · create TikTok @chat.clip.that
+- Higgsfield: Plus plan, ~461 credits — optional garnish only; clipping burns none
 
-No frontend yet by design — `python3 scripts/ledger.py report` is the dashboard until
-there's real data worth visualizing (then: published dashboard artifact or a Worker).
+No frontend by design — `python3 scripts/ledger.py report` is the dashboard until
+there's real earnings data worth visualizing.

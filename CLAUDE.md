@@ -1,14 +1,17 @@
 # CLAUDE.md — Operator Brief
 
-This repo is the brain and state store for a TikTok short-form content business
-operated by Claude sessions using the Higgsfield MCP tools. The repo holds
-strategy, config, the idea backlog, and the content ledger; Claude sessions do
-the production work (generate → review → prepare draft → log → push).
+This repo is the brain and state store for a TikTok **streamer-clipping** business
+operated by Claude sessions. Claude does the production work in-container
+(ingest VOD section → transcript → pick moment → cut/caption → QC → deliver files →
+log → push); campaign bounties pay per verified view. Higgsfield MCP tools are
+optional garnish (AI VO/b-roll), not the pipeline.
 
 ## Source of truth
-- `config/account.json` — operating config (niche, cadence, budget caps, publish mode)
-- `content/backlog.json` — scored idea backlog
-- `ledger/videos.json` — every video's lifecycle + real credit costs + metrics (via `scripts/ledger.py`)
+- `config/account.json` — operating config (cadence, budget caps, publish mode, style)
+- `config/campaigns.json` — joined campaigns + their rules (empty until user joins one)
+- `content/backlog.json` — clip queue (see `content/README.md`); POV-history ideas archived
+- `ledger/videos.json` — every clip's lifecycle + earnings + any credit costs (via `scripts/ledger.py`)
+- `scripts/clipper.py` — the validated pipeline CLI (doctor/probe/ingest/transcribe/moments/cut/qc/pack)
 - `docs/OPERATIONS.md` — the session runbook. Follow it for any production/metrics session.
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
@@ -19,15 +22,22 @@ the production work (generate → review → prepare draft → log → push).
    than `budget.session_cap_credits` in one session; max 1 regeneration per weak concept.
 3. **Log every credit.** Each generation's actual cost goes into the ledger entry
    (`credits_spent`). Update the cost table in `docs/OPERATIONS.md` when real numbers land.
-4. **Content safety for account survival:** no real-person likenesses, no copyrighted
-   characters, original scripts only, AI-generated label ON for every post. See
-   STRATEGY.md → Risks.
+4. **Content safety for account survival:** clip ONLY campaign-authorized creators —
+   never freelance-clip without a program. Real editorial on every clip (own hook,
+   captions, cut points), never raw re-uploads. AI-generated label ON whenever a clip
+   contains an added AI element (AI VO, generated b-roll); plain edits of human footage
+   are not labeled AI. See STRATEGY.md → Risks.
 5. **End every session with commit + push** to the working branch so state survives the
    ephemeral container. Ledger/backlog updates are part of the work, not optional.
 6. Niche changes, account identity changes, and enabling scheduled/auto-posting are user
    decisions — propose, don't do.
 
-## Tool crib (Higgsfield MCP)
+## Tool crib
+**Primary (no credits):** `scripts/clipper.py` — doctor / probe / ingest / transcribe /
+moments / cut / qc / pack; media stays in gitignored `work/`. Ledger:
+`scripts/ledger.py` add/set/list/report (campaign earnings aware).
+
+### Higgsfield MCP (optional garnish + legacy lane)
 - Video: `generate_video` (models: `seedance_2_5` 4–30s + audio, `flux_3_video` 5–20s + synced audio, `gemini_omni_flash_1_1` 3–10s, `minimax_h3_max` fast/cheap) · batch via `generate_video_batch` → `jobs_wait` → `show_generation_by_ids`
 - Full shorts pipeline: `shorts_studio_create` (+ `shorts_studio_list_presets`, `shorts_studio_status`)
 - Quality gate: `virality_predictor` · Audio/VO: `generate_audio` · Upscale: `upscale_video`
@@ -35,19 +45,18 @@ the production work (generate → review → prepare draft → log → push).
 - Account: `balance`, `show_plans_and_credits` (only when user wants to buy)
 
 ## Current phase
-**PIVOTED to streamer-clipping (2026-09-22).** Handle: **@chat.clip.that** (see
-`config/account.json`). Editing pipeline validated in-container; ingest blocked until
-the user flips the environment network policy — steps and validated ffmpeg recipes in
-`docs/CAPABILITY-NOTES.md`. STRATEGY/OPERATIONS/SETUP docs still describe the legacy
-POV-history plan; restructure them for the clipping model during the next work session.
+**Pipeline BUILT + VALIDATED E2E (2026-09-22, network open).** Handle:
+**@chat.clip.that**. Twitch VOD → whisper transcript → 9:16 captioned clip proven on
+real material (26s clip in 24s wall; details + connectivity matrix in
+`docs/CAPABILITY-NOTES.md`). Docs/ledger/config restructured for clipping. YouTube
+media ingest stays bot-checked (user-cookie workaround documented; don't re-test idly).
 
-First session after the network flip:
-1. Re-run the connectivity matrix from CAPABILITY-NOTES (curl loop) and record results.
-2. Build `scripts/clipper.py` around the validated recipe: ingest (campaign source /
-   yt-dlp) → transcript (platform subs, else faster-whisper) → moment selection → cut →
-   9:16 blur-pad → ASS captions → loudnorm → frame-grid QC → deliver via file send.
-3. Restructure docs for clipping; retool ledger fields for per-campaign earnings.
-4. Still user-gated: Whop signup + campaign selection, TikTok account creation +
-   `tiktok_connect`, posting (drafts/files only — user posts).
-Money model: Whop-style campaign bounties (~$0.20–$6 per 1k verified views). Clip ONLY
-campaign-authorized material — never freelance-clip a creator without a program.
+**Blocked on user (see SETUP.md):** ① join Whop campaign(s) + paste rules → Claude
+fills `config/campaigns.json`; ② create TikTok @chat.clip.that. Until then, sessions
+can dry-run the pipeline and keep docs/tooling sharp, but produce nothing postable —
+campaign-authorized material only.
+
+Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
+(fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow
+OPERATIONS.md. Money model: campaign bounties ~$0.20–$6 per 1k verified views;
+marginal cost per clip ≈ $0.

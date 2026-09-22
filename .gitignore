@@ -1,9 +1,10 @@
-__pycache__/
-*.pyc
-.env
-.DS_Store
-media/
-downloads/
-*.mp4
 *.mov
+*.mp4
+*.pyc
 *.webm
+.DS_Store
+.env
+__pycache__/
+downloads/
+media/
+work/

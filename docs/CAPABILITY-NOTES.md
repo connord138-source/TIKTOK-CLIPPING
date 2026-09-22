@@ -1,87 +1,61 @@
-# Capability notes — clipping pipeline feasibility (validated 2026-09-22)
+# Capability notes — clipping pipeline (network OPEN, validated 2026-09-22)
 
-Findings from the in-session proof-of-capability run. Keep current: re-verify the
-network matrix after any environment policy change.
+The environment network policy was flipped and re-verified in-session. `scripts/clipper.py
+doctor` now automates the tooling + connectivity check — run it at the start of every
+production session (fresh containers lose apt/pip installs).
 
-## Editing: VALIDATED end-to-end in the cloud container
-- ffmpeg 6.1.1 installs via apt (run `apt-get update` first — stale index 404s otherwise).
-  yt-dlp installs via pip (PyPI is always reachable). DejaVu fonts present for ASS captions.
-- Full render validated: remote HTTP range-seek cut (`-ss` before `-i`, no full download)
-  → 9:16 blur-pad composite → burned ASS captions (styled, two-tone) → loudnorm I=-14
-  → h264/aac faststart. **25s clip rendered in ~22s wall.** Throughput supports 20–30
-  clips/day easily.
-- Validated filter chain:
-  ```
-  ffmpeg -ss <start> -t <len> -i <URL-or-file> \
-    -filter_complex '[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,gblur=sigma=24[bg];[0:v]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[comp];[comp]subtitles=captions.ass[v]' \
-    -map '[v]' -map '0:a?' -af loudnorm=I=-14:TP=-1 \
-    -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -c:a aac -b:a 128k \
-    -movflags +faststart out.mp4
-  ```
-- QC without watching: frame grid (`fps=1/4,scale=270:480,tile=3x2` → jpg, Claude reads it)
-  + ffprobe duration/res + transcript spot-check.
+## Session bootstrap (fresh container)
+```
+apt-get update -qq && apt-get install -y -qq ffmpeg   # stale apt index 404s without update
+pip3 install -q yt-dlp faster-whisper
+python3 scripts/clipper.py doctor                     # verifies tools, fonts, network
+```
+whisper `small.en` (int8) downloads from huggingface on first use (~10s, cached in
+container only — re-downloads each fresh container).
 
-## Ingest: BLOCKED by current environment network policy
-Connectivity matrix (via agent proxy; 000 = CONNECT denied by policy):
-| Host | Result |
+## Connectivity matrix (validated 2026-09-22 post-flip)
+| Path | Result |
 |---|---|
-| raw.githubusercontent.com | **206 (works, range requests OK)** |
-| youtube.com / twitch.tv / kick.com | 000 blocked |
-| drive.google.com | 000 blocked |
-| whop.com / contentrewards.com | 000 blocked |
-| huggingface.co (whisper models) | 000 blocked |
-| cdn.higgsfield.ai (!) | 000 blocked — can't download Higgsfield outputs locally either |
+| Twitch VOD list + media (`ttvnw.net`/`cloudfront.net` HLS) | ✅ **validated E2E** — 2min/720p section in ~7s (≥20x realtime); full ladder to 1080p60 Source |
+| Kick VOD listing | ✅ works via yt-dlp (Cloudflare passes datacenter IP) — media download not yet exercised |
+| YouTube metadata/subs listing | ✅ works |
+| YouTube media download | ❌ **bot-check** ("Sign in to confirm you're not a bot"), also on tv/mweb clients. Workarounds: user-exported browser cookies (`--cookies`), PO tokens, or campaign-provided files. Revisit only if a campaign needs YouTube source |
+| Direct media URL (HTTP range) | ✅ archive.org 206 partial-content verified; ffmpeg remote range-seek recipe applies |
+| Drive/Dropbox (campaign folders) | Hosts reachable (302/200); full download untested until a real campaign link exists |
+| huggingface.co (whisper models) | ✅ validated — small.en pulled + run |
+| whop.com / contentrewards.com | ✅ 200 |
+| Agent proxy | healthy, `"selective": false` (full egress). BigBuckBunny GCS bucket 403 is Google's own AccessDenied (bucket privated), not policy |
 
-**Fix (user action), verified against docs 2026-09-22:** at claude.ai/code, click the
-cloud icon showing the environment name in the row above the message box (no settings
-page/URL exists for this) → hover the environment → gear icon → **Network access**
-selector. Four levels exist: None / Trusted (current) / **Full** (any domain) / Custom.
-**Recommended: Full** — media CDNs rotate hostnames (`*.googlevideo.com`,
-`*.cloudfront.net`, `*.googleusercontent.com`), so Custom lists leak 403s. If Custom:
-paste the list below one-per-line AND tick **"Also include default list of common
-package managers"** (else apt/pip break):
+## Editing pipeline: VALIDATED end-to-end via `scripts/clipper.py`
+Twitch VOD → `ingest` (section download) → `transcribe` (whisper small.en, word
+timestamps, 3.6x realtime cpu) → `moments` (heuristic assist) → editorial pick →
+`cut` (9:16 blur-pad + ASS caption cards w/ accent word + hook + loudnorm I=-14) →
+`qc` (frame grid Claude reads + ffprobe + ebur128) → `pack` → file send.
+**26s clip rendered in 24s wall** (≈1x realtime, 4-core). Measured loudness −14.6 LUFS.
+
+Validated filter chain (lives in `cmd_cut`):
 ```
-youtube.com
-*.youtube.com
-*.googlevideo.com
-*.ytimg.com
-twitch.tv
-*.twitch.tv
-*.ttvnw.net
-*.cloudfront.net
-kick.com
-*.kick.com
-drive.google.com
-docs.google.com
-*.googleusercontent.com
-storage.googleapis.com
-commondatastorage.googleapis.com
-dropbox.com
-*.dropbox.com
-*.dropboxusercontent.com
-whop.com
-*.whop.com
-contentrewards.com
-huggingface.co
-*.hf.co
-cdn.higgsfield.ai
-*.higgsfield.ai
+[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,gblur=sigma=24[bg];
+[0:v]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[comp];[comp]subtitles=<clip>.ass[v]
+-map [v] -map 0:a? -af loudnorm=I=-14:TP=-1
+-c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart
 ```
-**The change applies to sessions started AFTER saving** — running sessions keep the old
-policy, so start a fresh session on this repo/branch after flipping (repo state carries
-everything). First new session may start slower: changing allowed hosts rebuilds the
-environment snapshot. Docs: https://code.claude.com/docs/en/cloud-environments#network-access
 
-## Residual risks after policy opens (validate on first real campaign)
-- YouTube/Twitch may bot-check datacenter IPs (yt-dlp cookies/PO-token workarounds exist).
-  Most reliable ingest: campaign-provided source folders (Drive/Dropbox links) — most
-  Whop campaigns provide these.
-- Fallback compute: Higgsfield `sandbox_exec` (their sandbox, their network) can run the
-  same download+ffmpeg flow if local egress stays limited.
-- ASR captions: faster-whisper via PyPI is installable, models need huggingface.co.
-  Fallback: platform auto-subs via `yt-dlp --write-auto-sub` for moment-finding.
+## Transcript sources by platform
+- **Twitch/Kick:** no platform subs → faster-whisper is the primary path (validated).
+- **YouTube:** auto-sub VTT with word timings when media access exists (`parse_vtt_words`).
+- Word timestamps drive the caption cards; segment text drives moment selection.
 
-## Delivery loop (v1)
-Claude produces finished MP4 + caption/hashtag text → sends files in-session → user posts
-from phone (~1 min/clip; campaigns generally require account-holder posting anyway).
-Later option: push clip to repo/release → `media_import_url` → `tiktok_prepare_publish`.
+## Residual risks / open items
+- Kick media download not yet exercised (listing works) — validate on first Kick campaign.
+- Twitch sub-only VODs exist on some channels; campaign material usually comes with
+  access or files. GDQ-style public VODs download without auth.
+- YouTube media stays user-gated (cookies) — don't burn session time re-testing it.
+- Long VODs: ingest sections (10–20 min around candidate moments), not whole VODs —
+  disk allowance is finite and `df` misleads in this container.
+
+## Delivery loop (v1, validated mechanics)
+clipper `pack` writes `deliverables.txt`; clip + QC grid go to the user via file send;
+user posts from phone (campaigns generally require account-holder posting anyway).
+Later option: push clip bytes elsewhere (repo release / `media_import_url` →
+`tiktok_prepare_publish` draft) once TikTok is connected.

@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Content ledger CLI: track every video from idea to posted metrics.
+"""Content ledger CLI: track every clip/video from idea to verified payout.
 
 Usage:
-  ledger.py add --title "Pompeii hour by hour" [--idea-id idea-003] [--status planned]
-  ledger.py set v001 status=draft_ready credits_spent=95 virality_score=7.5
-  ledger.py list [--status draft_ready]
+  ledger.py add --title "streamer W moment" --campaign whop-xyz --rate-per-1k 1.50 \
+      --source-url https://twitch.tv/videos/123 --vod-window 1:10:40-1:11:06
+  ledger.py set v001 status=posted tiktok_url=... posted_at=2026-09-23
+  ledger.py set v001 verified_views=41000 payout_status=verified
+  ledger.py set v001 earnings_usd=61.50 payout_status=paid
+  ledger.py list [--status posted] [--campaign whop-xyz]
   ledger.py report
 """
 import argparse
@@ -63,6 +66,15 @@ def cmd_add(args) -> None:
         "created_at": now(),
         "updated_at": now(),
     }
+    for key, value in (
+        ("campaign", args.campaign),
+        ("rate_per_1k", args.rate_per_1k),
+        ("source_url", args.source_url),
+        ("vod_window", args.vod_window),
+        ("clip_file", args.clip_file),
+    ):
+        if value is not None:
+            entry[key] = value
     entries.append(entry)
     save(entries)
     print(f"added {entry['id']}: {entry['title']}")
@@ -85,16 +97,28 @@ def cmd_list(args) -> None:
     entries = load()
     if args.status:
         entries = [e for e in entries if e.get("status") == args.status]
+    if args.campaign:
+        entries = [e for e in entries if e.get("campaign") == args.campaign]
     if not entries:
         print("(no entries)")
         return
-    print(f"{'id':<6}{'status':<14}{'credits':>8}{'views':>10}  title")
+    print(f"{'id':<6}{'status':<14}{'campaign':<16}{'views':>10}{'$':>8}  title")
     for e in entries:
         print(
             f"{e['id']:<6}{e.get('status', '?'):<14}"
-            f"{e.get('credits_spent', 0):>8}{e.get('views', '-'):>10}  "
-            f"{e.get('title', '')[:48]}"
+            f"{str(e.get('campaign', '-'))[:15]:<16}"
+            f"{e.get('views', '-'):>10}{earnings(e):>8.2f}  "
+            f"{e.get('title', '')[:40]}"
         )
+
+
+def earnings(entry: dict) -> float:
+    """Recorded payout, else estimate from verified views x campaign rate."""
+    if entry.get("earnings_usd") is not None:
+        return float(entry["earnings_usd"])
+    views = entry.get("verified_views") or 0
+    rate = entry.get("rate_per_1k") or 0
+    return views / 1000 * rate
 
 
 def cmd_report(_args) -> None:
@@ -122,15 +146,39 @@ def cmd_report(_args) -> None:
         for e in top:
             print(f"  {e['id']} {e.get('views', 0):>8} views  {e.get('title', '')[:40]}")
 
+    by_campaign: dict = {}
+    for e in entries:
+        if e.get("campaign"):
+            by_campaign.setdefault(e["campaign"], []).append(e)
+    if by_campaign:
+        print("campaigns:")
+        total_usd = 0.0
+        for name, group in sorted(by_campaign.items()):
+            usd = sum(earnings(e) for e in group)
+            paid = sum(earnings(e) for e in group
+                       if e.get("payout_status") == "paid")
+            views = sum(e.get("verified_views") or e.get("views") or 0
+                        for e in group)
+            total_usd += usd
+            print(f"  {name}: {len(group)} clips, {views} views, "
+                  f"${usd:.2f} earned (${paid:.2f} paid out)")
+        print(f"total earnings: ${total_usd:.2f}")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_add = sub.add_parser("add", help="add a new video entry")
+    p_add = sub.add_parser("add", help="add a new video/clip entry")
     p_add.add_argument("--title", required=True)
     p_add.add_argument("--idea-id", default=None)
     p_add.add_argument("--status", default="planned")
+    p_add.add_argument("--campaign", default=None, help="campaign id/name")
+    p_add.add_argument("--rate-per-1k", type=float, default=None,
+                       help="campaign USD per 1k verified views")
+    p_add.add_argument("--source-url", default=None, help="VOD url clipped from")
+    p_add.add_argument("--vod-window", default=None, help="e.g. 1:10:40-1:11:06")
+    p_add.add_argument("--clip-file", default=None, help="work/<job>/clip-NNN.mp4")
     p_add.set_defaults(func=cmd_add)
 
     p_set = sub.add_parser("set", help="update fields: set v001 key=value ...")
@@ -140,6 +188,7 @@ def main() -> None:
 
     p_list = sub.add_parser("list", help="list entries")
     p_list.add_argument("--status", default=None)
+    p_list.add_argument("--campaign", default=None)
     p_list.set_defaults(func=cmd_list)
 
     p_report = sub.add_parser("report", help="summary: counts, spend, views, top videos")
