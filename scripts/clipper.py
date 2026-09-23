@@ -419,14 +419,15 @@ def ass_escape(text: str) -> str:
 def build_ass(words: list[dict], clip_start: float, clip_end: float,
               hook: str | None, max_card_words: int = 4,
               max_card_span: float = 1.8, hook_as_is: bool = False,
-              hook_full: bool = False) -> str:
+              hook_full: bool = False, hook_y: int | None = None) -> str:
     """Group words into short caption cards, accent-color the loudest word."""
     events = []
     if hook:
         text = hook if hook_as_is else hook.upper()
         h_end = (clip_end - clip_start) if hook_full else min(4.5, clip_end - clip_start)
+        pos = rf"{{\pos(540,{hook_y})}}" if hook_y is not None else ""
         events.append(f"Dialogue: 0,{ass_time(0)},{ass_time(h_end)},"
-                      f"Hook,,0,0,0,,{ass_escape(text)}")
+                      f"Hook,,0,0,0,,{pos}{ass_escape(text)}")
     card: list[dict] = []
 
     def flush(card):
@@ -474,10 +475,21 @@ def cmd_cut(args) -> None:
     out_name = args.out or f"clip-{len(list(job.glob('clip-*.mp4'))) + 1:03d}"
     out = job / f"{out_name}.mp4"
 
-    filters = ["[0:v]scale=1080:1920:force_original_aspect_ratio=increase,"
-               "crop=1080:1920,gblur=sigma=24[bg]",
-               "[0:v]scale=1080:-2[fg]",
-               "[bg][fg]overlay=(W-w)/2:(H-h)/2[comp]"]
+    if args.layout == "stack":
+        if not (args.cam and args.game):
+            die("--layout stack needs --cam X,Y,W,H and --game X,Y,W,H (source px)")
+        cx, cy, cw, ch = (int(v) for v in args.cam.split(","))
+        gx, gy, gw, gh = (int(v) for v in args.game.split(","))
+        cam_h = args.cam_h // 2 * 2
+        game_h = 1920 - cam_h
+        filters = [f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale=1080:{cam_h}[cam]",
+                   f"[0:v]crop={gw}:{gh}:{gx}:{gy},scale=1080:{game_h}[game]",
+                   "[cam][game]vstack=inputs=2[comp]"]
+    else:  # blur-pad (default)
+        filters = ["[0:v]scale=1080:1920:force_original_aspect_ratio=increase,"
+                   "crop=1080:1920,gblur=sigma=24[bg]",
+                   "[0:v]scale=1080:-2[fg]",
+                   "[bg][fg]overlay=(W-w)/2:(H-h)/2[comp]"]
     last = "comp"
 
     logo = None
@@ -497,14 +509,18 @@ def cmd_cut(args) -> None:
             die("no transcript.json — run transcribe first (or pass --no-captions)")
         segs = json.loads(tfile.read_text())
         words = [w for s in segs for w in s["words"]]
+        hook_y = (args.cam_h // 2 * 2 + 26) if args.layout == "stack" else None
         ass = build_ass(words, args.start, args.end, args.hook,
-                        hook_as_is=args.hook_as_is, hook_full=args.hook_full)
+                        hook_as_is=args.hook_as_is, hook_full=args.hook_full,
+                        hook_y=hook_y)
         (job / f"{out_name}.ass").write_text(ass)
         filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
     elif args.hook:
+        hook_y = (args.cam_h // 2 * 2 + 26) if args.layout == "stack" else None
         ass = build_ass([], args.start, args.end, args.hook,
-                        hook_as_is=args.hook_as_is, hook_full=args.hook_full)
+                        hook_as_is=args.hook_as_is, hook_full=args.hook_full,
+                        hook_y=hook_y)
         (job / f"{out_name}.ass").write_text(ass)
         filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
@@ -529,7 +545,7 @@ def cmd_cut(args) -> None:
         "file": out.name, "start_s": args.start, "end_s": args.end,
         "vod_start": fmt_ts(vod_off + args.start),
         "vod_end": fmt_ts(vod_off + args.end),
-        "hook": args.hook, "logo": bool(logo),
+        "hook": args.hook, "logo": bool(logo), "layout": args.layout,
         "loudnorm": not args.no_loudnorm, "rendered_at": now_utc(),
     })
     meta["clips"] = clips
@@ -661,6 +677,12 @@ def main() -> None:
     p.add_argument("--logo-width", type=int, default=210)
     p.add_argument("--no-loudnorm", action="store_true",
                    help="keep original audio untouched (strict-audio campaigns)")
+    p.add_argument("--layout", choices=("blur", "stack"), default="blur",
+                   help="stack = facecam crop on top of gameplay crop (streamer format)")
+    p.add_argument("--cam", help="stack: facecam rect X,Y,W,H in source px")
+    p.add_argument("--game", help="stack: gameplay rect X,Y,W,H in source px")
+    p.add_argument("--cam-h", type=int, default=740,
+                   help="stack: facecam panel height in the 1920 output")
     p.set_defaults(func=cmd_cut)
 
     p = sub.add_parser("qc", help="frame grid + probe + loudness")
