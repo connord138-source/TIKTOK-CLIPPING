@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "id": "cod-mw4-trailer",
+    "cr_campaign_id": "3ae31049-8719-44c5-a2ef-c0a40dcc3095",
+    "name": "Call of Duty - Modern Warfare 4 Campaign Trailer",
+    "org": "Clipping Culture (verified)",
+    "platform": "whop-content-rewards",
+    "participation": "open_submission - no join step; post per rules then user clicks 'Submit clip' with the TikTok post URL",
+    "status": "active",
+    "activated_at": "2026-09-23",
+    "rate_per_1k": 2.0,
+    "allowed_platforms": ["tiktok", "instagram_reels"],
+    "min_payout_usd": 4.0,
+    "max_payout_per_post_usd": 1000,
+    "min_len_s": 10,
+    "sources_local": "work/cod-trailer/source.mp4 (official 4K trailer) + MW4 logo PNGs, from campaign Drive folder",
+    "sources": [
+      "https://drive.google.com/drive/folders/1-dn7v7DVlx0QS_YACET6cvg9-sra-xIj",
+      "https://app.mediasilo.com/spotlight/db426386-b6e3-4ba7-806f-699e0dafe730"
+    ],
+    "post_recipe": {
+      "caption_line_required": "Pre-Order Modern Warfare 4 to get early access to the Campaign",
+      "tag": "@Callofduty",
+      "ftc": "#Ad alone on first line, first hashtag; max 3 more hashtags",
+      "onscreen_text": "approved line only: 'New Look at Modern Warfare 4 Campaign' (--hook-as-is --hook-full)",
+      "audio": "original trailer audio only (--no-loudnorm, no captions burned)",
+      "watermark": "MW4 official logo NEG on dark footage (--logo ... --logo-pos br --logo-width 280)",
+      "other": ">=10s; English; live >=30 days; >=0.20% ER; likes visible; no paid boosts; same video <=5 pages; never name the lead actor"
+    },
+    "avoid": "ESRB slate (0:00-4:00); profanity line at ~0:36-0:40"
+  }
+]

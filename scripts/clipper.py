@@ -388,7 +388,7 @@ ASS_HEADER = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 1080
 PlayResY: 1920
-WrapStyle: 2
+WrapStyle: 0
 ScaledBorderAndShadow: yes
 
 [V4+ Styles]
@@ -418,12 +418,15 @@ def ass_escape(text: str) -> str:
 
 def build_ass(words: list[dict], clip_start: float, clip_end: float,
               hook: str | None, max_card_words: int = 4,
-              max_card_span: float = 1.8) -> str:
+              max_card_span: float = 1.8, hook_as_is: bool = False,
+              hook_full: bool = False) -> str:
     """Group words into short caption cards, accent-color the loudest word."""
     events = []
     if hook:
-        events.append(f"Dialogue: 0,{ass_time(0)},{ass_time(min(4.5, clip_end - clip_start))},"
-                      f"Hook,,0,0,0,,{ass_escape(hook.upper())}")
+        text = hook if hook_as_is else hook.upper()
+        h_end = (clip_end - clip_start) if hook_full else min(4.5, clip_end - clip_start)
+        events.append(f"Dialogue: 0,{ass_time(0)},{ass_time(h_end)},"
+                      f"Hook,,0,0,0,,{ass_escape(text)}")
     card: list[dict] = []
 
     def flush(card):
@@ -484,7 +487,7 @@ def cmd_cut(args) -> None:
             die(f"logo not found: {logo}")
         pos = {"tr": "W-w-40:150", "tl": "40:150",
                "br": "W-w-40:H-h-320", "bl": "40:H-h-320"}[args.logo_pos]
-        filters.append("[1:v]scale=210:-1[lg]")
+        filters.append(f"[1:v]scale={args.logo_width}:-1[lg]")
         filters.append(f"[{last}][lg]overlay={pos}[wm]")
         last = "wm"
 
@@ -494,12 +497,14 @@ def cmd_cut(args) -> None:
             die("no transcript.json — run transcribe first (or pass --no-captions)")
         segs = json.loads(tfile.read_text())
         words = [w for s in segs for w in s["words"]]
-        ass = build_ass(words, args.start, args.end, args.hook)
+        ass = build_ass(words, args.start, args.end, args.hook,
+                        hook_as_is=args.hook_as_is, hook_full=args.hook_full)
         (job / f"{out_name}.ass").write_text(ass)
         filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
     elif args.hook:
-        ass = build_ass([], args.start, args.end, args.hook)
+        ass = build_ass([], args.start, args.end, args.hook,
+                        hook_as_is=args.hook_as_is, hook_full=args.hook_full)
         (job / f"{out_name}.ass").write_text(ass)
         filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
@@ -645,10 +650,15 @@ def main() -> None:
     p.add_argument("--start", type=float, required=True, help="secs, section-local")
     p.add_argument("--end", type=float, required=True)
     p.add_argument("--hook", help="top-of-frame hook text")
+    p.add_argument("--hook-as-is", action="store_true",
+                   help="render hook text exactly as given (campaign-approved lines)")
+    p.add_argument("--hook-full", action="store_true",
+                   help="keep hook on screen for the whole clip")
     p.add_argument("--out", help="output stem (default clip-NNN)")
     p.add_argument("--no-captions", action="store_true")
     p.add_argument("--logo", help="watermark PNG (campaign brand requirement)")
     p.add_argument("--logo-pos", choices=("tr", "tl", "br", "bl"), default="tr")
+    p.add_argument("--logo-width", type=int, default=210)
     p.add_argument("--no-loudnorm", action="store_true",
                    help="keep original audio untouched (strict-audio campaigns)")
     p.set_defaults(func=cmd_cut)

@@ -51,14 +51,15 @@ real material (26s clip in 24s wall; details + connectivity matrix in
 `docs/CAPABILITY-NOTES.md`). Docs/ledger/config restructured for clipping. YouTube
 media ingest stays bot-checked (user-cookie workaround documented; don't re-test idly).
 
-**TikTok @chat.clip.that created (2026-09-22).** Campaign shortlist researched +
-encoded: `research/whop-campaign-shortlist-2026-09-23.md` (5 finalists + watch list,
-full rules) and `config/campaigns-proposed.json`. Keyless campaign discovery works
-in-container: `scripts/whop_scout.py discover / detail` (contentrewards public API;
-the authed bounties API additionally needs WHOP_CLIPPING env var — reaches sessions
-started after saving). **Blocked ONLY on the user clicking Join** on shortlisted
-campaigns → then move the entry to `config/campaigns.json` and produce. Until then:
-campaign-authorized material only, nothing postable.
+**PRODUCTION LIVE (2026-09-23).** TikTok @chat.clip.that created. First active
+campaign in `config/campaigns.json`: **cod-mw4-trailer** ($2/1k) — its official 4K
+trailer + logo assets downloaded from the campaign Drive folder (gdown works); first
+clips cut. Open campaigns have NO join step ("Submit clip" only): produce → user
+posts → user submits post URL on the campaign page (see OPERATIONS §C). Shortlist +
+full rules: `research/whop-campaign-shortlist-2026-09-23.md`,
+`config/campaigns-proposed.json` (next up: Coinbase×Valorant — user must grab its
+Dropbox link + warm-up doc from the Notion rules). Keyless discovery:
+`whop_scout.py discover / detail`. Campaign-authorized material only, as ever.
 
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow

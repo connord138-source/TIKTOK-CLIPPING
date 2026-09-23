@@ -51,9 +51,16 @@ hard rule 2 applies first (`balance`, floor 150, session cap 250).
 
 ## C. Campaign onboarding (user-gated parts marked 👤)
 
+**Participation model (learned 2026-09-23):** open Content Rewards campaigns have NO
+join step — the page shows only "Submit clip". Flow: produce per the campaign's rules
+from its provided sources → 👤 user posts on TikTok → 👤 user clicks "Submit clip"
+with the post URL → platform verifies views → payout. Only application-gated
+campaigns (e.g. Shuffle) have an approval step before submitting.
+
 1. 👤 User signs up / signs in on Whop (or campaign platform) and picks campaigns
-   (Claude can shortlist from public pages when asked).
-2. 👤 User pastes campaign brief/rules + source links into the session.
+   (Claude shortlists via `whop_scout.py discover`; rules pages may need the user).
+2. 👤 User pastes campaign brief/rules + source links into the session (or Claude
+   pulls them when the rules page is fetchable).
 3. Claude encodes it in `config/campaigns.json`:
    ```json
    {"id": "whop-xyz", "name": "...", "platform": "whop", "creator": "...",
