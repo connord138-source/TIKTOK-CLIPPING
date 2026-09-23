@@ -9,7 +9,10 @@
     "status": "active",
     "activated_at": "2026-09-23",
     "rate_per_1k": 2.0,
-    "allowed_platforms": ["tiktok", "instagram_reels"],
+    "allowed_platforms": [
+      "tiktok",
+      "instagram_reels"
+    ],
     "min_payout_usd": 4.0,
     "max_payout_per_post_usd": 1000,
     "min_len_s": 10,
@@ -28,5 +31,44 @@
       "other": ">=10s; English; live >=30 days; >=0.20% ER; likes visible; no paid boosts; same video <=5 pages; never name the lead actor"
     },
     "avoid": "ESRB slate (0:00-4:00); profanity line at ~0:36-0:40"
+  },
+  {
+    "id": "coinbase-valorant-oneshot",
+    "cr_campaign_id": "3cd86bbc-30ac-4b34-b860-f333784f1db3",
+    "name": "COINBASE x VALORANT One Shot Tournament",
+    "org": "ClipHaus",
+    "platform": "whop-content-rewards",
+    "participation": "open_submission - no join step",
+    "status": "active_producing - POSTING GATED on 3-day warm-up + follow 4 accounts on IG+TikTok + geo-tag each post",
+    "activated_at": "2026-09-23",
+    "rate_per_1k": 1.5,
+    "allowed_platforms": [
+      "tiktok",
+      "instagram_reels",
+      "youtube_shorts"
+    ],
+    "min_payout_usd": 1.5,
+    "max_payout_per_post_usd": 300,
+    "min_len_s": 7,
+    "sources_local": "work/valorant-src/ (7 curated moments + guidelines.pdf downloaded from approved Dropbox)",
+    "sources": [
+      "https://www.dropbox.com/scl/fo/bujuqeyrogowmz1xrthgs/AB3VEil_L_8P4ybnSPqoYwI?rlkey=j4a6h0b9lwc0pi3aqah10y99j&dl=0"
+    ],
+    "post_recipe": {
+      "disclosure": "#ad or #coinbasepartner in every post",
+      "tag": "@coinbase in every video",
+      "geo_tag": "city/region on every post",
+      "follows_required": [
+        "@coinbaseoneshot",
+        "@riotgames",
+        "@coinbase",
+        "@cliphausinc",
+        "@petersint",
+        "@jamespfetter"
+      ],
+      "audio": "original stream audio; only platform commercial library sounds may be added",
+      "language_bans": "no financial advice/FOMO wording; no best/fastest/free claims; prize only as approved copy ('a shot at 1 BTC'); no implying endorsement",
+      "other": ">=7s; live >=30 days; Tier-1 audience >=50%; entry closes Sep 25 - avoid 'anyone can enter' hooks; full VODs also in folder (TenZ NA/EU, Sliggy, Mixwell) for deeper mining"
+    }
   }
 ]
