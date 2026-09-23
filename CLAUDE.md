@@ -36,18 +36,25 @@ the production work (generate → review → prepare draft → log → push).
 
 ## Current phase
 **PIVOTED to streamer-clipping (2026-09-22).** Handle: **@chat.clip.that** (see
-`config/account.json`). Editing pipeline validated in-container; ingest blocked until
-the user flips the environment network policy — steps and validated ffmpeg recipes in
-`docs/CAPABILITY-NOTES.md`. STRATEGY/OPERATIONS/SETUP docs still describe the legacy
-POV-history plan; restructure them for the clipping model during the next work session.
+`config/account.json`). Editing pipeline validated in-container. **Network policy
+FLIPPED and verified open 2026-09-23** — ingest unblocked; matrix + validated ffmpeg
+recipes + in-chat browser recipe in `docs/CAPABILITY-NOTES.md`. STRATEGY/OPERATIONS/
+SETUP docs still describe the legacy POV-history plan; restructure them for the
+clipping model during the next work session.
 
-First session after the network flip:
-1. Re-run the connectivity matrix from CAPABILITY-NOTES (curl loop) and record results.
-2. Build `scripts/clipper.py` around the validated recipe: ingest (campaign source /
-   yt-dlp) → transcript (platform subs, else faster-whisper) → moment selection → cut →
-   9:16 blur-pad → ASS captions → loudnorm → frame-grid QC → deliver via file send.
-3. Restructure docs for clipping; retool ledger fields for per-campaign earnings.
-4. Still user-gated: Whop signup + campaign selection, TikTok account creation +
+**Campaign shortlist DONE (2026-09-23):** `research/whop-campaigns-2026-09-23.md`
+(+ raw JSON snapshot). Top picks: CoD MW4 trailer ($2/1K), Coinbase x Valorant
+($1.50/1K, fresh-page friendly), [US] Double Date Island ($2.80/1K), Crazy Taxi CNT
+($2.10/1K), Candid Club ($1.20/1K). Nothing joined — joining is the user's move.
+
+Next session:
+1. Once user has joined campaign(s): build `scripts/clipper.py` around the validated
+   recipe: ingest (campaign source folders / yt-dlp) → transcript (platform subs, else
+   faster-whisper) → moment selection → cut → 9:16 blur-pad → ASS captions → logo
+   watermark (most brand campaigns require it) → loudnorm → frame-grid QC → deliver via
+   file send. Bake in the compliance checklist from the research doc (§common patterns).
+2. Restructure docs for clipping; retool ledger fields for per-campaign earnings.
+3. Still user-gated: Whop campaign joins + Shuffle application decision, TikTok
    `tiktok_connect`, posting (drafts/files only — user posts).
 Money model: Whop-style campaign bounties (~$0.20–$6 per 1k verified views). Clip ONLY
 campaign-authorized material — never freelance-clip a creator without a program.

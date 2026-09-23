@@ -21,16 +21,41 @@ network matrix after any environment policy change.
 - QC without watching: frame grid (`fps=1/4,scale=270:480,tile=3x2` → jpg, Claude reads it)
   + ffprobe duration/res + transcript spot-check.
 
-## Ingest: BLOCKED by current environment network policy
-Connectivity matrix (via agent proxy; 000 = CONNECT denied by policy):
+## Ingest: UNBLOCKED — network policy flipped, verified 2026-09-23
+Re-run of the matrix (all reachable; non-200s are normal redirects/roots):
 | Host | Result |
 |---|---|
-| raw.githubusercontent.com | **206 (works, range requests OK)** |
-| youtube.com / twitch.tv / kick.com | 000 blocked |
-| drive.google.com | 000 blocked |
-| whop.com / contentrewards.com | 000 blocked |
-| huggingface.co (whisper models) | 000 blocked |
-| cdn.higgsfield.ai (!) | 000 blocked — can't download Higgsfield outputs locally either |
+| youtube.com | 301 (reachable) |
+| www.twitch.tv / kick.com | 200 |
+| drive.google.com / docs.google.com | 302 (reachable; public-doc export works: `/document/d/<id>/export?format=txt`) |
+| dropbox.com / we.tl / app.mediasilo.com | 200/301 |
+| whop.com / contentrewards.com / app.notion.com | 200 |
+| huggingface.co (whisper models) | 200 |
+| cdn.higgsfield.ai | 404 at root (reachable) |
+
+yt-dlp bot-check risk on datacenter IPs still untested — validate on first real ingest.
+
+## In-chat browser: VALIDATED 2026-09-23 (used for Whop campaign research)
+Playwright 1.56.1 is global in `/opt/node22/lib` (`NODE_PATH=/opt/node22/lib/node_modules`),
+Chromium under `/opt/pw-browsers`. Two gotchas, both solved:
+1. **TLS**: agent proxy MITMs HTTPS; Chromium trusts NSS, and `/root/.pki/nssdb` ships
+   EMPTY → `ERR_CERT_AUTHORITY_INVALID`. Fix (do once per session):
+   `apt-get update && apt-get install -y libnss3-tools`, split `/root/.ccr/ca-bundle.crt`
+   on `BEGIN CERTIFICATE` and `certutil -d sql:/root/.pki/nssdb -A -t "C,," -n <name> -i <pem>`
+   for each cert, then start the browser. Never disable TLS verification.
+2. **Persistence across Bash calls**: launch chromium via a long-lived node script with
+   `args: ['--remote-debugging-port=9222']` (run_in_background; a `pkill` in the same
+   command kills its own wrapper shell — exit 144). Each step then
+   `chromium.connectOverCDP('http://localhost:9222')`, drives `contexts()[0]`, screenshots
+   to scratchpad, and disconnects. Screenshots reach the user via file send (render).
+
+Whop research shortcut: `contentrewards.com` is the public campaign browser — no login
+needed. JSON API: `/api/campaign/campaigns/discover?limit=50&contentTag=clipping` (list;
+offset param ignored, vary `sortBy`: featured/trending/newest/budget) and
+`/api/campaign/campaigns/discover/{uuid}` (full detail: per-platform payouts, budget
+spent, referenceMaterials, requiresApplication). Campaign reference videos live on a
+public S3 bucket (`content-rewards-production-publicassetsbucket-*`) — directly
+downloadable for the editing pipeline.
 
 **Fix (user action), verified against docs 2026-09-22:** at claude.ai/code, click the
 cloud icon showing the environment name in the row above the message box (no settings
