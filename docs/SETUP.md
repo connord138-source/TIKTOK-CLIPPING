@@ -6,7 +6,7 @@
 - Higgsfield: Plus plan, ~461 credits (unused by clipping; garnish only)
 - TikTok: **@chat.clip.that created + confirmed 2026-09-22**;
   `tiktok_connect` not run (optional)
-- Whop: **account created 2026-09-22** (org "CHAT CLIP THAT" on the business dashboard);
+- Whop: account created 2026-09-22; **member of Propaganda network whop (free, 2026-09-23)**;
   no campaign joined yet → `config/campaigns.json` empty — THE current blocker
 
 ## Your part (the 1%) — in order
