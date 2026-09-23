@@ -80,10 +80,12 @@ automatic. Two human touchpoints by design.
 3. **Staged drafts:** after user runs `tiktok_connect` once, deliver via
    `tiktok_prepare_publish` → clips wait in the user's TikTok inbox; user taps post.
    Metrics sessions then pull views automatically.
-4. **Campaign auto-discovery** (needs one investigation session): Whop developer API
-   key (dashboard → Developer) or user-exported cookies → poll Content Rewards →
-   filter by STRATEGY §3 criteria → write PROPOSED entries to campaigns.json. User
-   still clicks Join (terms/applications are theirs to accept).
+4. **Campaign auto-discovery** (API mapped, script built 2026-09-23): with
+   `WHOP_CLIPPING` in the environment vars, `scripts/whop_scout.py scout` polls
+   open clipping bounties, filters, and writes `config/campaigns-proposed.json`;
+   `show <id>` pulls a bounty's full rules for encoding. User still clicks Join
+   (terms/applications are theirs to accept). Later: `POST /bounty_submissions`
+   can automate payout claims on posted clips.
 5. **NOT planned near-term — full auto-post:** technically feasible once connected,
    but new-account distribution risk + "mass-produced content" flag risk + many
    campaigns require account-holder posting. User decision per hard rule 6; revisit

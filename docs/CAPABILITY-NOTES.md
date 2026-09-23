@@ -56,6 +56,23 @@ web) can't be scraped headlessly for now; curl/yt-dlp/pip/ffmpeg trust the proxy
 Whop discover HTML is a client-rendered shell with no campaign data server-side —
 campaign details come from the user pasting them (OPERATIONS §C).
 
+## Whop API mapped (2026-09-23) — Content Rewards = "bounties"
+Base `https://api.whop.com/api/v1`, `Authorization: Bearer <key>`; full OpenAPI spec
+mirrored from the docs CDN. Discovery: `GET /bounties?status=open&
+business_goal_type=clipping&order=gross_reward_amount&direction=desc` (cursor
+pagination first/after). Bounty fields incl. `budget_amount`, `gross_reward_amount`,
+`gross_paid_out_amount` (pool health), `spots_remaining`,
+`min_total_verified_duration_seconds`, `accepted_deliverable_types`, `description`
+(rules text; per-1k rate likely lives here — confirm on first real payload).
+Submission leg exists: `POST /bounty_submissions` → `POST /bounty_submissions/{id}/
+submit` (programmatic payout claim on posted clips — later automation).
+Unauthenticated list → 400 "must provide a valid App API key"; key-type semantics
+(account key = own bounties, user token = workable bounties) unverified until the key
+lands. `scripts/whop_scout.py` (probe/scout/show/submissions) wraps all of this.
+**Key delivery:** user set `WHOP_CLIPPING`; GitHub repo secrets are NOT visible here —
+it must be a cloud-environment Environment variable, and those reach sessions STARTED
+AFTER saving (same rule as the network policy flip).
+
 ## Residual risks / open items
 - Kick media download not yet exercised (listing works) — validate on first Kick campaign.
 - Twitch sub-only VODs exist on some channels; campaign material usually comes with
