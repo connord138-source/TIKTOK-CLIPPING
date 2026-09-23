@@ -12,6 +12,7 @@ monetization (that's a later bonus).
 | **Campaign bounties** (Whop "Content Rewards", contentrewards.com, creator Discords) | join a campaign; follow its rules; post from our account; views get verified | **from the first posted clip** | ~$0.20–$6.00 per 1k verified views depending on campaign; pools cap totals |
 | Account growth → Creator Rewards | 10k followers, 100k views/30d, >1min videos | months; clips are usually <1min so this stays secondary | RPM bonus on qualifying content |
 | Account as asset / paid clipping retainers | track record | after consistent results | retainers of $500–$2k/mo exist for proven clippers |
+| **Agency networks** (Clipping Culture whop, Propaganda, Lumina, Shuffle) | join community / apply with posting account | community joins now; applications after first posts | steadier campaign flow, private campaigns, retainer path — see research/clipper-networks-2026-09-23.md |
 
 **Plan of record:** bounty campaigns are the business. Everything else is optional
 upside. Marginal cost per clip ≈ $0 (ffmpeg in the container; no generation credits),
