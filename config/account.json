@@ -1,11 +1,14 @@
 {
   "account_handle": "chat.clip.that",
-  "display_name": "CHAT, CLIP THAT 🎬",
+  "display_name": "CHAT, CLIP THAT \ud83c\udfac",
   "niche": "streamer-clipping",
   "niche_status": "confirmed_2026-09-22_restructure_done_awaiting_campaigns",
   "publish_mode": "draft_only",
   "cadence_per_day": 2,
-  "video_length_target_seconds": [15, 45],
+  "video_length_target_seconds": [
+    15,
+    45
+  ],
   "aspect_ratio": "9:16",
   "resolution": "720p",
   "budget": {
@@ -29,6 +32,7 @@
     "caption_template": "{hook} {campaign_required_tags} {topic_hashtags}",
     "cta_default": "follow for the moments chat begged us to clip",
     "on_screen_captions": true,
-    "caption_cards": "2-4 words, accent word highlighted, DejaVu Bold"
+    "caption_cards": "2-4 words, accent word highlighted, DejaVu Bold",
+    "edit_template_v9": "intro: impact moment + win/payoff banner held ~2s (punched in 1.12, hook on seam) -> cut to ENTIRE clip from top. Stacked layout: facecam crop top (~740px), gameplay crop bottom. Never open on setup; never put reaction in the intro - reaction lives in the full playthrough."
   }
 }

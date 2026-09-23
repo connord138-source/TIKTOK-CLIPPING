@@ -21,7 +21,17 @@ so any verified payout is profit against time.
 work that costs us nothing but minutes. The KPIs are (a) verified views per clip,
 (b) campaign acceptance rate (clips not rejected), (c) clips shipped per session.
 
-## 2. Positioning
+## 2. Positioning — NICHE LOCKED (2026-09-23, user decision)
+**Streamers/gaming only.** Two content layers on one account:
+- **Identity layer** (builds followers): streamer/esports moments — tournament clips,
+  streamer reactions, chat-culture moments. This is what the handle promises.
+- **Paid-filler layer** (pays bills, same audience): gaming-brand campaigns (game
+  trailers, game influencer VODs).
+Off-niche campaigns (podcasts, dating shows, finance faces) are skipped regardless of
+rate — mixed posting trains the FYP graph against us and off-niche viewers don't
+follow clip pages. High-rate off-niche pools = second-account decision (user's call).
+
+## 2b. Positioning (original)
 - Handle: **@chat.clip.that** — "CHAT, CLIP THAT 🎬". The name IS the niche: the
   moments chat begs to have clipped.
 - Content: highlight clips of campaign-authorized streamers/creators. Bias campaign
