@@ -1,0 +1,232 @@
+[
+  {
+    "campaign_id": "e715e097-ded7-46ed-a81a-6a7a2d613955",
+    "name": "#FreeJimmyLai Clips With Application",
+    "org": "#FreeJimmyLai Clips",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "news-politics",
+        "name": "News & Politics"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 10.0,
+    "cpm_max_usd_per_1k": 10.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 4964.27,
+    "remaining_usd": 5035.73,
+    "approved_submissions": 16,
+    "listed_at": "2026-07-28T14:08:37.000Z"
+  },
+  {
+    "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
+    "name": "Post Clips for Sinparty",
+    "org": "Clipr Agency",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 5.0,
+    "cpm_max_usd_per_1k": 5.0,
+    "budget_usd": 3160.0,
+    "spent_usd": 34.25,
+    "remaining_usd": 3125.75,
+    "approved_submissions": 150,
+    "listed_at": "2026-08-04T13:02:32.000Z"
+  },
+  {
+    "campaign_id": "334ba2c6-30fe-46db-a9a6-118463750bc3",
+    "name": "Syberjet Speed Record",
+    "org": "1DS",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 3645.93,
+    "remaining_usd": 6354.07,
+    "approved_submissions": 198,
+    "listed_at": "2026-09-05T18:02:57.000Z"
+  },
+  {
+    "campaign_id": "85237537-154d-46ac-9040-fb4ce2815d05",
+    "name": "Talking-Head UGC [English]",
+    "org": "Content Rewards",
+    "org_verified": true,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 6926.69,
+    "remaining_usd": 3073.31,
+    "approved_submissions": 409,
+    "listed_at": "2026-06-06T20:37:41.000Z"
+  },
+  {
+    "campaign_id": "eaa3ff22-e6e4-4396-8d7a-148cf5db3664",
+    "name": "Chad Powers S2 | Ricky + Russ Edits",
+    "org": "Amplify Media",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "movie-tv-show",
+        "name": "Movies & TV"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.5,
+    "budget_usd": 3600.0,
+    "spent_usd": 508.85,
+    "remaining_usd": 3091.15,
+    "approved_submissions": 42,
+    "listed_at": "2026-09-18T13:29:33.000Z"
+  },
+  {
+    "campaign_id": "a726ca2a-174f-4974-9829-7f69c19b5dad",
+    "name": "[Mexico] Prime Video - Invincible Clipping",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.8,
+    "cpm_max_usd_per_1k": 2.25,
+    "budget_usd": 15000.0,
+    "spent_usd": 6141.44,
+    "remaining_usd": 8858.56,
+    "approved_submissions": 344,
+    "listed_at": "2026-09-08T20:15:14.000Z"
+  },
+  {
+    "campaign_id": "3ae31049-8719-44c5-a2ef-c0a40dcc3095",
+    "name": "Call of Duty - Modern Warfare 4 Campaign Trailer",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 40000.0,
+    "spent_usd": 25138.09,
+    "remaining_usd": 14861.91,
+    "approved_submissions": 408,
+    "listed_at": "2026-09-17T19:04:55.000Z"
+  },
+  {
+    "campaign_id": "e73b0bf8-397e-4b99-aaa3-08e1468d1f0f",
+    "name": "$10,000 Double Coverage x Justin Gaethje Campaign",
+    "org": "Reach",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "podcast",
+        "name": "Podcasts"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 9980.42,
+    "spent_usd": 1269.58,
+    "remaining_usd": 8710.84,
+    "approved_submissions": 296,
+    "listed_at": "2026-09-18T22:04:59.000Z"
+  },
+  {
+    "campaign_id": "2c65001c-d6a8-4b14-9ba6-52400794b085",
+    "name": "Alpha Futures Clipping Campaign",
+    "org": "Click Culture",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "finance",
+        "name": "Finance"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 13000.0,
+    "spent_usd": 7983.4,
+    "remaining_usd": 5016.6,
+    "approved_submissions": 346,
+    "listed_at": "2026-06-11T06:02:18.000Z"
+  },
+  {
+    "campaign_id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
+    "name": "It's Personal Podcast Clipping Campaign",
+    "org": "Tykoonclips",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "news-politics",
+        "name": "News & Politics"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 466.23,
+    "remaining_usd": 4533.77,
+    "approved_submissions": 16,
+    "listed_at": "2026-07-30T21:20:25.000Z"
+  },
+  {
+    "campaign_id": "2432b187-415b-437c-9545-8cfa032a6155",
+    "name": "(Deutsch) Call of Duty MW4",
+    "org": "German Clipping",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 6500.0,
+    "spent_usd": 2049.42,
+    "remaining_usd": 4450.58,
+    "approved_submissions": 154,
+    "listed_at": "2026-08-07T11:08:11.000Z"
+  },
+  {
+    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
+    "name": "Michael Sartain's Clipping Army",
+    "org": "Michael Sartain's Clipper Army",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 5566.44,
+    "remaining_usd": 4433.56,
+    "approved_submissions": 24,
+    "listed_at": "2026-08-06T13:16:40.000Z"
+  }
+]

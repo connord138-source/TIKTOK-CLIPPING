@@ -51,10 +51,14 @@ real material (26s clip in 24s wall; details + connectivity matrix in
 `docs/CAPABILITY-NOTES.md`). Docs/ledger/config restructured for clipping. YouTube
 media ingest stays bot-checked (user-cookie workaround documented; don't re-test idly).
 
-**Blocked on user (see SETUP.md):** ① join Whop campaign(s) + paste rules → Claude
-fills `config/campaigns.json`; ② create TikTok @chat.clip.that. Until then, sessions
-can dry-run the pipeline and keep docs/tooling sharp, but produce nothing postable —
-campaign-authorized material only.
+**TikTok @chat.clip.that created (2026-09-22).** Campaign shortlist researched +
+encoded: `research/whop-campaign-shortlist-2026-09-23.md` (5 finalists + watch list,
+full rules) and `config/campaigns-proposed.json`. Keyless campaign discovery works
+in-container: `scripts/whop_scout.py discover / detail` (contentrewards public API;
+the authed bounties API additionally needs WHOP_CLIPPING env var — reaches sessions
+started after saving). **Blocked ONLY on the user clicking Join** on shortlisted
+campaigns → then move the entry to `config/campaigns.json` and produce. Until then:
+campaign-authorized material only, nothing postable.
 
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow

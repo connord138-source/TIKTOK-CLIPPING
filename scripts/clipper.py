@@ -476,6 +476,18 @@ def cmd_cut(args) -> None:
                "[0:v]scale=1080:-2[fg]",
                "[bg][fg]overlay=(W-w)/2:(H-h)/2[comp]"]
     last = "comp"
+
+    logo = None
+    if args.logo:  # campaign watermark (brand campaigns require it)
+        logo = Path(args.logo).expanduser().resolve()
+        if not logo.exists():
+            die(f"logo not found: {logo}")
+        pos = {"tr": "W-w-40:150", "tl": "40:150",
+               "br": "W-w-40:H-h-320", "bl": "40:H-h-320"}[args.logo_pos]
+        filters.append("[1:v]scale=210:-1[lg]")
+        filters.append(f"[{last}][lg]overlay={pos}[wm]")
+        last = "wm"
+
     if not args.no_captions:
         tfile = job / "transcript.json"
         if not tfile.exists():
@@ -484,22 +496,25 @@ def cmd_cut(args) -> None:
         words = [w for s in segs for w in s["words"]]
         ass = build_ass(words, args.start, args.end, args.hook)
         (job / f"{out_name}.ass").write_text(ass)
-        filters.append(f"[comp]subtitles={out_name}.ass[v]")
+        filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
     elif args.hook:
         ass = build_ass([], args.start, args.end, args.hook)
         (job / f"{out_name}.ass").write_text(ass)
-        filters.append(f"[comp]subtitles={out_name}.ass[v]")
+        filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
 
     cmd = ["ffmpeg", "-y", "-v", "error", "-stats",
-           "-ss", str(args.start), "-t", str(length), "-i", "source.mp4",
-           "-filter_complex", ";".join(filters),
-           "-map", f"[{last}]", "-map", "0:a?",
-           "-af", "loudnorm=I=-14:TP=-1",
-           "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-           "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
-           "-movflags", "+faststart", f"{out_name}.mp4"]
+           "-ss", str(args.start), "-t", str(length), "-i", "source.mp4"]
+    if logo:
+        cmd += ["-i", str(logo)]
+    cmd += ["-filter_complex", ";".join(filters),
+            "-map", f"[{last}]", "-map", "0:a?"]
+    if not args.no_loudnorm:  # strict-audio campaigns (e.g. trailer-audio-only)
+        cmd += ["-af", "loudnorm=I=-14:TP=-1"]
+    cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
+            "-movflags", "+faststart", f"{out_name}.mp4"]
     run(cmd, cwd=job)
 
     clips = meta.setdefault("clips", [])
@@ -509,7 +524,8 @@ def cmd_cut(args) -> None:
         "file": out.name, "start_s": args.start, "end_s": args.end,
         "vod_start": fmt_ts(vod_off + args.start),
         "vod_end": fmt_ts(vod_off + args.end),
-        "hook": args.hook, "rendered_at": now_utc(),
+        "hook": args.hook, "logo": bool(logo),
+        "loudnorm": not args.no_loudnorm, "rendered_at": now_utc(),
     })
     meta["clips"] = clips
     save_meta(job, meta)
@@ -631,6 +647,10 @@ def main() -> None:
     p.add_argument("--hook", help="top-of-frame hook text")
     p.add_argument("--out", help="output stem (default clip-NNN)")
     p.add_argument("--no-captions", action="store_true")
+    p.add_argument("--logo", help="watermark PNG (campaign brand requirement)")
+    p.add_argument("--logo-pos", choices=("tr", "tl", "br", "bl"), default="tr")
+    p.add_argument("--no-loudnorm", action="store_true",
+                   help="keep original audio untouched (strict-audio campaigns)")
     p.set_defaults(func=cmd_cut)
 
     p = sub.add_parser("qc", help="frame grid + probe + loudness")

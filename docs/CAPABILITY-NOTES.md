@@ -56,6 +56,14 @@ web) can't be scraped headlessly for now; curl/yt-dlp/pip/ffmpeg trust the proxy
 Whop discover HTML is a client-rendered shell with no campaign data server-side —
 campaign details come from the user pasting them (OPERATIONS §C).
 
+## Keyless campaign discovery VALIDATED (2026-09-23)
+`GET https://contentrewards.com/api/campaign/campaigns/discover` — public, no auth,
+works in-container. Cursor pagination (`?cursor=<pagination.nextCursor>`), ~20/page,
+300 campaigns fetched live. Fields: cpmMin/MaxRateCents, budgetCents,
+metrics.budgetSpentCents, organizationName/Verified, payoutType. Detail at
+`/discover/{id}` (adds description + payouts). Wrapped by `whop_scout.py discover` /
+`detail`. Numbers cross-validated against the desktop session's browsing research.
+
 ## Whop API mapped (2026-09-23) — Content Rewards = "bounties"
 Base `https://api.whop.com/api/v1`, `Authorization: Bearer <key>`; full OpenAPI spec
 mirrored from the docs CDN. Discovery: `GET /bounties?status=open&
