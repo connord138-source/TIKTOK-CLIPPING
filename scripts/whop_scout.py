@@ -133,6 +133,21 @@ def cmd_discover(a) -> None:
               f"[{n['org']}{'✓' if n['org_verified'] else ''}]")
     print("\nnote: category/platform/rules need `detail <id>` — the list payload "
           "doesn't carry them all.")
+    wl = REPO / "config" / "streamer-watchlist.json"
+    if wl.exists():
+        targets = json.loads(wl.read_text()).get("tier1_brand_targets", [])
+        seen = []
+        for c in rows:
+            text = f"{c.get('name','')} {c.get('organizationName','')}".lower()
+            for t in targets:
+                if all(part in text for part in t.split()):
+                    seen.append((t, c.get("name"), c.get("id")))
+        if seen:
+            print("\n🎯 WATCHLIST HITS (tier-1 brand streamers):")
+            for t, name, cid in seen:
+                print(f"  [{t}] {name[:60]}  id={cid}")
+        else:
+            print("watchlist: no tier-1 streamer programs in public feed this scan")
 
 
 def cmd_detail(a) -> None:

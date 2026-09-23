@@ -1,0 +1,12 @@
+{
+  "note": "Brand-target daily streamers. Their clipping programs open/close in cycles - via their own Discords/whops, networks (Shuffle/Propaganda/Clipping Culture member feeds), or public Content Rewards. whop_scout discover flags matches; user relays member-feed sightings.",
+  "tier1_brand_targets": ["jynxzi", "kai cenat", "jasontheween", "stableronaldo", "ishowspeed", "adin ross", "plaqueboymax", "fanum", "duke dennis", "agent00", "caseoh", "sketch", "xqc", "tjr"],
+  "known_cycling_programs": {
+    "tjr-weekly": "Reach runs 'TJR $23,100 Weekly' - refills Mondays, drains by midweek (564 clippers). Catch the reset.",
+    "kai-adjacent": "small pools citing KAI CENAT content cycle through (e.g. Flood Division roblox-edits, $1k, drained). Move fast when seen."
+  },
+  "second_tier_active_now": {
+    "pb-blake": "Click Culture, $1.25/1k, $10k pool only $965 spent - streamer, fresh",
+    "rayan-lekai": "$1.5/1k, $1.5k pool, $33 spent - brand new"
+  }
+}
