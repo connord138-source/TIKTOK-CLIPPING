@@ -467,8 +467,8 @@ def cmd_cut(args) -> None:
     if not src.exists():
         die("no source.mp4 — run ingest first")
     length = args.end - args.start
-    if length <= 1.2:
-        die("clip/segment must be longer than 1.2s")
+    if length <= 0.4:
+        die("clip/segment must be longer than 0.4s")
     if length > 180:
         die("clip longer than 180s — split it")
 
@@ -582,8 +582,8 @@ def cmd_stitch(args) -> None:
         part = f"__{out_name}-seg{i}"
         ns = argparse.Namespace(
             job=args.job, start=s, end=e, out=part,
-            hook=args.hook if i == 0 else None,
-            hook_as_is=args.hook_as_is, hook_full=True,
+            hook=args.hook if i <= 1 else None,
+            hook_as_is=args.hook_as_is, hook_full=(i == 0),
             no_captions=args.no_captions, logo=None, logo_pos="tr",
             logo_width=210, no_loudnorm=True, layout=args.layout,
             cam=args.cam, game=args.game, cam_h=args.cam_h,
