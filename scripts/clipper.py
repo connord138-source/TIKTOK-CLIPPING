@@ -393,8 +393,8 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Caption,DejaVu Sans,64,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,0,2,60,60,430,1
-Style: Hook,DejaVu Sans,68,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,0,8,60,60,120,1
+Style: Caption,DejaVu Sans,78,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,0,2,50,50,430,1
+Style: Hook,DejaVu Sans,72,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,0,8,60,60,120,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -417,8 +417,8 @@ def ass_escape(text: str) -> str:
 
 
 def build_ass(words: list[dict], clip_start: float, clip_end: float,
-              hook: str | None, max_card_words: int = 4,
-              max_card_span: float = 1.8, hook_as_is: bool = False,
+              hook: str | None, max_card_words: int = 3,
+              max_card_span: float = 1.4, hook_as_is: bool = False,
               hook_full: bool = False, hook_y: int | None = None) -> str:
     """Group words into short caption cards, accent-color the loudest word."""
     events = []
@@ -467,8 +467,8 @@ def cmd_cut(args) -> None:
     if not src.exists():
         die("no source.mp4 — run ingest first")
     length = args.end - args.start
-    if length <= 3:
-        die("clip must be longer than 3s")
+    if length <= 1.2:
+        die("clip/segment must be longer than 1.2s")
     if length > 180:
         die("clip longer than 180s — split it")
 
@@ -491,6 +491,13 @@ def cmd_cut(args) -> None:
                    "[0:v]scale=1080:-2[fg]",
                    "[bg][fg]overlay=(W-w)/2:(H-h)/2[comp]"]
     last = "comp"
+
+    zoom = getattr(args, "zoom", 1.0) or 1.0
+    if zoom > 1.001:  # punch-in: scale up then center-crop back
+        zw = int(1080 * zoom) // 2 * 2
+        zh = int(1920 * zoom) // 2 * 2
+        filters.append(f"[{last}]scale={zw}:{zh},crop=1080:1920[zm]")
+        last = "zm"
 
     logo = None
     if args.logo:  # campaign watermark (brand campaigns require it)
@@ -538,6 +545,10 @@ def cmd_cut(args) -> None:
             "-movflags", "+faststart", f"{out_name}.mp4"]
     run(cmd, cwd=job)
 
+    if getattr(args, "_no_meta", False):
+        print(f"  seg {out.name}: {length:.1f}s")
+        return
+
     clips = meta.setdefault("clips", [])
     clips = [c for c in clips if c["file"] != out.name]
     vod_off = meta.get("section_start_s", 0)
@@ -553,6 +564,62 @@ def cmd_cut(args) -> None:
     size_mb = out.stat().st_size / 1e6
     print(f"{out.name}: {length:.0f}s, {size_mb:.1f}MB "
           f"(VOD {fmt_ts(vod_off + args.start)}-{fmt_ts(vod_off + args.end)})")
+
+
+def cmd_stitch(args) -> None:
+    """Multi-segment edit: peak-first ordering, per-segment punch-in, one concat."""
+    job = job_dir(args.job)
+    meta = load_meta(job)
+    segs = [tuple(float(x) for x in s.split("-")) for s in args.segments.split(",")]
+    zooms = ([float(z) for z in args.zooms.split(",")] if args.zooms
+             else [1.0] * len(segs))
+    if len(zooms) != len(segs):
+        die("--zooms count must match --segments count")
+    out_name = args.out or f"stitch-{len(list(job.glob('stitch-*.mp4'))) + 1:03d}"
+
+    parts = []
+    for i, ((s, e), z) in enumerate(zip(segs, zooms)):
+        part = f"__{out_name}-seg{i}"
+        ns = argparse.Namespace(
+            job=args.job, start=s, end=e, out=part,
+            hook=args.hook if i == 0 else None,
+            hook_as_is=args.hook_as_is, hook_full=True,
+            no_captions=args.no_captions, logo=None, logo_pos="tr",
+            logo_width=210, no_loudnorm=True, layout=args.layout,
+            cam=args.cam, game=args.game, cam_h=args.cam_h,
+            zoom=z, _no_meta=True)
+        cmd_cut(ns)
+        parts.append(job / f"{part}.mp4")
+
+    lst = job / f"__{out_name}-list.txt"
+    lst.write_text("".join(f"file '{p.name}'\n" for p in parts))
+    raw = job / f"__{out_name}-raw.mp4"
+    run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0",
+         "-i", lst.name, "-c", "copy", raw.name], cwd=job)
+    out = job / f"{out_name}.mp4"
+    if args.no_loudnorm:
+        run(["ffmpeg", "-y", "-v", "error", "-i", raw.name, "-c", "copy",
+             "-movflags", "+faststart", out.name], cwd=job)
+    else:
+        run(["ffmpeg", "-y", "-v", "error", "-i", raw.name, "-c:v", "copy",
+             "-af", "loudnorm=I=-14:TP=-1", "-c:a", "aac", "-b:a", "128k",
+             "-movflags", "+faststart", out.name], cwd=job)
+    for p in parts + [lst, raw]:
+        p.unlink(missing_ok=True)
+    for stale in job.glob(f"__{out_name}-seg*.ass"):
+        stale.unlink()
+
+    total = sum(e - s for s, e in segs)
+    vod_off = meta.get("section_start_s", 0)
+    clips = [c for c in meta.setdefault("clips", []) if c["file"] != out.name]
+    clips.append({"file": out.name, "segments": args.segments, "zooms": args.zooms,
+                  "total_s": round(total, 1), "hook": args.hook,
+                  "layout": args.layout, "loudnorm": not args.no_loudnorm,
+                  "vod_offset": fmt_ts(vod_off), "rendered_at": now_utc()})
+    meta["clips"] = clips
+    save_meta(job, meta)
+    print(f"{out.name}: {total:.1f}s from {len(segs)} segments, "
+          f"{out.stat().st_size / 1e6:.1f}MB")
 
 
 # ------------------------------------------------------------------------- qc
@@ -683,7 +750,26 @@ def main() -> None:
     p.add_argument("--game", help="stack: gameplay rect X,Y,W,H in source px")
     p.add_argument("--cam-h", type=int, default=740,
                    help="stack: facecam panel height in the 1920 output")
+    p.add_argument("--zoom", type=float, default=1.0,
+                   help="punch-in factor (scale + center-crop)")
     p.set_defaults(func=cmd_cut)
+
+    p = sub.add_parser("stitch", help="multi-segment edit (peak-first + punch-ins)")
+    p.add_argument("--job")
+    p.add_argument("--segments", required=True,
+                   help="comma list of START-END source times, in PLAY order "
+                        "(put the peak first for cold-open)")
+    p.add_argument("--zooms", help="comma list of punch factors per segment, e.g. 1.12,1,1")
+    p.add_argument("--hook", help="burned only during the first segment")
+    p.add_argument("--hook-as-is", action="store_true")
+    p.add_argument("--no-captions", action="store_true")
+    p.add_argument("--layout", choices=("blur", "stack"), default="blur")
+    p.add_argument("--cam")
+    p.add_argument("--game")
+    p.add_argument("--cam-h", type=int, default=740)
+    p.add_argument("--out")
+    p.add_argument("--no-loudnorm", action="store_true")
+    p.set_defaults(func=cmd_stitch)
 
     p = sub.add_parser("qc", help="frame grid + probe + loudness")
     p.add_argument("--job")
