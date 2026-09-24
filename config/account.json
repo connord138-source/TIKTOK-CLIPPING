@@ -35,5 +35,10 @@
     "caption_cards": "2-4 words, accent word highlighted, DejaVu Bold",
     "edit_template_v9": "intro: impact moment + win/payoff banner held ~2s (punched in 1.12, hook on seam) -> cut to ENTIRE clip from top. Stacked layout: facecam crop top (~740px), gameplay crop bottom. Never open on setup; never put reaction in the intro - reaction lives in the full playthrough.",
     "brand_definition": "'chat clip that' = daily streamer culture: Jynxzi, Kai Cenat, Jasontheween, Stableronaldo tier + esports moments. Warm-up scrolling and follows target these streamers' content. Posting still campaign-authorized only (hard rule 4)."
+  },
+  "instagram": {
+    "account_created": null,
+    "handle": null,
+    "status": "TO CREATE (user, ~2026-09-24): needed for Valorant follow rule (IG half) and as paid Reels surface on both campaigns. Same warm-up protocol applies; follows of 4 required accounts during warm-up; Reels posting ~Sep 27+."
   }
 }
