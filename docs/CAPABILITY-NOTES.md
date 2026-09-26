@@ -74,9 +74,15 @@ pagination first/after). Bounty fields incl. `budget_amount`, `gross_reward_amou
 (rules text; per-1k rate likely lives here — confirm on first real payload).
 Submission leg exists: `POST /bounty_submissions` → `POST /bounty_submissions/{id}/
 submit` (programmatic payout claim on posted clips — later automation).
-Unauthenticated list → 400 "must provide a valid App API key"; key-type semantics
-(account key = own bounties, user token = workable bounties) unverified until the key
-lands. `scripts/whop_scout.py` (probe/scout/show/submissions) wraps all of this.
+Unauthenticated list → 400 "must provide a valid App API key". **Key-type semantics
+VERIFIED 2026-09-26:** `WHOP_CLIPPING` is company-scoped — `/bounties` returns 0 (only
+bounties we'd run), and a marketplace campaign id (Valorant `3cd86bbc…`) → 404 "Bounty
+not found" on both `show` and `submissions`. So programmatic "Submit clip" is NOT
+possible with this key; the button runs on the user's logged-in browser session. Only
+route would be borrowed browser cookies against the site's internal API (brittle,
+touches the payout account) — rejected; submission stays manual.
+`scripts/whop_scout.py` (probe/scout/show/submissions) wraps all of this; scans that
+return 0 rows no longer overwrite `config/campaigns-discovered.json`.
 **Key delivery:** user set `WHOP_CLIPPING`; GitHub repo secrets are NOT visible here —
 it must be a cloud-environment Environment variable, and those reach sessions STARTED
 AFTER saving (same rule as the network policy flip).
@@ -92,5 +98,24 @@ AFTER saving (same rule as the network policy flip).
 ## Delivery loop (v1, validated mechanics)
 clipper `pack` writes `deliverables.txt`; clip + QC grid go to the user via file send;
 user posts from phone (campaigns generally require account-holder posting anyway).
-Later option: push clip bytes elsewhere (repo release / `media_import_url` →
-`tiktok_prepare_publish` draft) once TikTok is connected.
+Board delivery (2026-09-26): finished clips also live as ops-board assets with an in-page
+player + Download (downloads capability).
+
+## TikTok drafts lane (connected 2026-09-26)
+- Account linked via `tiktok_connect` (OAuth opened on the phone logged into
+  @chat.clip.that); connector id in `config/account.json`. Higgsfield's grant is broad
+  (publish/upload/insights/comments) — we only ever use `UPLOAD_TO_DRAFT`.
+- TikTok only accepts **Higgsfield-hosted** media: `media_upload` → curl PUT the bytes from
+  the container (HTTP 200) → `media_confirm type=video` → the returned cloudfront `url`
+  is the `video_url`. 14.4MB / 1080×1920 / 60fps / 22.5s accepted (limits: MP4/WebM/MOV,
+  ≤1GB, 3–600s, ≥360px, 23–60fps — 60fps is the ceiling, so never export higher).
+- `tiktok_prepare_publish` returns a publish session (~2h TTL), preview, privacy options
+  (this account: PUBLIC / MUTUAL_FOLLOW_FRIENDS / SELF_ONLY), comment/duet/stitch that
+  the user must select, commercial-content choice (none / your brand / branded content /
+  both — branded = "Paid partnership" label, cannot be private), and required
+  confirmations. **Publishing is widget-only**: the user completes the publish form in a
+  Claude client that renders MCP Apps widgets; there is no programmatic publish, and a
+  chat reply is never consent. Fallback when this client shows no form: a regular Claude
+  chat with the Higgsfield connector, pasting the video URL + caption.
+- Prefill `is_aigc=false` only for plain human-footage edits (account rule); privacy and
+  disclosure are left for the user's form.

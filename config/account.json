@@ -23,8 +23,12 @@
   "tiktok": {
     "account_created": "2026-09-22",
     "handle_confirmed": "@chat.clip.that",
-    "connected": false,
-    "connector_id": null,
+    "connected": true,
+    "connector_id": "33520bdb-526f-422b-80e9-6aa523f3e3e1",
+    "connected_at": "2026-09-26T16:33:04Z",
+    "drafts_lane": "media_upload (presigned PUT from container) -> media_confirm -> tiktok_prepare_publish mode=UPLOAD_TO_DRAFT -> USER completes the publish-form widget (needs a widget-capable Claude client; no programmatic publish exists) -> video waits in TikTok drafts -> user adds geo-tag, checks caption, posts in-app. DIRECT_POST is never used (hard rule 1).",
+    "disclosure_choice_paid_campaigns": "Branded content (third party) -> TikTok 'Paid partnership' label; required by TikTok's Branded Content Policy for paid promos, on top of the campaign's caption disclosure. Branded content cannot be private.",
+    "first_draft": "val-1v1-v9 staged 2026-09-26 (Higgsfield media 633dc40c-adc6-4600-a781-45910947a96d; publish session 5e12814e expires 18:39 UTC)",
     "ai_generated_label": "only_when_ai_element_added"
   },
   "style": {

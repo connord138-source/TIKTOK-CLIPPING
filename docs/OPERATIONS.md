@@ -102,9 +102,14 @@ automatic. Two human touchpoints by design.
 2. **Scheduled production — LIVE 2026-09-26** as the pick→produce loop (§D): user
    queues on the board → hourly watcher produces → package lands on the board.
    No credits burned.
-3. **Staged drafts:** after user runs `tiktok_connect` once, deliver via
-   `tiktok_prepare_publish` → clips wait in the user's TikTok inbox; user taps post.
-   Metrics sessions then pull views automatically.
+3. **Staged drafts — CONNECTED 2026-09-26** (connector in `config/account.json`):
+   `media_upload` → curl PUT from the container → `media_confirm` →
+   `tiktok_prepare_publish` mode `UPLOAD_TO_DRAFT` → the USER completes TikTok's
+   publish-form widget (privacy, comment/duet/stitch, disclosure, preview consent) →
+   clip waits in TikTok drafts → user adds geo-tag, checks caption, posts in-app.
+   Interactive sessions only: the form needs a widget-capable Claude client, and
+   Routine sessions carry no connectors. Paid campaign clips → disclosure
+   "Branded content". Metrics sessions can later pull views via the same connector.
 4. **Campaign auto-discovery** (API mapped, script built 2026-09-23): with
    `WHOP_CLIPPING` in the environment vars, `scripts/whop_scout.py scout` polls
    open clipping bounties, filters, and writes `config/campaigns-proposed.json`;

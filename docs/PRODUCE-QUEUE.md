@@ -77,6 +77,9 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
    `asset:true`, `url` = board). **≤14.5MB.** Bigger → re-encode delivery copy
    (`-crf 22/23`) until it fits; if still no, skip the asset and say so in `clip.delivery`.
 2. ALSO send the full-quality file with SendUserFile (belt and braces — asset link + file card).
+   Do NOT try to stage a TikTok draft from a Routine session: drafts need the Higgsfield
+   connector (fired sessions have none) plus a user completing TikTok's form widget.
+   Draft staging happens in the user's next interactive session (OPERATIONS ladder §3).
 3. Build the package from the campaign's `post_recipe` (config/campaigns.json):
    caption (disclosure + required tag + approved copy + 2-3 topic hashtags), window
    (tonight/tomorrow, 2/day ≥4h apart, 6–10pm ET prime), ai_label (OFF unless an AI
