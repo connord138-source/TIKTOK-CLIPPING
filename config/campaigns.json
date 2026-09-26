@@ -6,7 +6,7 @@
     "org": "Clipping Culture (verified)",
     "platform": "whop-content-rewards",
     "participation": "open_submission - no join step; post per rules then user clicks 'Submit clip' with the TikTok post URL",
-    "status": "active",
+    "status": "ENDED 2026-09-26 - pool drained to $0 (was $14.9k on 09-23; ~$5k/day burn). Lesson: check pool before EVERY post.",
     "activated_at": "2026-09-23",
     "rate_per_1k": 2.0,
     "allowed_platforms": [
@@ -39,7 +39,7 @@
     "org": "ClipHaus",
     "platform": "whop-content-rewards",
     "participation": "open_submission - no join step",
-    "status": "active_producing - POSTING GATED on 3-day warm-up + follow 4 accounts on IG+TikTok + geo-tag each post",
+    "status": "ACTIVE - $6,201 remaining of $10k as of 09-26 morning, ~$800/day drain. Post + submit FAST.",
     "activated_at": "2026-09-23",
     "rate_per_1k": 1.5,
     "allowed_platforms": [

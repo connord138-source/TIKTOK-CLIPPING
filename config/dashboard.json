@@ -1,0 +1,5 @@
+{
+  "artifact_url": "https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj",
+  "source_file": "brand/dashboard.html",
+  "note": "Live ops board. Guard sessions (Routine trig_01Bx7y32NN6rLdA2oN47GKrk, 13:00+22:00 UTC daily) regenerate DATA (pools/posts/actions/stamp) in brand/dashboard.html from configs+ledger and republish to the SAME url. Update the POOLS const, tiles, table, actions and stamp; keep design/tokens as-is."
+}

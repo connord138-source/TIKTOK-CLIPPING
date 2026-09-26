@@ -262,6 +262,31 @@ def cmd_submissions(a) -> None:
         print("---")
 
 
+
+def cmd_pools(_a) -> None:
+    """Live pool check for every campaign in campaigns.json + campaigns-proposed.json."""
+    ids = []
+    for fname in ("campaigns.json", "campaigns-proposed.json"):
+        f = REPO / "config" / fname
+        if f.exists():
+            for c in json.loads(f.read_text()):
+                cid = c.get("cr_campaign_id")
+                if cid and len(cid) == 36:
+                    ids.append((c.get("id"), cid))
+    print(f"{'campaign':<28}{'remaining':>12}{'of budget':>12}  flag")
+    for name, cid in ids:
+        try:
+            d = cr_get(f"{CR_API}/{cid}")
+            c = d.get("data", d)
+            n = cr_normalize(c)
+            rem, bud = n["remaining_usd"], n["budget_usd"]
+            flag = ("DEAD" if rem <= 50 else "LOW <$2k" if rem < 2000 else "ok")
+            print(f"{name:<28}{'$' + format(rem, ',.0f'):>12}"
+                  f"{'$' + format(bud, ',.0f'):>12}  {flag}")
+        except Exception as e:
+            print(f"{name:<28}{'?':>12}{'?':>12}  lookup failed: {e}")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -276,6 +301,9 @@ def main() -> None:
     pdet = sub.add_parser("detail", help="KEYLESS: one campaign incl. rules")
     pdet.add_argument("campaign_id")
     pdet.set_defaults(func=cmd_detail)
+
+    sub.add_parser("pools", help="KEYLESS: live pool status of tracked campaigns"
+                   ).set_defaults(func=cmd_pools)
 
     sub.add_parser("probe", help="auth check").set_defaults(func=cmd_probe)
 

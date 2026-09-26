@@ -1,0 +1,164 @@
+<title>Clip Ops Board</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#141416; --surface:#1d1d21; --surface2:#26262b; --line:#2e2e34;
+  --ink:#f5f5f5; --ink2:#a9a9b2; --ink3:#7c7c86;
+  --accent:#ffd100; --accent-ink:#141416;
+  --ok:#3dd68c; --warn:#f5b83d; --dead:#f0564e;
+  --track:#2a2a2f;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f4f4f2; --surface:#ffffff; --surface2:#ececea; --line:#dcdcd8;
+    --ink:#17171a; --ink2:#55555e; --ink3:#84848c;
+    --accent:#e0b400; --accent-ink:#141416;
+    --ok:#118a56; --warn:#b07600; --dead:#c62f28;
+    --track:#e2e2de;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f4f4f2; --surface:#ffffff; --surface2:#ececea; --line:#dcdcd8;
+  --ink:#17171a; --ink2:#55555e; --ink3:#84848c;
+  --accent:#e0b400; --accent-ink:#141416;
+  --ok:#118a56; --warn:#b07600; --dead:#c62f28;
+  --track:#e2e2de;
+  color-scheme:light;
+}
+body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,sans-serif;
+  padding-inline:16px;padding-block:20px 40px;max-width:760px;margin:0 auto;}
+header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+.brand{font-family:'Archivo Black',Archivo,sans-serif;font-size:1.5rem;letter-spacing:.01em;}
+.brand .tri{color:var(--accent);}
+.sub{color:var(--ink3);font-size:.8rem;}
+.stamp{color:var(--ink3);font-size:.75rem;font-family:'IBM Plex Mono',monospace;margin-bottom:22px;}
+h2{font-family:'Archivo Black',Archivo,sans-serif;font-size:.8rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink2);margin:26px 0 10px;}
+.actions{display:flex;flex-direction:column;gap:8px;}
+.action{display:flex;gap:10px;align-items:flex-start;background:var(--surface);
+  border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 6px 6px 0;}
+.action.muted{border-left-color:var(--line);color:var(--ink2);}
+.action b{font-weight:700;}
+.action .why{color:var(--ink3);font-size:.8rem;display:block;margin-top:2px;}
+.pool{background:var(--surface);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.pool-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;}
+.pool-name{font-weight:700;}
+.pool-rate{color:var(--ink3);font-size:.78rem;}
+.flag{font-size:.7rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:99px;}
+.flag.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);}
+.flag.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn);}
+.flag.dead{background:color-mix(in srgb,var(--dead) 18%,transparent);color:var(--dead);}
+.flag.hold{background:var(--surface2);color:var(--ink2);}
+.meter{height:8px;background:var(--track);border-radius:4px;margin:10px 0 6px;overflow:hidden;}
+.meter i{display:block;height:100%;border-radius:4px;}
+.meter .ok{background:var(--ok);} .meter .warn{background:var(--warn);} .meter .dead{background:var(--dead);}
+.pool-nums{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;
+  font-size:.8rem;color:var(--ink2);font-variant-numeric:tabular-nums;}
+.pool-note{color:var(--ink3);font-size:.78rem;margin-top:6px;}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.tile{background:var(--surface);border-radius:8px;padding:12px 14px;}
+.tile .k{font-family:'IBM Plex Mono',monospace;font-size:1.5rem;font-weight:600;
+  font-variant-numeric:tabular-nums;}
+.tile .l{color:var(--ink3);font-size:.75rem;margin-top:2px;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+th{color:var(--ink3);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
+  text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;}
+td.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
+.state{font-size:.75rem;font-weight:700;}
+.state.go{color:var(--accent);} .state.ok{color:var(--ok);} .state.dead{color:var(--dead);} .state.wait{color:var(--ink3);}
+.inv{display:flex;flex-direction:column;gap:6px;}
+.inv-row{display:flex;justify-content:space-between;gap:10px;background:var(--surface);
+  border-radius:6px;padding:9px 12px;font-size:.85rem;flex-wrap:wrap;}
+.inv-row .tag{color:var(--ink3);font-size:.78rem;}
+footer{margin-top:30px;color:var(--ink3);font-size:.75rem;line-height:1.6;}
+a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+.tablewrap{overflow-x:auto;}
+</style>
+
+<header>
+  <div class="brand">CHAT, CL<span class="tri">&#9654;</span>P THAT</div>
+  <div class="sub">ops board</div>
+</header>
+<div class="stamp" id="stamp">updated 2026-09-26 · auto-guard runs 9:00 + 18:00 ET</div>
+
+<h2>Do next</h2>
+<div class="actions">
+  <div class="action"><div><b>1 · Submit the TenZ post to the Valorant campaign — today.</b>
+    <span class="why">Pool is draining ~$800/day. <a href="https://contentrewards.com/discover/3cd86bbc-30ac-4b34-b860-f333784f1db3">Open campaign → Submit clip</a> → paste the TikTok link. Check the 5 IG follows on @chat.clipp.that first.</span></div></div>
+  <div class="action"><div><b>2 · Post val-1v1-v9 tonight, 6–10pm ET.</b>
+    <span class="why">Caption: <code>#coinbasepartner the 1v1s for a shot at 1 BTC are getting out of hand @coinbase #valorant #esports</code> · geo-tag on · AI label off. Submit right after.</span></div></div>
+  <div class="action"><div><b>3 · File the Shuffle Streamers application.</b>
+    <span class="why">$24.5k pool, barely touched, exact niche. Biggest open lever on the board.</span></div></div>
+  <div class="action muted"><div><b>Do NOT post MW4 clip A.</b>
+    <span class="why">CoD pool hit $0 on 09-26 — killed in inventory. Clip B stays live (account content) but earns nothing.</span></div></div>
+</div>
+
+<h2>Campaign pools <span style="letter-spacing:0;text-transform:none;font-family:Archivo;font-weight:400;">· live-checked 2x daily</span></h2>
+<div id="pools"></div>
+
+<h2>Posts</h2>
+<div class="tiles">
+  <div class="tile"><div class="k">300</div><div class="l">views · TenZ clutch (36h)</div></div>
+  <div class="tile"><div class="k">2</div><div class="l">likes · 0.67% ER (min 0.2%)</div></div>
+  <div class="tile"><div class="k">$0.45</div><div class="l">accruing · floor $1.50 @ 1k views</div></div>
+  <div class="tile"><div class="k">8</div><div class="l">followers</div></div>
+</div>
+<div class="tablewrap" style="margin-top:10px;">
+<table>
+  <tr><th>clip</th><th>posted</th><th>views</th><th>status</th></tr>
+  <tr><td>TenZ 15HP clutch (Valorant)</td><td class="num">09-24</td><td class="num">300</td>
+      <td><span class="state go">SUBMIT NOW</span></td></tr>
+  <tr><td>MW4 trailer B (CoD)</td><td class="num">09-26</td><td class="num">—</td>
+      <td><span class="state dead">pool died — no payout</span> keeps training the account</td></tr>
+</table>
+</div>
+
+<h2>Ready to post</h2>
+<div class="inv">
+  <div class="inv-row"><span>val-1v1-v9 · 22s · insane 1v1 shot</span><span class="tag">tonight</span></div>
+  <div class="inv-row"><span>val-replay-v9 · 24s · TenZ chat-check breakdown</span><span class="tag">tomorrow</span></div>
+  <div class="inv-row"><span>TenZ NA VOD library · 2h18m mined, more moments available</span><span class="tag">on demand</span></div>
+</div>
+
+<footer>
+  Ledger + configs live in the repo (branch claude/relaxed-gauss-ewfkho). Guard sessions
+  re-check pools and the tier-1 streamer watchlist (Jynxzi · Kai Cenat · Jasontheween ·
+  Stableronaldo · TJR Mondays) twice daily and republish this board. Rule that never
+  bends: campaign-authorized material only.
+</footer>
+
+<script>
+const POOLS = [
+  {name:"Coinbase × Valorant One Shot", rate:"$1.50/1k · TT+IG+Shorts", rem:6201, bud:10000,
+   flag:"ok", note:"~$800/day drain — ship inventory fast", url:"https://contentrewards.com/discover/3cd86bbc-30ac-4b34-b860-f333784f1db3"},
+  {name:"Shuffle Streamers", rate:"$1.50/1k · application required", rem:24463, bud:25000,
+   flag:"hold", note:"waiting on our application — exact niche", url:"https://contentrewards.com/discover/a900b95b-85be-4113-9d74-5bdb6a6a0952"},
+  {name:"Double Date Island (Tinder)", rate:"$2.80/1k · TikTok only", rem:10208, bud:10500,
+   flag:"hold", note:"analytics-gated + off-niche — second-account option", url:"https://contentrewards.com/discover/a9578edf-9a01-4b94-89d6-a11516ff8404"},
+  {name:"CoD MW4 Trailer", rate:"$2.00/1k", rem:0, bud:40000,
+   flag:"dead", note:"drained 09-26 · $40k gone in ~9 days", url:null},
+  {name:"Crazy Taxi (SEGA)", rate:"$2.10/1k", rem:0, bud:12000,
+   flag:"dead", note:"drained 09-26", url:null},
+];
+const wrap = document.getElementById("pools");
+for (const p of POOLS){
+  const pct = p.bud ? Math.max(0, Math.min(100, p.rem / p.bud * 100)) : 0;
+  const cls = p.flag === "dead" ? "dead" : (p.rem < 2000 ? "warn" : "ok");
+  const label = {ok:"OPEN", warn:"LOW", dead:"DEAD", hold:"GATED"}[p.flag === "ok" && p.rem < 2000 ? "warn" : p.flag];
+  const el = document.createElement("div");
+  el.className = "pool";
+  el.innerHTML = `
+    <div class="pool-top">
+      <span class="pool-name">${p.url ? `<a href="${p.url}">${p.name}</a>` : p.name}</span>
+      <span class="flag ${p.flag === "hold" ? "hold" : cls}">${label}</span>
+    </div>
+    <div class="pool-rate">${p.rate}</div>
+    <div class="meter"><i class="${cls}" style="width:${pct}%"></i></div>
+    <div class="pool-nums"><span>$${p.rem.toLocaleString()} left</span><span>of $${p.bud.toLocaleString()}</span></div>
+    <div class="pool-note">${p.note}</div>`;
+  wrap.appendChild(el);
+}
+</script>
