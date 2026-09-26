@@ -52,9 +52,9 @@ the pick (open campaigns need no join), so onboard, then produce:
    sign-ups, a language/geo we don't serve, adult/gambling/political content, bought
    engagement); or anything conflicts with CLAUDE.md hard rules.
 5. Encode a `config/campaigns.json` entry (id = board doc id, `cr_campaign_id`, rate/min/max,
-   allowed_platforms, `required_caption_tokens`, post_recipe, sources, `submit_url` = the
-   brand whop's Bounties app: take `organizationExperienceId`, grep `https://whop.com/<slug>/`
-   store HTML for it to pick the slug → `https://whop.com/<slug>/<exp_id>/app/`).
+   allowed_platforms, `required_caption_tokens`, post_recipe, sources, `submit_url` =
+   `https://whop.com/discover/content-rewards/` — the user searches the campaign name there
+   and taps "Submit clip"; brand-whop Bounties feeds may not list CPM campaigns).
 6. Refresh the board doc: real rules as chips, `url` → submit_url. Then continue at §3.
 
 ## 3 · Bootstrap + sources

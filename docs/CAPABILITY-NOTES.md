@@ -83,9 +83,11 @@ route would be borrowed browser cookies against the site's internal API (brittle
 touches the payout account) — rejected; submission stays manual.
 `scripts/whop_scout.py` (probe/scout/show/submissions) wraps all of this; scans that
 return 0 rows no longer overwrite `config/campaigns-discovered.json`.
-**Submit surface (pinned 2026-09-26):** the keyless detail's `organizationExperienceId`
-is the brand whop's "Bounties" app (Whop's in-whop name for Content Rewards; public
-store HTML maps `data-experience-id` → `/<slug>/<exp_id>/app/`). Brand names can map to
+**Submit surface (corrected 2026-09-26):** submit via Whop Discover → Content Rewards
+(`https://whop.com/discover/content-rewards/`) → campaign card → "Submit clip". The keyless
+detail's `organizationExperienceId` is the brand whop's "Bounties" app (public store HTML
+maps `data-experience-id` → `/<slug>/<exp_id>/app/`) but the CPM campaign was NOT listed in
+that feed for the user — treat brand-whop links as info only. Brand names can map to
 several whops (ClipHaus: `cliphaus` AND `cliphaus-inc` both exist; the experience lives
 in `cliphaus-inc`) — grep the store HTML for the exp id to pick the right slug. Detail
 also exposes `referenceMaterials` (live rules link — Notion pages are readable via
