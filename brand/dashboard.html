@@ -161,9 +161,9 @@ const FB = {
     {text:"Do NOT post MW4 clip A.",
      why:"CoD pool hit $0 on 09-26. Clip B stays live (account content) but earns nothing.", urgency:"hold"}]},
   campaigns: [
-    {id:"coinbase-valorant-oneshot", name:"Coinbase × Valorant One Shot", rate:"$1.50/1k · TT + IG + Shorts",
-     rem:6201, bud:10000, flag:"ok", can_queue:true, url:"https://contentrewards.com/discover/3cd86bbc-30ac-4b34-b860-f333784f1db3",
-     note:"~$800/day drain — ship inventory fast", rules:["#coinbasepartner","@coinbase tag","geo-tag","≥7s","prize copy: “a shot at 1 BTC” only"]},
+    {id:"coinbase-valorant-oneshot", name:"Coinbase × Valorant — Clipping", rate:"$1.00/1k · TT + IG + Shorts · pays from 2k views",
+     rem:9155, bud:10000, flag:"ok", can_queue:true, url:"https://whop.com/cliphaus-inc/exp_BmRo1Cepnpq46o/app/",
+     note:"terms changed 09-26 — #ad now mandatory for payout", rules:["#ad — mandatory for payout","@coinbase tag","geo-tag","≥7s"]},
     {id:"shuffle-streamers", name:"Shuffle Streamers", rate:"$1.50/1k · application required",
      rem:24463, bud:25000, flag:"hold", can_queue:false, url:"https://contentrewards.com/discover/a900b95b-85be-4113-9d74-5bdb6a6a0952",
      note:"waiting on our application — exact niche", rules:[]},
@@ -231,7 +231,7 @@ function renderCampaigns(list){
     const label = p.flag==="hold" ? "GATED" : ({ok:"OPEN",warn:"LOW",dead:"DEAD"})[p.flag==="ok"&&p.rem<2000?"warn":p.flag] || p.flag.toUpperCase();
     return `<div class="pool" data-cid="${esc(p.id)}">
       <div class="pool-top">
-        <span class="pool-name">${p.url ? `<a href="${esc(p.url)}">${esc(p.name)}</a>` : esc(p.name)}</span>
+        <span class="pool-name">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</span>
         <span class="flag ${p.flag==="hold" ? "hold" : cls}">${esc(label)}</span>
       </div>
       <div class="pool-rate">${esc(p.rate)}</div>
@@ -284,10 +284,13 @@ function renderQueue(list){
         ${q.clip && q.clip.asset_url ? `<video controls preload="metadata" src="${esc(q.clip.asset_url)}"></video>` : ""}
         ${pk.caption ? `<div class="cap">${esc(pk.caption)}<button class="btn ghost small copy" data-copy="${esc(q.id)}">copy</button></div>` : ""}
         ${pk.window ? `<div class="qnote">⏱ ${esc(pk.window)}</div>` : ""}
+        ${pk.tiktok_draft ? `<div class="qnote">${pk.tiktok_draft.status === "SEND_TO_USER_INBOX"
+            ? "✓ TikTok draft delivered — open it from TikTok’s Inbox"
+            : "⏳ TikTok draft staged — approve it in the agent’s session (tap the READY notification; form expires ~2h, reply “restage” if it lapsed)"}</div>` : ""}
         ${(pk.checklist&&pk.checklist.length) ? `<ul class="klist">${pk.checklist.map(c=>`<li><input type="checkbox"><span>${esc(c)}</span></li>`).join("")}</ul>` : ""}
         <div class="qactions">
           ${q.clip && q.clip.asset_url ? `<button class="btn ghost small" data-dl="${esc(q.id)}">Download video</button>` : ""}
-          ${pk.submit_url ? `<a class="btn ghost small" href="${esc(pk.submit_url)}">Campaign page ↗</a>` : ""}
+          ${pk.submit_url ? `<a class="btn ghost small" href="${esc(pk.submit_url)}" target="_blank" rel="noopener">Submit on Whop ↗</a>` : ""}
           <button class="btn small" data-posted="${esc(q.id)}">Mark posted</button>
         </div>
         ${q.clip && q.clip.delivery ? `<div class="mini" style="margin-top:8px;">${esc(q.clip.delivery)}</div>` : ""}</div>`;
@@ -307,7 +310,7 @@ function renderPosts(list, board){
   $("tiles").innerHTML = `
     <div class="tile"><div class="k">${totalViews.toLocaleString()}</div><div class="l">views tracked</div></div>
     <div class="tile"><div class="k">${totalLikes}</div><div class="l">likes · ${er}% ER (min 0.2%)</div></div>
-    <div class="tile"><div class="k">$${accruing.toFixed(2)}</div><div class="l">accruing · floor $1.50 @ 1k</div></div>
+    <div class="tile"><div class="k">$${accruing.toFixed(2)}</div><div class="l">accruing · ${esc((board&&board.floor_label)||"min payout per post applies")}</div></div>
     <div class="tile"><div class="k">${(board&&board.followers)??"—"}</div><div class="l">followers</div></div>`;
   $("posts").innerHTML = `<tr><th>clip</th><th>posted</th><th>views</th><th>status</th></tr>` +
     list.map(p=>`<tr><td>${esc(p.clip)}</td><td class="num">${esc(p.posted||"—")}</td>

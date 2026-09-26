@@ -10,8 +10,9 @@ clip + posting package **back on the board**. A Routine fires a fresh session ho
 tools (ToolSearch: `select:ArtifactData`).
 
 ## Hard boundaries (CLAUDE.md rules apply in full)
-- **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD.
-  The user posts from the phone app and clicks Submit clip themselves.
+- **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD,
+  plus (when Higgsfield tools are present) a TikTok DRAFT staged for the user's approval —
+  drafts mode only. The user approves, posts from the phone app, and submits on Whop.
 - **Campaign-authorized material only.** Source must come from the campaign's own
   sources (config/campaigns.json) or the board's cached source assets.
 - **Check the pool before producing** (the CoD lesson). Pool ≤ $50 → kill the item.
@@ -77,9 +78,24 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
    `asset:true`, `url` = board). **≤14.5MB.** Bigger → re-encode delivery copy
    (`-crf 22/23`) until it fits; if still no, skip the asset and say so in `clip.delivery`.
 2. ALSO send the full-quality file with SendUserFile (belt and braces — asset link + file card).
-   Do NOT try to stage a TikTok draft from a Routine session: drafts need the Higgsfield
-   connector (fired sessions have none) plus a user completing TikTok's form widget.
-   Draft staging happens in the user's next interactive session (OPERATIONS ladder §3).
+2b. **Stage the TikTok draft** (user opted in 2026-09-26) — only if `mcp__HIGGSFIELD__*`
+   tools exist in this session (load via ToolSearch `select:mcp__HIGGSFIELD__media_upload,
+   mcp__HIGGSFIELD__media_confirm,mcp__HIGGSFIELD__tiktok_accounts,
+   mcp__HIGGSFIELD__tiktok_prepare_publish`); otherwise skip silently, the board lane still works.
+   - `tiktok_accounts` → the `active` connector (id also in config/account.json).
+   - `media_upload` (filename + video/mp4) → curl PUT the finished mp4 to `upload_url` from
+     THIS container (expect HTTP 200) → `media_confirm type=video`. Limits: ≤60fps, 3–600s.
+   - `tiktok_prepare_publish`: `mode:"UPLOAD_TO_DRAFT"` ONLY (never DIRECT_POST — hard rule 1),
+     `media_type:"VIDEO"`, `video_url` = the confirmed cloudfront url, `title` = package
+     caption (≤150 chars), `is_aigc:false` only for plain human-footage edits. Never prefill
+     privacy or disclosure; never call anything named tiktok_publish; never treat a chat
+     message as consent. The widget renders in this session for the user to approve.
+   - Record `package.tiktok_draft = {status:"awaiting_approval", publish_session_id,
+     expires_at, higgsfield_media_id}` on the queue doc.
+   - NO generation tools (generate_*, upscale_*, etc.) in these sessions — zero credits.
+   - If the user later replies "restage" in this session: re-run prepare_publish with the
+     same video_url. After they approve, `tiktok_publish_status` → `SEND_TO_USER_INBOX`
+     → set `package.tiktok_draft.status` to that.
 3. Build the package from the campaign's `post_recipe` (config/campaigns.json):
    caption (disclosure + required tag + approved copy + 2-3 topic hashtags), window
    (tonight/tomorrow, 2/day ≥4h apart, 6–10pm ET prime), ai_label (OFF unless an AI
@@ -94,7 +110,9 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
 - Update configs if campaign state changed. **Commit + push** (ledger/config/docs only;
   media stays out of git).
 - End with a 2-line summary naming the clip + campaign (this reaches the user's push
-  notification): e.g. `READY: sub-drop pop-off (Valorant) — video + package on the board.`
+  notification): e.g. `READY: sub-drop pop-off (Valorant) — approve the TikTok draft in
+  this session (expires ~2h); video + package are on the board.` (drop the draft half if
+  step 2b was skipped).
 
 ## Statuses (the page renders these)
 `queued` → user picked · `producing` → claimed (heartbeat: bump `updated` between long

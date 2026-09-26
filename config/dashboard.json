@@ -27,6 +27,7 @@
   },
   "routines": {
     "trig_01Bx7y32NN6rLdA2oN47GKrk": "Campaign pool guard + scout, 13:00+22:00 UTC (9am+6pm ET) — pools/discover/watchlist, config updates, board DB sync, posted-item mirroring to ledger",
-    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher, hourly :07 9am-11pm ET — picks up queued board items, produces per docs/PRODUCE-QUEUE.md, delivers video+package to the board"
-  }
+    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher (auto-stages TikTok drafts), hourly :07 9am-11pm ET — picks up queued board items, produces per docs/PRODUCE-QUEUE.md, delivers video+package to the board, then stages a TikTok draft for the user's approval IF the run has Higgsfield tools"
+  },
+  "routine_connector_note": "create_trigger's `connectors` param is NOT available for this org (verified 2026-09-26), so the Higgsfield connector must be added to the clip-queue-watcher routine by the USER in the claude.ai Routines UI. Until then its runs skip draft staging (board lane unaffected)."
 }

@@ -51,11 +51,21 @@ hard rule 2 applies first (`balance`, floor 150, session cap 250).
 
 ## C. Campaign onboarding (user-gated parts marked 👤)
 
-**Participation model (learned 2026-09-23):** open Content Rewards campaigns have NO
-join step — the page shows only "Submit clip". Flow: produce per the campaign's rules
-from its provided sources → 👤 user posts on TikTok → 👤 user clicks "Submit clip"
-with the post URL → platform verifies views → payout. Only application-gated
-campaigns (e.g. Shuffle) have an approval step before submitting.
+**Participation model (learned 2026-09-23, submit path pinned 2026-09-26):** open
+Content Rewards campaigns need no application. Flow: produce per the campaign's rules
+from its provided sources → 👤 user posts on TikTok → 👤 user submits the post URL →
+platform verifies views → payout. Only application-gated campaigns (e.g. Shuffle) have
+an approval step first.
+**Where "Submit" lives:** inside the BRAND'S OWN WHOP, in its "Bounties" app (Whop's
+name for Content Rewards campaigns in a whop). The campaign API field
+`organizationExperienceId` is that app → link `https://whop.com/<brand-slug>/<exp_id>/app/`
+(ClipHaus = slug `cliphaus-inc`, NOT `cliphaus`: `/cliphaus-inc/exp_BmRo1Cepnpq46o/app/`).
+The campaign is one card in that feed, often BELOW pinned side-bounties — scroll to it →
+Submit → paste the post URL; the "Submissions" tab tracks status. The public
+contentrewards.com page's "Join Campaign" just runs sign-in + joins the brand's whop and
+lands in that same Bounties feed — confusing, so the board links straight to the feed.
+**Re-read the rules at submit/produce time:** campaigns edit terms live (Valorant on
+09-26: rate $1.50→$1.00/1k, max $300→$150, min $2, and #ad became MANDATORY for payout).
 
 1. 👤 User signs up / signs in on Whop (or campaign platform) and picks campaigns
    (Claude shortlists via `whop_scout.py discover`; rules pages may need the user).
@@ -79,9 +89,12 @@ post tracking. Two Routines run it:
   pools + discovery + watchlist → config updates → board DB sync → mirrors
   user-marked "posted" items into the ledger.
 - **clip-queue-watcher** (`trig_019PXV8XZwDdiHTFFxFDGHTa`, hourly :07, 9am–11pm ET):
-  picks up queued board items and runs `docs/PRODUCE-QUEUE.md` — claim → pool check →
-  source (board asset cache first) → v9 edit → QC → video + package back onto the
-  board + SendUserFile. Never posts anywhere.
+  picks up queued board items and runs `docs/PRODUCE-QUEUE.md` — claim → pool + rules
+  check → source (board asset cache first) → v9 edit → QC → video + package back onto
+  the board + SendUserFile → stages a TikTok DRAFT (user approves the form in that
+  session via the READY push notification). Draft staging needs the Higgsfield
+  connector on the routine — 👤 user adds it in the Routines UI (not settable via
+  the trigger API for this org). Never posts anywhere.
 User touchpoints by design: pick/queue on the board, post from the phone app,
 Mark posted, Submit clip on the campaign page. Fired sessions have no MCP connectors —
 board DB/assets, git, and the Whop API all work without them; Higgsfield lanes

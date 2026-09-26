@@ -83,6 +83,16 @@ route would be borrowed browser cookies against the site's internal API (brittle
 touches the payout account) — rejected; submission stays manual.
 `scripts/whop_scout.py` (probe/scout/show/submissions) wraps all of this; scans that
 return 0 rows no longer overwrite `config/campaigns-discovered.json`.
+**Submit surface (pinned 2026-09-26):** the keyless detail's `organizationExperienceId`
+is the brand whop's "Bounties" app (Whop's in-whop name for Content Rewards; public
+store HTML maps `data-experience-id` → `/<slug>/<exp_id>/app/`). Brand names can map to
+several whops (ClipHaus: `cliphaus` AND `cliphaus-inc` both exist; the experience lives
+in `cliphaus-inc`) — grep the store HTML for the exp id to pick the right slug. Detail
+also exposes `referenceMaterials` (live rules link — Notion pages are readable via
+`POST notion.so/api/v3/loadCachedPageChunkV2`), `requiresApplication`, `updatedAt`
+(terms can change intraday), per-platform `payouts` (rate/min/max cents).
+**Routines:** `create_trigger(connectors=…)` → "connectors parameter is not available
+for this organization" — connector grants on routines are a user action in the UI.
 **Key delivery:** user set `WHOP_CLIPPING`; GitHub repo secrets are NOT visible here —
 it must be a cloud-environment Environment variable, and those reach sessions STARTED
 AFTER saving (same rule as the network policy flip).
