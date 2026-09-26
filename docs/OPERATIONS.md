@@ -71,19 +71,37 @@ campaigns (e.g. Shuffle) have an approval step before submitting.
    ```
 4. First clip of a new campaign: extra-careful rules pass, then normal flow.
 
+## D. Board-driven production — the pick→produce loop (LIVE 2026-09-26)
+The ops board (`config/dashboard.json` → artifact URL) is mission control: live pools,
+one-tap **Queue a clip** on open campaigns, production queue with posting packages,
+post tracking. Two Routines run it:
+- **Campaign pool guard + scout** (`trig_01Bx7y32NN6rLdA2oN47GKrk`, 13:00+22:00 UTC):
+  pools + discovery + watchlist → config updates → board DB sync → mirrors
+  user-marked "posted" items into the ledger.
+- **clip-queue-watcher** (`trig_019PXV8XZwDdiHTFFxFDGHTa`, hourly :07, 9am–11pm ET):
+  picks up queued board items and runs `docs/PRODUCE-QUEUE.md` — claim → pool check →
+  source (board asset cache first) → v9 edit → QC → video + package back onto the
+  board + SendUserFile. Never posts anywhere.
+User touchpoints by design: pick/queue on the board, post from the phone app,
+Mark posted, Submit clip on the campaign page. Fired sessions have no MCP connectors —
+board DB/assets, git, and the Whop API all work without them; Higgsfield lanes
+(sandbox_exec Dropbox listing, AI garnish) run only in interactive sessions.
+
 ## Session boundaries
 - Draft/file-only delivery — the user posts. `publish_mode` in config governs; do not
   change it in-session.
 - TikTok connect (`tiktok_connect`) is optional QoL for `tiktok_prepare_publish`
   drafts later; the file-send loop works without it.
-- Scheduled/recurring sessions stay OFF until the user opts in.
+- Scheduled/recurring sessions: user opted IN 2026-09-26 (guard + queue-watcher above).
+  Auto-POSTING stays OFF — that's a separate decision per hard rule 6.
 
 ## Automation ladder (agreed direction, 2026-09-22)
 Target end state: user approves campaigns and taps post; everything between is
 automatic. Two human touchpoints by design.
-1. **NOW (manual trigger):** user-run clip sessions → files delivered → user posts.
-2. **Scheduled production** (user opt-in, ready to enable): daily Routine wakes a
-   session → full clip flow → files + ledger + push. No credits burned.
+1. ~~Manual trigger~~ → superseded by the board queue (§D).
+2. **Scheduled production — LIVE 2026-09-26** as the pick→produce loop (§D): user
+   queues on the board → hourly watcher produces → package lands on the board.
+   No credits burned.
 3. **Staged drafts:** after user runs `tiktok_connect` once, deliver via
    `tiktok_prepare_publish` → clips wait in the user's TikTok inbox; user taps post.
    Metrics sessions then pull views automatically.

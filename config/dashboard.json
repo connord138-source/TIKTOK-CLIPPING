@@ -1,5 +1,32 @@
 {
   "artifact_url": "https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj",
   "source_file": "brand/dashboard.html",
-  "note": "Live ops board. Guard sessions (Routine trig_01Bx7y32NN6rLdA2oN47GKrk, 13:00+22:00 UTC daily) regenerate DATA (pools/posts/actions/stamp) in brand/dashboard.html from configs+ledger and republish to the SAME url. Update the POOLS const, tiles, table, actions and stamp; keep design/tokens as-is."
+  "kind": "live app (capabilities: db, assets, downloads) — NOT a static page since 2026-09-26",
+  "design_change_pending": false,
+  "note": "Data flows through the artifact DATABASE (ArtifactData tool), not HTML edits. Republishing brand/dashboard.html is only for design/behavior changes; pass url + capabilities unchanged (omit capabilities to keep them). Fired sessions must READ the artifact before their first republish of it.",
+  "db_schema": {
+    "campaigns/<config id>": "{name, org, rate:str, rem:usd, bud:usd, flag: ok|hold|dead, can_queue:bool, url, note, rules:[chips], sources_state, updated:ms}",
+    "queue/<id>": "{campaign_id, campaign_name, note, status: queued|producing|ready|posted|killed, created:ms, updated:ms, claimed_by, kill_reason, post_url, posted_at:ms, clip:{name,length_s,asset_url:'/_blob/<id>',delivery}, package:{caption,window,ai_label,audio,submit_url,checklist:[str]}}",
+    "posts/<id>": "{clip, campaign_id, posted:'MM-DD', views, likes, accruing:usd, state: go|ok|dead|wait, note, updated:ms}",
+    "meta/board": "{stamp, followers, do_next:[{text,why,urgency: hot|warm|hold}], updated:ms, updated_by}"
+  },
+  "asset_cache": {
+    "note": "campaign source material + deliverables stored as artifact assets; fetch with Artifact read path:<id>. Cap 15MB/file — mezzanine re-encode (crf22) anything bigger.",
+    "coinbase-valorant-oneshot": {
+      "1v1-mezz.mp4": "aecee81453245f19f99163f096a477f6",
+      "sub-drop-mogi-mezz.mp4": "3cf63dae8df05965c65eb7035f4d7a19",
+      "wait-sliggy-no.mp4": "8eeb1a1471a1c64fb06d5fc6cdcb7ffe",
+      "tenz-break.mp4": "6d99a2199432602f61ea7187bd526aa4",
+      "might-as-well-play.mp4": "0b951fee473fc8e11e62383a00814856",
+      "guidelines.pdf": "d606e0f5824413c029856ee19f989838"
+    },
+    "deliverables": {
+      "val-1v1-v9.mp4": "f5f1f8bb7a5fb043ed3ffdbeba324351",
+      "val-replay-v9.mp4": "7470b6dc556881e0c501f4d5a38ac0a7"
+    }
+  },
+  "routines": {
+    "trig_01Bx7y32NN6rLdA2oN47GKrk": "Campaign pool guard + scout, 13:00+22:00 UTC (9am+6pm ET) — pools/discover/watchlist, config updates, board DB sync, posted-item mirroring to ledger",
+    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher, hourly :07 9am-11pm ET — picks up queued board items, produces per docs/PRODUCE-QUEUE.md, delivers video+package to the board"
+  }
 }

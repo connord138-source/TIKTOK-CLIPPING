@@ -61,6 +61,14 @@ full rules: `research/whop-campaign-shortlist-2026-09-23.md`,
 Dropbox link + warm-up doc from the Notion rules). Keyless discovery:
 `whop_scout.py discover / detail`. Campaign-authorized material only, as ever.
 
+**MISSION CONTROL LIVE (2026-09-26).** The dashboard is now a live app (artifact URL in
+`config/dashboard.json`; capabilities db+assets+downloads): the user taps **Queue a
+clip** on an open campaign → the hourly `clip-queue-watcher` Routine produces it per
+`docs/PRODUCE-QUEUE.md` and posts video + posting package back onto the board; the
+2x-daily pool guard keeps pools/board synced and mirrors "posted" marks into the
+ledger. Data flows through the artifact DATABASE (ArtifactData), never HTML edits.
+Posting/submitting stays human, as ever.
+
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow
 OPERATIONS.md. Money model: campaign bounties ~$0.20–$6 per 1k verified views;
