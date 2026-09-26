@@ -1,0 +1,38 @@
+{
+  "_note": "Read by whop_scout.py board-feed. hard=true -> card shows GATED with the reason (not queueable on @chat.clip.that); hard=false -> stays queueable but the note warns (user decision per CLAUDE.md rule 6). second_account_option flags money we could take with a separate niche account.",
+  "1634558e-eae2-4d03-bd7d-a51ab44999a1": {
+    "name": "Clip MegaMcqueen",
+    "hard": true,
+    "reason": "needs a McQueen-only account or a 5,000+ follower gaming page; clips pay only after 5,000 views; bio link must point to his Twitch",
+    "second_account_option": true,
+    "decided": "2026-09-26"
+  },
+  "ad06c6d9-d46f-4b03-9bf8-58bf8a09cf5b": {
+    "name": "Steal A Seed! [Roblox Game]",
+    "hard": true,
+    "reason": "Roblox-only accounts may upload; game name must be spoken in the video; Discord join required",
+    "second_account_option": true,
+    "decided": "2026-09-26"
+  },
+  "1db63081-715e-4e04-9b11-fbc1d4e8e700": {
+    "name": "ForgeGUI Clipping [Roblox]",
+    "hard": true,
+    "reason": "needs a Roblox-dev-only account with their exact bio line + Discord join; $32k pool is a strong second-account play",
+    "second_account_option": true,
+    "decided": "2026-09-26"
+  },
+  "2c65001c-d6a8-4b14-9ba6-52400794b085": {
+    "name": "Alpha Futures Clipping Campaign",
+    "hard": false,
+    "reason": "off-niche: trading-personality clips (TJR, PB Trading) from their content portal; best rate on the board but dilutes a gaming/streamer page",
+    "second_account_option": true,
+    "decided": "2026-09-26"
+  },
+  "117ddb85-e38d-47e2-abc1-9bbaf7ec8d1c": {
+    "name": "Roll Anime Girls! [Roblox Game]",
+    "hard": true,
+    "reason": "Roblox-only accounts may upload; game name must be spoken in the video; Discord join required (same BloxClips template as Steal A Seed)",
+    "second_account_option": true,
+    "decided": "2026-09-26"
+  }
+}

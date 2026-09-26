@@ -113,6 +113,20 @@ user posts from phone (campaigns generally require account-holder posting anyway
 Board delivery (2026-09-26): finished clips also live as ops-board assets with an in-page
 player + Download (downloads capability).
 
+## VOD mining speed + campaign fine print (learned 2026-09-26)
+- Twitch VODs are HLS in small fragments: ALWAYS pass `-N 16` (concurrent fragments).
+  Three full VOD audio tracks (47–115 min) came down in 25s total vs ~8 min EACH without
+  it. `clipper.py ingest` now passes `-N 16`. Audio-only format id: `Audio_Only`.
+- Loudness spikes on IRL streams mostly flag music/singing and crosstalk, not comedy —
+  treat them as candidates, judge from transcripts; skip windows with music (copyright).
+  Viewer-made Twitch clips for small streamers are near-useless as signals (titles like
+  "a", "e", single-digit views).
+- The listing API never shows the rules doc's fine print. Common deal-breakers seen in
+  one scan: dedicated single-creator/niche accounts, follower minimums (5k+), per-clip
+  view floors (5k), bio-link requirements, "name must be spoken" (needs VO), mandatory
+  Discord joins. Record verdicts in `config/campaign-exclusions.json` so the scout shows
+  them GATED with the reason instead of re-offering them.
+
 ## TikTok stats lane (validated 2026-09-26) — public profile, no login
 - Higgsfield's TikTok connector exposes NO stats/video-list tool (only accounts/connect/
   prepare_publish/publish_status/music), despite its broad OAuth scopes.

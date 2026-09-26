@@ -218,7 +218,7 @@ def cmd_ingest(args) -> None:
         cmd += ["-i", args.source, "-c", "copy", "-movflags", "+faststart", str(src)]
         run(cmd)
     else:  # platform URL via yt-dlp
-        cmd = ["yt-dlp", "--no-warnings", "-f", QUALITY_MAP[args.quality],
+        cmd = ["yt-dlp", "--no-warnings", "-f", QUALITY_MAP[args.quality], "-N", "16",
                "-o", "source.%(ext)s", "--downloader-args", "ffmpeg:-v error", "--write-auto-subs", "--write-subs",
                "--sub-langs", "en.*,en", "--sub-format", "vtt"]
         if section:
@@ -485,6 +485,13 @@ def cmd_cut(args) -> None:
         filters = [f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale=1080:{cam_h}[cam]",
                    f"[0:v]crop={gw}:{gh}:{gx}:{gy},scale=1080:{game_h}[game]",
                    "[cam][game]vstack=inputs=2[comp]"]
+    elif getattr(args, "fg", None):  # blur-pad around a focus crop (wide IRL shots)
+        fx, fy, fw, fh = (int(v) for v in args.fg.split(","))
+        filters = [f"[0:v]crop={fw}:{fh}:{fx}:{fy},split[fa][fb]",
+                   "[fa]scale=1080:1920:force_original_aspect_ratio=increase,"
+                   "crop=1080:1920,gblur=sigma=24[bg]",
+                   "[fb]scale=1080:1920:force_original_aspect_ratio=decrease[fg]",
+                   "[bg][fg]overlay=(W-w)/2:(H-h)/2[comp]"]
     else:  # blur-pad (default)
         filters = ["[0:v]scale=1080:1920:force_original_aspect_ratio=increase,"
                    "crop=1080:1920,gblur=sigma=24[bg]",
@@ -586,7 +593,7 @@ def cmd_stitch(args) -> None:
             hook_as_is=args.hook_as_is, hook_full=(i == 0),
             no_captions=args.no_captions, logo=None, logo_pos="tr",
             logo_width=210, no_loudnorm=True, layout=args.layout,
-            cam=args.cam, game=args.game, cam_h=args.cam_h,
+            cam=args.cam, game=args.game, cam_h=args.cam_h, fg=args.fg,
             zoom=z, _no_meta=True)
         cmd_cut(ns)
         parts.append(job / f"{part}.mp4")
@@ -752,6 +759,7 @@ def main() -> None:
                    help="stack: facecam panel height in the 1920 output")
     p.add_argument("--zoom", type=float, default=1.0,
                    help="punch-in factor (scale + center-crop)")
+    p.add_argument("--fg", help="blur: focus crop X,Y,W,H in source px (wide IRL shots)")
     p.set_defaults(func=cmd_cut)
 
     p = sub.add_parser("stitch", help="multi-segment edit (peak-first + punch-ins)")
@@ -767,6 +775,7 @@ def main() -> None:
     p.add_argument("--cam")
     p.add_argument("--game")
     p.add_argument("--cam-h", type=int, default=740)
+    p.add_argument("--fg", help="blur: focus crop X,Y,W,H in source px (wide IRL shots)")
     p.add_argument("--out")
     p.add_argument("--no-loudnorm", action="store_true")
     p.set_defaults(func=cmd_stitch)

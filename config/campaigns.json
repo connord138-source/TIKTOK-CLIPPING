@@ -79,5 +79,41 @@
       "#ad",
       "@coinbase"
     ]
+  },
+  {
+    "id": "cr-d8f10d9f",
+    "cr_campaign_id": "d8f10d9f-5207-4268-8069-b6da45a23b67",
+    "name": "Irubyana Twitch Clips",
+    "org": "Irubyanaclips",
+    "platform": "whop-content-rewards",
+    "participation": "open_submission - no application, no account restrictions. SUBMIT via Whop Discover -> Content Rewards (https://whop.com/discover/content-rewards/) -> search 'Irubyana' -> Submit clip.",
+    "submit_url": "https://whop.com/discover/content-rewards/",
+    "status": "ACTIVE - onboarded 2026-09-26 (discovered by board-feed); $1,971 of $2,000 left at onboarding",
+    "activated_at": "2026-09-26",
+    "rate_per_1k": 1.0,
+    "min_payout_usd": 1.0,
+    "max_payout_per_post_usd": 60.0,
+    "allowed_platforms": [
+      "tiktok",
+      "instagram_reels"
+    ],
+    "min_len_s": 15,
+    "max_len_s": 60,
+    "required_caption_tokens": [
+      "@irubyana",
+      "#irubyana",
+      "#twitch"
+    ],
+    "sources": [
+      "https://www.twitch.tv/irubyana/videos?filter=archives (VODs; she authorizes clipping her streams)"
+    ],
+    "post_recipe": {
+      "caption": "hook line + @irubyana #irubyana #twitch #twitchlivestream + 1 topic tag",
+      "tag": "@irubyana (real TikTok handle, 349k followers)",
+      "length": "15-60s, short and high energy",
+      "disclosure": "TikTok in-app Disclose commercial content -> Branded content (paid clipping program)",
+      "avoid": "her 'first date' stream is full of innuendo/profanity — skip for account safety; skip windows with background music (copyright)"
+    },
+    "notes": "IRL streamer (music studio, kickboxing, dating bits) — wide 1080p60 shots: use blur layout with --fg focus crop."
   }
 ]

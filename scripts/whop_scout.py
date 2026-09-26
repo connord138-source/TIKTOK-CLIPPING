@@ -358,6 +358,8 @@ def cmd_board_feed(a) -> None:
     targets = json.loads(wl.read_text()).get("tier1_brand_targets", []) if wl.exists() else []
     seen_f = REPO / "config" / "discovered-seen.json"
     seen = json.loads(seen_f.read_text()) if seen_f.exists() else {}
+    excl_f = REPO / "config" / "campaign-exclusions.json"
+    excl = json.loads(excl_f.read_text()) if excl_f.exists() else {}
     now = datetime.now(timezone.utc)
     today, now_ms = now.strftime("%Y-%m-%d"), int(now.timestamp() * 1000)
 
@@ -396,7 +398,8 @@ def cmd_board_feed(a) -> None:
             skipped.append((name, "; ".join(why)))
             continue
 
-        gated = bool(c.get("requiresApplication"))
+        x = excl.get(cid) or {}
+        gated = bool(c.get("requiresApplication")) or bool(x.get("hard"))
         plats = "+".join({"tiktok": "TT", "instagram": "IG", "youtube": "YT"}.get(p, p)
                          for p in (c.get("platforms") or []))
         rate_s = f"${m['rate']:.2f}/1k · {plats}"
@@ -408,8 +411,10 @@ def cmd_board_feed(a) -> None:
                   else "60+ days of pool at current burn" if m["runway_days"] >= 60
                   else f"~{m['runway_days']:.0f} days of pool at current burn")
         chips = [f"${m['per10k']:g} per 10k views"]
-        if gated:
+        if c.get("requiresApplication"):
             chips.append("application required")
+        if x.get("second_account_option"):
+            chips.append("second-account option")
         chips += [f"watchlist: {t}" for t in wl_hits]
         chips += sorted(cats - {"gaming"})[:2]
         docs.append({"doc_id": "cr-" + cid[:8], "data": {
@@ -417,8 +422,11 @@ def cmd_board_feed(a) -> None:
             "rem": round(n["remaining_usd"]), "bud": round(n["budget_usd"]),
             "flag": "hold" if gated else "ok", "can_queue": not gated,
             "url": f"https://contentrewards.com/discover/{cid}",
-            "note": (f"found {seen.get(cid, today)} · {runway}"
-                     + (" · apply on the campaign page first" if gated else "")),
+            "note": ((f"Not for this account: {x['reason']}" if x.get("hard")
+                      else f"Your call: {x['reason']} · " if x else "")
+                     + ("" if x.get("hard") else f"found {seen.get(cid, today)} · {runway}")
+                     + (" · apply on the campaign page first"
+                        if c.get("requiresApplication") else "")),
             "rules": chips, "discovered": True, "first_seen": seen.get(cid, today),
             "cr_campaign_id": cid, "money": m, "updated": now_ms}})
 
@@ -439,7 +447,7 @@ def cmd_board_feed(a) -> None:
         x, m = d["data"], d["data"]["money"]
         print(f"{m['score']:>6.1f}{m['per10k']:>7.1f}{m['pays_from_views']:>7}"
               f"{m['runway_days']:>7.0f}d{'$' + format(x['rem'], ','):>9}  "
-              f"{x['name'][:44]}{'  [APPLY]' if not x['can_queue'] else ''}  {d['doc_id']}")
+              f"{x['name'][:44]}{'  [GATED]' if not x['can_queue'] else ''}  {d['doc_id']}")
     if skipped:
         print(f"\nniche-matched but skipped ({len(skipped)}):")
         for name, why in skipped[:12]:
