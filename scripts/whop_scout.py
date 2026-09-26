@@ -15,6 +15,9 @@ Usage:
                                            # contentrewards public API -> table +
                                            # raw dump + config/campaigns-discovered.json
   whop_scout.py detail CAMPAIGN_ID         # keyless: one campaign incl. rules/links
+  whop_scout.py board-feed [--min-rate 0.75] [--min-remaining 1500] [--top 10]
+                                           # keyless: gaming/streamer campaigns ranked by
+                                           # money -> work/whop/board-feed.json (board docs)
   whop_scout.py probe                      # Whop API key auth check
   whop_scout.py scout [--goal clipping] [--min-reward 100] [--top 15] [--all-goals]
                                            # authed bounties -> campaigns-discovered.json
@@ -27,7 +30,9 @@ shortlist a session prepares -> config/campaigns-proposed.json; JOINED campaigns
 """
 import argparse
 import json
+import math
 import os
+import re
 import sys
 import urllib.parse
 import urllib.request
@@ -99,9 +104,9 @@ def cr_normalize(c: dict) -> dict:
     }
 
 
-def cmd_discover(a) -> None:
+def cr_fetch_all(max_pages: int = 15) -> list:
     rows, cursor, pages = [], None, 0
-    while pages < 15:
+    while pages < max_pages:
         url = CR_API + (f"?cursor={urllib.parse.quote(cursor)}" if cursor else "")
         d = cr_get(url)
         batch = d.get("data") or []
@@ -110,6 +115,11 @@ def cmd_discover(a) -> None:
         cursor = (d.get("pagination") or {}).get("nextCursor")
         if not batch or not cursor:
             break
+    return rows
+
+
+def cmd_discover(a) -> None:
+    rows = cr_fetch_all()
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M")
     dump_dir = REPO / "work" / "whop"
@@ -135,8 +145,8 @@ def cmd_discover(a) -> None:
         print(f"{n['cpm_max_usd_per_1k']:>6.2f}{money(n['remaining_usd']):>10}"
               f"{money(n['spent_usd']):>10}  {(n['name'] or '')[:46]}  "
               f"[{n['org']}{'✓' if n['org_verified'] else ''}]")
-    print("\nnote: category/platform/rules need `detail <id>` — the list payload "
-          "doesn't carry them all.")
+    print("\nnote: the list payload carries categories/platforms/payouts/"
+          "requiresApplication/referenceMaterials — `board-feed` ranks our niche by money.")
     wl = REPO / "config" / "streamer-watchlist.json"
     if wl.exists():
         targets = json.loads(wl.read_text()).get("tier1_brand_targets", [])
@@ -296,6 +306,146 @@ def cmd_pools(_a) -> None:
             print(f"{name:<28}{'?':>12}{'?':>12}  lookup failed: {e}")
 
 
+NICHE_KW = re.compile(
+    r"\b(stream(er|ers|ing)?|livestream(er|ers|s)?|twitch|kick(\.com| stream)|esports?|"
+    r"gaming|gamer|valorant|fortnite|call of duty|warzone|minecraft|roblox|gta|"
+    r"league of legends|apex legends|overwatch|rocket league|speedrun)\b", re.I)
+STRONG_KW = re.compile(
+    r"\b(twitch|kick(\.com| stream)|esports?|gaming|gamer|streamers?|valorant|fortnite|"
+    r"call of duty|warzone|minecraft|roblox|gta|league of legends|apex legends|"
+    r"overwatch|rocket league|speedrun)\b", re.I)
+SKIP_CATS = {"music", "casino", "gambling", "adult", "dating", "politics"}
+SKIP_FORMAT = re.compile(
+    r"\b(ugc|slideshows?|talking[- ]head|sound campaign|audio[- ]clipping)\b", re.I)
+GEO_LOCK = re.compile(
+    r"^\s*[\[(](?!US\b|USA\b|EN\b|ENG\b|English\b)[^\])]{2,20}[\])]", re.I)
+
+
+def money_metrics(c: dict) -> dict:
+    """What a campaign is worth to a small TikTok account: TikTok rate, the views a
+    post needs before it pays anything, and how long the pool lasts at its burn."""
+    tt = next((p for p in (c.get("payouts") or []) if p.get("platform") == "tiktok"), {})
+    rate = (tt.get("rateCents") or c.get("cpmMaxRateCents") or 0) / 100
+    min_pay = (tt.get("minPayoutCents") or 0) / 100
+    max_pay = (tt.get("maxPayoutCents") or 0) / 100 or None
+    n = cr_normalize(c)
+    try:
+        listed = datetime.fromisoformat(
+            (c.get("listedAt") or c.get("createdAt")).replace("Z", "+00:00"))
+        age_d = max(0.5, (datetime.now(timezone.utc) - listed).total_seconds() / 86400)
+    except (AttributeError, ValueError):
+        age_d = 7.0
+    burn = n["spent_usd"] / age_d if n["spent_usd"] > 0 else 0.0
+    runway = round(n["remaining_usd"] / burn, 1) if burn > 0 else 99.0
+    pays_from = math.ceil(min_pay / rate * 1000) if rate > 0 and min_pay > 0 else 0
+    threshold = (1.0 if pays_from <= 1000 else 0.8 if pays_from <= 2000
+                 else 0.55 if pays_from <= 5000 else 0.3)
+    return {"rate": rate, "per10k": round(rate * 10, 2), "min_payout": min_pay,
+            "max_payout": max_pay, "pays_from_views": pays_from,
+            "burn_per_day": round(burn), "runway_days": runway,
+            "score": round(rate * 10 * threshold * min(1.0, runway / 3.0), 2)}
+
+
+def cmd_board_feed(a) -> None:
+    """Niche-filtered, money-ranked NEW campaigns as ops-board docs (campaigns/<doc_id>)."""
+    rows = cr_fetch_all()
+    tracked = set()
+    for fname in ("campaigns.json", "campaigns-proposed.json"):
+        f = REPO / "config" / fname
+        if f.exists():
+            tracked |= {c.get("cr_campaign_id") for c in json.loads(f.read_text())}
+    wl = REPO / "config" / "streamer-watchlist.json"
+    targets = json.loads(wl.read_text()).get("tier1_brand_targets", []) if wl.exists() else []
+    seen_f = REPO / "config" / "discovered-seen.json"
+    seen = json.loads(seen_f.read_text()) if seen_f.exists() else {}
+    now = datetime.now(timezone.utc)
+    today, now_ms = now.strftime("%Y-%m-%d"), int(now.timestamp() * 1000)
+
+    docs, skipped = [], []
+    for c in rows:
+        cid = c.get("id") or ""
+        if len(cid) != 36 or cid in tracked:
+            continue
+        name = c.get("name") or ""
+        cats = {x.get("id") for x in (c.get("categories") or [])}
+        text = f"{name} {c.get('organizationName', '')} {(c.get('description') or '')[:800]}"
+        wl_hits = [t for t in targets if all(p in text.lower() for p in t.split())]
+        desc = (c.get("description") or "")[:800]
+        if not ("gaming" in cats or wl_hits or NICHE_KW.search(name)
+                or STRONG_KW.search(desc)):
+            continue
+        n, m = cr_normalize(c), money_metrics(c)
+        why = []
+        if cats & SKIP_CATS and not wl_hits:
+            why.append("off-niche category")
+        if SKIP_FORMAT.search(name):
+            why.append("format we don't make")
+        if GEO_LOCK.search(name):
+            why.append("geo/language-locked")
+        if "tiktok" not in (c.get("platforms") or []):
+            why.append("no TikTok")
+        if c.get("private") or c.get("status") != "active":
+            why.append("not open")
+        if m["rate"] < a.min_rate:
+            why.append(f"${m['rate']:.2f}/1k")
+        if n["remaining_usd"] < a.min_remaining:
+            why.append(f"pool ${n['remaining_usd']:,.0f}")
+        if m["runway_days"] < 1:
+            why.append("drains within a day")
+        if why:
+            skipped.append((name, "; ".join(why)))
+            continue
+
+        gated = bool(c.get("requiresApplication"))
+        plats = "+".join({"tiktok": "TT", "instagram": "IG", "youtube": "YT"}.get(p, p)
+                         for p in (c.get("platforms") or []))
+        rate_s = f"${m['rate']:.2f}/1k · {plats}"
+        if m["pays_from_views"]:
+            rate_s += f" · pays from {m['pays_from_views'] / 1000:g}k views"
+        if m["max_payout"]:
+            rate_s += f" · max ${m['max_payout']:,.0f}/post"
+        runway = ("fresh pool, barely touched" if n["spent_usd"] < 0.1 * n["budget_usd"]
+                  else "60+ days of pool at current burn" if m["runway_days"] >= 60
+                  else f"~{m['runway_days']:.0f} days of pool at current burn")
+        chips = [f"${m['per10k']:g} per 10k views"]
+        if gated:
+            chips.append("application required")
+        chips += [f"watchlist: {t}" for t in wl_hits]
+        chips += sorted(cats - {"gaming"})[:2]
+        docs.append({"doc_id": "cr-" + cid[:8], "data": {
+            "name": name.strip(), "org": c.get("organizationName"), "rate": rate_s,
+            "rem": round(n["remaining_usd"]), "bud": round(n["budget_usd"]),
+            "flag": "hold" if gated else "ok", "can_queue": not gated,
+            "url": f"https://contentrewards.com/discover/{cid}",
+            "note": (f"found {seen.get(cid, today)} · {runway}"
+                     + (" · apply on the campaign page first" if gated else "")),
+            "rules": chips, "discovered": True, "first_seen": seen.get(cid, today),
+            "cr_campaign_id": cid, "money": m, "updated": now_ms}})
+
+    docs.sort(key=lambda d: d["data"]["money"]["score"], reverse=True)
+    docs = docs[:a.top]
+    for d in docs:
+        seen.setdefault(d["data"]["cr_campaign_id"], today)
+    seen_f.write_text(json.dumps(seen, indent=1, sort_keys=True) + "\n")
+    out = REPO / "work" / "whop" / "board-feed.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({"generated": now.isoformat(), "docs": docs,
+                               "skipped": skipped}, indent=1))
+
+    print(f"{len(rows)} campaigns scanned; {len(docs)} niche + money-qualified "
+          f"-> {out.relative_to(REPO)} (board docs campaigns/<doc_id>)")
+    print(f"{'score':>6}{'$/10k':>7}{'pays@':>7}{'runway':>8}{'left':>9}  name")
+    for d in docs:
+        x, m = d["data"], d["data"]["money"]
+        print(f"{m['score']:>6.1f}{m['per10k']:>7.1f}{m['pays_from_views']:>7}"
+              f"{m['runway_days']:>7.0f}d{'$' + format(x['rem'], ','):>9}  "
+              f"{x['name'][:44]}{'  [APPLY]' if not x['can_queue'] else ''}  {d['doc_id']}")
+    if skipped:
+        print(f"\nniche-matched but skipped ({len(skipped)}):")
+        for name, why in skipped[:12]:
+            print(f"  - {name[:48]}: {why}")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -313,6 +463,16 @@ def main() -> None:
 
     sub.add_parser("pools", help="KEYLESS: live pool status of tracked campaigns"
                    ).set_defaults(func=cmd_pools)
+
+    pbf = sub.add_parser("board-feed",
+                         help="KEYLESS: niche-filtered, money-ranked new campaigns "
+                              "as ops-board docs")
+    pbf.add_argument("--min-rate", type=float, default=0.75,
+                     help="min TikTok $/1k (default 0.75)")
+    pbf.add_argument("--min-remaining", type=float, default=1500.0,
+                     help="min remaining pool USD (default 1500)")
+    pbf.add_argument("--top", type=int, default=10)
+    pbf.set_defaults(func=cmd_board_feed)
 
     sub.add_parser("probe", help="auth check").set_defaults(func=cmd_probe)
 

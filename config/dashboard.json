@@ -5,10 +5,11 @@
   "design_change_pending": false,
   "note": "Data flows through the artifact DATABASE (ArtifactData tool), not HTML edits. Republishing brand/dashboard.html is only for design/behavior changes; pass url + capabilities unchanged (omit capabilities to keep them). Fired sessions must READ the artifact before their first republish of it.",
   "db_schema": {
-    "campaigns/<config id>": "{name, org, rate:str, rem:usd, bud:usd, flag: ok|hold|dead, can_queue:bool, url, note, rules:[chips], sources_state, updated:ms}",
+    "campaigns/<config id>": "tracked campaign: {name, org, rate:str, rem:usd, bud:usd, flag: ok|hold|dead, can_queue:bool, url (submit link), note, rules:[chips], sources_state, updated:ms}",
     "queue/<id>": "{campaign_id, campaign_name, note, status: queued|producing|ready|posted|killed, created:ms, updated:ms, claimed_by, kill_reason, post_url, posted_at:ms, clip:{name,length_s,asset_url:'/_blob/<id>',delivery}, package:{caption,window,ai_label,audio,submit_url,checklist:[str]}}",
-    "posts/<id>": "{clip, campaign_id, posted:'MM-DD', views, likes, accruing:usd, state: go|ok|dead|wait, note, updated:ms}",
-    "meta/board": "{stamp, followers, do_next:[{text,why,urgency: hot|warm|hold}], updated:ms, updated_by}"
+    "meta/board": "{stamp, followers, hearts, stats_at, floor_label, do_next:[{text,why,urgency: hot|warm|hold}], updated:ms, updated_by}",
+    "campaigns/cr-<8 of uuid>": "DISCOVERED by whop_scout.py board-feed (work/whop/board-feed.json): same fields + {discovered:true, first_seen:'YYYY-MM-DD' (from config/discovered-seen.json), cr_campaign_id, money:{rate, per10k, min_payout, max_payout, pays_from_views, burn_per_day, runway_days, score}}; board sorts tracked first, then by money.score; NEW chip for 3 days",
+    "posts/<ledger id>": "from scripts/tiktok_stats.py (work/tiktok/stats.json): {clip, campaign_id, posted:'MM-DD', views, likes, comments, accruing:usd, state: go|ok|dead|wait, note, post_url, updated:ms}"
   },
   "asset_cache": {
     "note": "campaign source material + deliverables stored as artifact assets; fetch with Artifact read path:<id>. Cap 15MB/file — mezzanine re-encode (crf22) anything bigger.",

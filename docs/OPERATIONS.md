@@ -85,9 +85,14 @@ lands in that same Bounties feed — confusing, so the board links straight to t
 The ops board (`config/dashboard.json` → artifact URL) is mission control: live pools,
 one-tap **Queue a clip** on open campaigns, production queue with posting packages,
 post tracking. Two Routines run it:
-- **Campaign pool guard + scout** (`trig_01Bx7y32NN6rLdA2oN47GKrk`, 13:00+22:00 UTC):
-  pools + discovery + watchlist → config updates → board DB sync → mirrors
-  user-marked "posted" items into the ledger.
+- **Campaign scout + pool guard + TikTok stats** (`trig_01Bx7y32NN6rLdA2oN47GKrk`,
+  13:00+22:00 UTC): pools + discovery + watchlist → `whop_scout.py board-feed` puts NEW
+  gaming/streamer campaigns on the board ranked by money (TikTok $/1k × payout-threshold
+  × pool-runway score; off-niche, geo-locked, UGC/sound formats, casino/adult/politics
+  filtered out) → `tiktok_stats.py` pulls live views/likes/comments + followers from the
+  public profile into the ledger + board and flags captions missing required tags →
+  config updates → board DB sync → mirrors user-marked "posted" items into the ledger.
+  Off-niche high payers never auto-appear: the gaming/streamer lock is a user decision.
 - **clip-queue-watcher** (`trig_019PXV8XZwDdiHTFFxFDGHTa`, hourly :07, 9am–11pm ET):
   picks up queued board items and runs `docs/PRODUCE-QUEUE.md` — claim → pool + rules
   check → source (board asset cache first) → v9 edit → QC → video + package back onto

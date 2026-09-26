@@ -14,10 +14,30 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 4964.27,
-    "remaining_usd": 5035.73,
-    "approved_submissions": 16,
+    "spent_usd": 4947.65,
+    "remaining_usd": 5052.35,
+    "approved_submissions": 15,
     "listed_at": "2026-07-28T14:08:37.000Z"
+  },
+  {
+    "campaign_id": "f048d5ae-fd0c-404d-8630-99e2ab70cec4",
+    "name": "EmpireDrop \u00d7 Ricky World | ES",
+    "org": "EmpireDrop",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "gambling",
+        "name": "Gambling"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 5.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 107.84,
+    "remaining_usd": 4892.16,
+    "approved_submissions": 42,
+    "listed_at": "2026-09-23T09:40:53.000Z"
   },
   {
     "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
@@ -34,10 +54,25 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 34.25,
-    "remaining_usd": 3125.75,
-    "approved_submissions": 150,
+    "spent_usd": 86.97,
+    "remaining_usd": 3073.03,
+    "approved_submissions": 200,
     "listed_at": "2026-08-04T13:02:32.000Z"
+  },
+  {
+    "campaign_id": "a86079c8-1693-4c19-ad89-c0647cc67814",
+    "name": "GERMANY | Meta-Klage Clipping | $4 CPM | $10,000 Budget",
+    "org": "Begeads",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 4.0,
+    "cpm_max_usd_per_1k": 4.0,
+    "budget_usd": 7000.0,
+    "spent_usd": 244.25,
+    "remaining_usd": 6755.75,
+    "approved_submissions": 68,
+    "listed_at": "2026-08-14T17:47:31.000Z"
   },
   {
     "campaign_id": "334ba2c6-30fe-46db-a9a6-118463750bc3",
@@ -54,9 +89,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 10000.0,
-    "spent_usd": 3645.93,
-    "remaining_usd": 6354.07,
-    "approved_submissions": 198,
+    "spent_usd": 4339.19,
+    "remaining_usd": 5660.81,
+    "approved_submissions": 224,
     "listed_at": "2026-09-05T18:02:57.000Z"
   },
   {
@@ -69,9 +104,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 10000.0,
-    "spent_usd": 6926.69,
-    "remaining_usd": 3073.31,
-    "approved_submissions": 409,
+    "spent_usd": 7854.32,
+    "remaining_usd": 2145.68,
+    "approved_submissions": 497,
     "listed_at": "2026-06-06T20:37:41.000Z"
   },
   {
@@ -89,10 +124,25 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3600.0,
-    "spent_usd": 508.85,
-    "remaining_usd": 3091.15,
-    "approved_submissions": 42,
+    "spent_usd": 1142.82,
+    "remaining_usd": 2457.18,
+    "approved_submissions": 79,
     "listed_at": "2026-09-18T13:29:33.000Z"
+  },
+  {
+    "campaign_id": "ee0d0d23-7e71-41ea-9837-04db6eb961db",
+    "name": "Make It Right - (UGC)  'Alan Fitzpatrick & Calvin Logue' Official Campaign",
+    "org": "The Cross Records",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.5,
+    "cpm_max_usd_per_1k": 2.5,
+    "budget_usd": 2500.0,
+    "spent_usd": 398.35,
+    "remaining_usd": 2101.65,
+    "approved_submissions": 3,
+    "listed_at": "2026-06-17T10:17:24.000Z"
   },
   {
     "campaign_id": "a726ca2a-174f-4974-9829-7f69c19b5dad",
@@ -108,15 +158,75 @@
     "payout_type": "cpm",
     "cpm_min_usd_per_1k": 1.8,
     "cpm_max_usd_per_1k": 2.25,
-    "budget_usd": 15000.0,
-    "spent_usd": 6141.44,
-    "remaining_usd": 8858.56,
-    "approved_submissions": 344,
+    "budget_usd": 20609.99,
+    "spent_usd": 10621.53,
+    "remaining_usd": 9988.46,
+    "approved_submissions": 713,
     "listed_at": "2026-09-08T20:15:14.000Z"
   },
   {
-    "campaign_id": "3ae31049-8719-44c5-a2ef-c0a40dcc3095",
-    "name": "Call of Duty - Modern Warfare 4 Campaign Trailer",
+    "campaign_id": "fd7cbf9b-b86b-46da-9cf7-690fd0c9145c",
+    "name": "[Mexico] Prime Video - Hazbin Hotel Clipping",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.8,
+    "cpm_max_usd_per_1k": 2.25,
+    "budget_usd": 18109.99,
+    "spent_usd": 8684.72,
+    "remaining_usd": 9425.27,
+    "approved_submissions": 375,
+    "listed_at": "2026-09-08T20:15:03.000Z"
+  },
+  {
+    "campaign_id": "f16b7171-9d06-462c-84df-1df9e82d09e1",
+    "name": "[VIRAL] My Mini Mixed Capsule Clipping",
+    "org": "Clip Influence",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "consumer-brand",
+        "name": "Consumer Brand"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 20000.0,
+    "spent_usd": 2016.48,
+    "remaining_usd": 17983.52,
+    "approved_submissions": 233,
+    "listed_at": "2026-09-22T05:35:52.000Z"
+  },
+  {
+    "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
+    "name": "Backyard Breaks [Clipping Campaign]",
+    "org": "ClipHouse",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "sports",
+        "name": "Sports"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 50153.25,
+    "spent_usd": 42032.22,
+    "remaining_usd": 8121.03,
+    "approved_submissions": 5805,
+    "listed_at": "2026-06-16T16:04:06.000Z"
+  },
+  {
+    "campaign_id": "30d0734a-6719-4224-ae2e-d018df8d3820",
+    "name": "[UK] Prime Video - Helluva Boss Clipping",
     "org": "Clipping Culture",
     "org_verified": true,
     "categories": [
@@ -128,31 +238,11 @@
     "payout_type": "cpm",
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 40000.0,
-    "spent_usd": 25138.09,
-    "remaining_usd": 14861.91,
-    "approved_submissions": 408,
-    "listed_at": "2026-09-17T19:04:55.000Z"
-  },
-  {
-    "campaign_id": "e73b0bf8-397e-4b99-aaa3-08e1468d1f0f",
-    "name": "$10,000 Double Coverage x Justin Gaethje Campaign",
-    "org": "Reach",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "podcast",
-        "name": "Podcasts"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 9980.42,
-    "spent_usd": 1269.58,
-    "remaining_usd": 8710.84,
-    "approved_submissions": 296,
-    "listed_at": "2026-09-18T22:04:59.000Z"
+    "budget_usd": 12500.0,
+    "spent_usd": 5003.36,
+    "remaining_usd": 7496.64,
+    "approved_submissions": 286,
+    "listed_at": "2026-09-08T20:15:35.000Z"
   },
   {
     "campaign_id": "2c65001c-d6a8-4b14-9ba6-52400794b085",
@@ -169,30 +259,45 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 7983.4,
-    "remaining_usd": 5016.6,
-    "approved_submissions": 346,
+    "spent_usd": 8018.61,
+    "remaining_usd": 4981.39,
+    "approved_submissions": 348,
     "listed_at": "2026-06-11T06:02:18.000Z"
   },
   {
-    "campaign_id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
-    "name": "It's Personal Podcast Clipping Campaign",
-    "org": "Tykoonclips",
+    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
+    "name": "Michael Sartain's Clipping Army",
+    "org": "Michael Sartain's Clipper Army",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 5788.59,
+    "remaining_usd": 4211.41,
+    "approved_submissions": 25,
+    "listed_at": "2026-08-06T13:16:40.000Z"
+  },
+  {
+    "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
+    "name": "Pepty SLIDESHOWS [HEALTH]",
+    "org": "Reachify",
     "org_verified": false,
     "categories": [
       {
-        "id": "news-politics",
-        "name": "News & Politics"
+        "id": "fitness",
+        "name": "Fitness"
       }
     ],
     "payout_type": "cpm",
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 466.23,
-    "remaining_usd": 4533.77,
-    "approved_submissions": 16,
-    "listed_at": "2026-07-30T21:20:25.000Z"
+    "spent_usd": 825.4,
+    "remaining_usd": 4174.6,
+    "approved_submissions": 162,
+    "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
     "campaign_id": "2432b187-415b-437c-9545-8cfa032a6155",
@@ -209,24 +314,159 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 6500.0,
-    "spent_usd": 2049.42,
-    "remaining_usd": 4450.58,
-    "approved_submissions": 154,
+    "spent_usd": 2463.69,
+    "remaining_usd": 4036.31,
+    "approved_submissions": 189,
     "listed_at": "2026-08-07T11:08:11.000Z"
   },
   {
-    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
-    "name": "Michael Sartain's Clipping Army",
-    "org": "Michael Sartain's Clipper Army",
+    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+    "name": "Reuben A Geimah | $5k budget - $2 CPM",
+    "org": "Reuben A Geimah",
     "org_verified": false,
     "categories": [],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.0,
+    "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1188.08,
+    "remaining_usd": 3811.92,
+    "approved_submissions": 435,
+    "listed_at": "2026-07-31T14:51:19.000Z"
+  },
+  {
+    "campaign_id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
+    "name": "It's Personal Podcast Clipping Campaign",
+    "org": "Tykoonclips",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "news-politics",
+        "name": "News & Politics"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1370.03,
+    "remaining_usd": 3629.97,
+    "approved_submissions": 35,
+    "listed_at": "2026-07-30T21:20:25.000Z"
+  },
+  {
+    "campaign_id": "a696e6af-18aa-4320-a61e-32e3bcf40a44",
+    "name": "$2 CPM new clipping niche: Payments",
+    "org": "eFlow",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "banking-fintech",
+        "name": "Banking & Fintech"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 2263.21,
+    "remaining_usd": 2736.79,
+    "approved_submissions": 47,
+    "listed_at": "2026-09-22T09:53:36.000Z"
+  },
+  {
+    "campaign_id": "bb7a286d-c388-4550-b2c2-8beca19cd6d0",
+    "name": "Daimon X Syndicate",
+    "org": "Syndicate",
+    "org_verified": true,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 31698.0,
+    "spent_usd": 29144.92,
+    "remaining_usd": 2553.08,
+    "approved_submissions": 3267,
+    "listed_at": "2026-06-23T16:29:05.000Z"
+  },
+  {
+    "campaign_id": "ee17b975-4f4e-4c22-9523-b524b8b53a95",
+    "name": "Agent Arcade Slideshows",
+    "org": "ViewCount",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "finance",
+        "name": "Finance"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 4000.0,
+    "spent_usd": 1482.22,
+    "remaining_usd": 2517.78,
+    "approved_submissions": 104,
+    "listed_at": "2026-08-25T21:16:40.000Z"
+  },
+  {
+    "campaign_id": "038b59a5-479d-4b95-be63-98875a5b0548",
+    "name": "Dalibor Cicman Clipping",
+    "org": "Dalibor Cicman Clipping",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "lifestyle",
+        "name": "Lifestyle"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 2749.46,
+    "remaining_usd": 2250.54,
+    "approved_submissions": 81,
+    "listed_at": "2026-09-03T10:56:43.000Z"
+  },
+  {
+    "campaign_id": "af2c8302-46b7-4eda-8963-81ff616a7189",
+    "name": "[UK] The Darkness Concert Clipping",
+    "org": "Distribity",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "concert-festival",
+        "name": "Concerts & Festivals"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 2838.0,
+    "spent_usd": 798.08,
+    "remaining_usd": 2039.92,
+    "approved_submissions": 15,
+    "listed_at": "2026-09-14T12:06:37.000Z"
+  },
+  {
+    "campaign_id": "02c918ad-6f25-4bfe-a1c3-833569532c9a",
+    "name": "Jacques Amoako x EAT",
+    "org": "Maison D'elites",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "business",
+        "name": "Business"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.75,
+    "cpm_max_usd_per_1k": 1.75,
     "budget_usd": 10000.0,
-    "spent_usd": 5566.44,
-    "remaining_usd": 4433.56,
-    "approved_submissions": 24,
-    "listed_at": "2026-08-06T13:16:40.000Z"
+    "spent_usd": 879.21,
+    "remaining_usd": 9120.79,
+    "approved_submissions": 140,
+    "listed_at": "2026-07-31T02:35:45.000Z"
   }
 ]

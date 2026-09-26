@@ -67,7 +67,10 @@ clip** on an open campaign → the hourly `clip-queue-watcher` Routine produces 
 `docs/PRODUCE-QUEUE.md` and posts video + posting package back onto the board; the
 2x-daily pool guard keeps pools/board synced and mirrors "posted" marks into the
 ledger. Data flows through the artifact DATABASE (ArtifactData), never HTML edits.
-Posting/submitting stays human, as ever.
+Posting/submitting stays human, as ever. Since 09-26 the 2x-daily run also AUTO-FINDS
+campaigns (`whop_scout.py board-feed`: gaming/streamer only, ranked by money) and TRACKS
+TikTok views live (`scripts/tiktok_stats.py`, public profile via yt-dlp + curl_cffi);
+queued `cr-*` campaigns get onboarded by the watcher (PRODUCE-QUEUE §2.5).
 
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow

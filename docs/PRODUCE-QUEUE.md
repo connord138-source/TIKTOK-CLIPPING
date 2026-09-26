@@ -35,6 +35,28 @@ pinned with `if_version` from your read. Pin fails → someone else claimed it; 
   campaign's db doc to `flag:"dead"`, `can_queue:false`; update config/campaigns.json; skip item.
 - Also refresh `rem` in the campaign's db doc while you're here.
 
+## 2.5 · New campaign? Onboard it first
+Board cards with ids `cr-XXXXXXXX` (`discovered: true`) come from the money-ranked scout
+(`whop_scout.py board-feed`) and have never been worked. The queue doc's `campaign_id` is
+that board doc id; its `cr_campaign_id` is on `campaigns/<doc id>`. The user queuing it IS
+the pick (open campaigns need no join), so onboard, then produce:
+1. `whop_scout.py detail <cr_campaign_id>` → rules text, payouts, platforms,
+   `requiresApplication`, `referenceMaterials` (rules + asset links).
+2. Read every rules link: Notion → `POST https://www.notion.so/api/v3/loadCachedPageChunkV2`
+   `{"page":{"id":"<uuid>"}}`; Google Docs → `…/export?format=txt`; PDFs → Read tool.
+3. Sources = only what the campaign provides or names (Drive via gdown; Dropbox per-file
+   `?dl=1`; the named creator's Twitch/Kick VODs when the rules say "clip my streams").
+4. **Kill** the item (`kill_reason` = exactly what the user must do or why we pass) if:
+   application required and not approved; sources private/unreachable; rules demand
+   something we don't do (face-cam reactions as a hard requirement, app installs, VPN
+   sign-ups, a language/geo we don't serve, adult/gambling/political content, bought
+   engagement); or anything conflicts with CLAUDE.md hard rules.
+5. Encode a `config/campaigns.json` entry (id = board doc id, `cr_campaign_id`, rate/min/max,
+   allowed_platforms, `required_caption_tokens`, post_recipe, sources, `submit_url` = the
+   brand whop's Bounties app: take `organizationExperienceId`, grep `https://whop.com/<slug>/`
+   store HTML for it to pick the slug → `https://whop.com/<slug>/<exp_id>/app/`).
+6. Refresh the board doc: real rules as chips, `url` → submit_url. Then continue at §3.
+
 ## 3 · Bootstrap + sources
 Bootstrap only once a real item exists: `pip install yt-dlp faster-whisper` and ffmpeg via
 apt if missing → `python3 scripts/clipper.py doctor` (see OPERATIONS.md §bootstrap).

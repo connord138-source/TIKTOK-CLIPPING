@@ -30,7 +30,10 @@
       "watermark": "MW4 official logo NEG on dark footage (--logo ... --logo-pos br --logo-width 280)",
       "other": ">=10s; English; live >=30 days; >=0.20% ER; likes visible; no paid boosts; same video <=5 pages; never name the lead actor"
     },
-    "avoid": "ESRB slate (0:00-4:00); profanity line at ~0:36-0:40"
+    "avoid": "ESRB slate (0:00-4:00); profanity line at ~0:36-0:40",
+    "required_caption_tokens": [
+      "#ad"
+    ]
   },
   {
     "id": "coinbase-valorant-oneshot",
@@ -71,6 +74,10 @@
       "audio": "original stream audio; only platform commercial library sounds may be added",
       "language_bans": "no financial advice/FOMO wording; no best/fastest/free claims; prize only as approved copy ('a shot at 1 BTC'); no implying endorsement",
       "other": ">=7s; live >=30 days; Tier-1 audience >=50%; entry closes Sep 25 - avoid 'anyone can enter' hooks; full VODs also in folder (TenZ NA/EU, Sliggy, Mixwell) for deeper mining"
-    }
+    },
+    "required_caption_tokens": [
+      "#ad",
+      "@coinbase"
+    ]
   }
 ]

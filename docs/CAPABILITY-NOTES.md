@@ -111,6 +111,18 @@ user posts from phone (campaigns generally require account-holder posting anyway
 Board delivery (2026-09-26): finished clips also live as ops-board assets with an in-page
 player + Download (downloads capability).
 
+## TikTok stats lane (validated 2026-09-26) — public profile, no login
+- Higgsfield's TikTok connector exposes NO stats/video-list tool (only accounts/connect/
+  prepare_publish/publish_status/music), despite its broad OAuth scopes.
+- `yt-dlp` TikTok extractors need browser impersonation: `pip install curl_cffi`, then
+  `--impersonate chrome`. Profile `--flat-playlist -J` → every video's id/url/views/likes/
+  comments/timestamp, but captions TRUNCATED (~70 chars); the per-video `-J` gives the full
+  caption (`description`) — needed for required-tag checks like #ad.
+- Followers/total likes: profile HTML (curl_cffi impersonated) →
+  `__UNIVERSAL_DATA_FOR_REHYDRATION__` → `webapp.user-detail.userInfo.stats`.
+- Wrapped by `scripts/tiktok_stats.py` (ledger link via `post_url` video id; `--link`).
+  These are raw public counts, not Whop-verified views — payouts use Whop's own numbers.
+
 ## TikTok drafts lane (connected 2026-09-26)
 - Account linked via `tiktok_connect` (OAuth opened on the phone logged into
   @chat.clip.that); connector id in `config/account.json`. Higgsfield's grant is broad

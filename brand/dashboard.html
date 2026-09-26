@@ -127,7 +127,7 @@ body.candl [data-dl]{display:inline-block;}
 <h2>Do next</h2>
 <div class="actions" id="donext"></div>
 
-<h2>Campaigns <span class="soft">· pick one, queue a clip — an agent takes it from there</span></h2>
+<h2>Campaigns <span class="soft">· new gaming/streamer finds land here, best-paying first — queue a clip and an agent takes it from there</span></h2>
 <div id="campaigns"></div>
 
 <h2>Production queue <span class="soft">· agents check hourly, 9am–11pm ET</span></h2>
@@ -138,12 +138,14 @@ body.candl [data-dl]{display:inline-block;}
 <div class="tablewrap" style="margin-top:10px;"><table id="posts"></table></div>
 
 <footer>
-  How the loop works: tap <b>Queue a clip</b> on an open campaign → an agent session picks
-  it up, verifies the pool, cuts a v9-template clip from campaign-authorized material, and
-  posts the finished video + caption + checklist back to this board. You post from the
-  phone app and hit <b>Mark posted</b>, then Submit clip on the campaign page. Pools are
-  re-checked 9:00 + 18:00 ET. Rule that never bends: campaign-authorized material only —
-  and nothing auto-posts, ever.
+  How the loop works: twice a day (9:00 + 18:00 ET) a scout re-checks pools, adds new
+  gaming/streamer campaigns ranked by what they pay, and pulls live views + likes from the
+  TikTok profile (it also flags captions missing a required tag like #ad). Tap
+  <b>Queue a clip</b> on an open campaign → an agent verifies the pool and rules, cuts a
+  v9-template clip from campaign-authorized material, and posts the video + caption +
+  checklist back here (plus a TikTok draft for your OK once Higgsfield is attached to its
+  routine). You post from the phone app, hit <b>Mark posted</b>, and Submit on Whop.
+  Rule that never bends: campaign-authorized material only — and nothing auto-posts, ever.
 </footer>
 <div id="toast"></div>
 
@@ -213,7 +215,7 @@ async function copyText(txt, btn){
 // ---------- renderers ----------
 function renderBoard(b){
   $("stamp").textContent = "updated " + (b.stamp||"—") +
-    " · pools re-checked 9:00 + 18:00 ET · queue watched hourly 9am–11pm ET";
+    " · pools, new campaigns + TikTok views synced 9:00 + 18:00 ET · queue watched hourly 9am–11pm ET";
   const rank = {hot:0, warm:1, hold:2};
   const items = (b.do_next||[]).slice().sort((a,z)=>(rank[a.urgency]??1)-(rank[z.urgency]??1));
   $("donext").innerHTML = items.map((a,i)=>`
@@ -224,14 +226,17 @@ function renderBoard(b){
 }
 function renderCampaigns(list){
   const order = {ok:0, warn:0, hold:1, dead:2};
-  const cs = list.slice().sort((a,z)=>(order[a.flag]??1)-(order[z.flag]??1));
+  const score = (p) => (p.money && p.money.score) || 0;
+  const isNew = (d) => d && (Date.now() - Date.parse(d + "T00:00:00Z")) < 3 * 864e5;
+  const cs = list.slice().sort((a,z)=>(order[a.flag]??1)-(order[z.flag]??1)
+    || (a.discovered?1:0)-(z.discovered?1:0) || score(z)-score(a));
   $("campaigns").innerHTML = cs.map(p=>{
     const pct = p.bud ? Math.max(0, Math.min(100, p.rem/p.bud*100)) : 0;
     const cls = p.flag==="dead" ? "dead" : (p.rem < 2000 ? "warn" : "ok");
     const label = p.flag==="hold" ? "GATED" : ({ok:"OPEN",warn:"LOW",dead:"DEAD"})[p.flag==="ok"&&p.rem<2000?"warn":p.flag] || p.flag.toUpperCase();
     return `<div class="pool" data-cid="${esc(p.id)}">
       <div class="pool-top">
-        <span class="pool-name">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</span>
+        <span class="pool-name">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}${p.discovered && isNew(p.first_seen) ? ` <span class="flag q">NEW</span>` : ""}</span>
         <span class="flag ${p.flag==="hold" ? "hold" : cls}">${esc(label)}</span>
       </div>
       <div class="pool-rate">${esc(p.rate)}</div>
@@ -312,9 +317,10 @@ function renderPosts(list, board){
     <div class="tile"><div class="k">${totalLikes}</div><div class="l">likes · ${er}% ER (min 0.2%)</div></div>
     <div class="tile"><div class="k">$${accruing.toFixed(2)}</div><div class="l">accruing · ${esc((board&&board.floor_label)||"min payout per post applies")}</div></div>
     <div class="tile"><div class="k">${(board&&board.followers)??"—"}</div><div class="l">followers</div></div>`;
-  $("posts").innerHTML = `<tr><th>clip</th><th>posted</th><th>views</th><th>status</th></tr>` +
-    list.map(p=>`<tr><td>${esc(p.clip)}</td><td class="num">${esc(p.posted||"—")}</td>
+  $("posts").innerHTML = `<tr><th>clip</th><th>posted</th><th>views</th><th>likes</th><th>status</th></tr>` +
+    list.map(p=>`<tr><td>${p.post_url ? `<a href="${esc(p.post_url)}" target="_blank" rel="noopener">${esc(p.clip)}</a>` : esc(p.clip)}</td><td class="num">${esc(p.posted||"—")}</td>
       <td class="num">${p.views==null ? "—" : p.views.toLocaleString()}</td>
+      <td class="num">${p.likes==null ? "—" : p.likes.toLocaleString()}</td>
       <td><span class="state ${esc(p.state||"wait")}">${esc(p.note||"")}</span></td></tr>`).join("");
 }
 
