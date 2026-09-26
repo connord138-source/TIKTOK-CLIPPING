@@ -120,8 +120,12 @@ def cmd_discover(a) -> None:
     keep = [n for n in norm if n["remaining_usd"] >= a.min_remaining]
     keep.sort(key=lambda n: (n["spent_usd"] > 0, n["cpm_max_usd_per_1k"],
                              n["remaining_usd"]), reverse=True)
-    (REPO / "config" / "campaigns-discovered.json").write_text(
-        json.dumps(keep[:a.top], indent=2) + "\n")
+    if keep:
+        (REPO / "config" / "campaigns-discovered.json").write_text(
+            json.dumps(keep[:a.top], indent=2) + "\n")
+    else:
+        print("0 rows after filters — keeping the existing "
+              "config/campaigns-discovered.json snapshot untouched")
 
     print(f"{len(rows)} campaigns fetched (keyless), {len(keep)} with >= "
           f"${a.min_remaining:,.0f} remaining; top {min(a.top, len(keep))} "
@@ -230,8 +234,13 @@ def cmd_scout(a) -> None:
                              (n["reward_total"] or 0) - (n["paid_out"] or 0)),
               reverse=True)
 
-    (REPO / "config" / "campaigns-discovered.json").write_text(
-        json.dumps(keep[:a.top], indent=2) + "\n")
+    if keep:
+        (REPO / "config" / "campaigns-discovered.json").write_text(
+            json.dumps(keep[:a.top], indent=2) + "\n")
+    else:
+        print("0 rows after filters — keeping the existing "
+              "config/campaigns-discovered.json snapshot untouched "
+              "(company-scoped keys see only your own bounties)")
 
     print(f"{len(rows)} open bounties fetched"
           + ("" if a.all_goals else f" (goal={a.goal})")
