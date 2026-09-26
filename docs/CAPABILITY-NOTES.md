@@ -110,12 +110,16 @@ player + Download (downloads capability).
   is the `video_url`. 14.4MB / 1080×1920 / 60fps / 22.5s accepted (limits: MP4/WebM/MOV,
   ≤1GB, 3–600s, ≥360px, 23–60fps — 60fps is the ceiling, so never export higher).
 - `tiktok_prepare_publish` returns a publish session (~2h TTL), preview, privacy options
-  (this account: PUBLIC / MUTUAL_FOLLOW_FRIENDS / SELF_ONLY), comment/duet/stitch that
-  the user must select, commercial-content choice (none / your brand / branded content /
-  both — branded = "Paid partnership" label, cannot be private), and required
-  confirmations. **Publishing is widget-only**: the user completes the publish form in a
-  Claude client that renders MCP Apps widgets; there is no programmatic publish, and a
-  chat reply is never consent. Fallback when this client shows no form: a regular Claude
-  chat with the Higgsfield connector, pasting the video URL + caption.
+  (this account: PUBLIC / MUTUAL_FOLLOW_FRIENDS / SELF_ONLY), comment/duet/stitch flags,
+  commercial-content options (branded = "Paid partnership" label, cannot be private), and
+  required confirmations. **Publishing is widget-only**: no programmatic publish exists,
+  and a chat reply is never consent. **VERIFIED 2026-09-26: the widget renders in the
+  Claude app for these cloud sessions.** In `UPLOAD_TO_DRAFT` mode the form is just
+  video preview + caption + "I reviewed the preview and agree"; privacy, location,
+  comments and disclosure are set in the TikTok app at post time (More options →
+  Disclose post content → Branded content). After submit, `tiktok_publish_status` →
+  `SEND_TO_USER_INBOX` = delivered; the user opens it from TikTok's Inbox. Fallback for a
+  client that shows no form: a regular Claude chat with the Higgsfield connector, pasting
+  the video URL + caption.
 - Prefill `is_aigc=false` only for plain human-footage edits (account rule); privacy and
   disclosure are left for the user's form.

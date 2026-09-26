@@ -105,11 +105,13 @@ automatic. Two human touchpoints by design.
 3. **Staged drafts — CONNECTED 2026-09-26** (connector in `config/account.json`):
    `media_upload` → curl PUT from the container → `media_confirm` →
    `tiktok_prepare_publish` mode `UPLOAD_TO_DRAFT` → the USER completes TikTok's
-   publish-form widget (privacy, comment/duet/stitch, disclosure, preview consent) →
-   clip waits in TikTok drafts → user adds geo-tag, checks caption, posts in-app.
-   Interactive sessions only: the form needs a widget-capable Claude client, and
-   Routine sessions carry no connectors. Paid campaign clips → disclosure
-   "Branded content". Metrics sessions can later pull views via the same connector.
+   form widget in chat (preview review + agree; verified rendering in the Claude app)
+   → `tiktok_publish_status` shows `SEND_TO_USER_INBOX` → user opens the draft from
+   TikTok's Inbox, adds location, sets disclosure, posts in-app. Interactive sessions
+   only: Routine sessions carry no connectors and nobody is there for the form. Paid
+   campaign clips → in-app "Disclose post content → Branded content". First draft
+   delivered 2026-09-26 (val-1v1-v9). Metrics sessions can later pull views via the
+   same connector.
 4. **Campaign auto-discovery** (API mapped, script built 2026-09-23): with
    `WHOP_CLIPPING` in the environment vars, `scripts/whop_scout.py scout` polls
    open clipping bounties, filters, and writes `config/campaigns-proposed.json`;
