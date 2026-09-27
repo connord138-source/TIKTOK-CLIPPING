@@ -1,6 +1,6 @@
 {
   "account_handle": "chat.clip.that",
-  "display_name": "CHAT, CLIP THAT \ud83c\udfac",
+  "display_name": "CHAT, CLIP THAT 🎬",
   "niche": "streamer-clipping",
   "niche_status": "confirmed_2026-09-22_restructure_done_awaiting_campaigns",
   "publish_mode": "draft_only",
@@ -44,5 +44,12 @@
     "account_created": "2026-09-24",
     "handle": "@chat.clipp.that",
     "status": "created (note: double-p, differs from TikTok @chat.clip.that). Warm-up through ~Sep 26: scroll Reels gaming lane, follow the 4 required Valorant accounts naturally, no posting/links. Reels posting ~Sep 27+."
+  },
+  "income_goal": {
+    "target": "a few thousand USD/month",
+    "set": "2026-09-27",
+    "campaign_floor": "skip campaigns with max payout < $100/post (board-feed --min-max-payout 100)",
+    "math": "income = verified views x rate; $3k/mo at ~$1/1k = ~3M views/mo (~100k/day across all posts/platforms)",
+    "open_question": "user offered a faceless YouTube pivot — assessment given 2026-09-27; decision pending (rule 6)"
   }
 }

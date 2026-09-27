@@ -394,6 +394,8 @@ def cmd_board_feed(a) -> None:
             why.append(f"pool ${n['remaining_usd']:,.0f}")
         if m["runway_days"] < 1:
             why.append("drains within a day")
+        if m["max_payout"] and m["max_payout"] < a.min_max_payout:
+            why.append(f"max ${m['max_payout']:,.0f}/post")
         if why:
             skipped.append((name, "; ".join(why)))
             continue
@@ -479,6 +481,9 @@ def main() -> None:
                      help="min TikTok $/1k (default 0.75)")
     pbf.add_argument("--min-remaining", type=float, default=1500.0,
                      help="min remaining pool USD (default 1500)")
+    pbf.add_argument("--min-max-payout", type=float, default=100.0,
+                     help="skip campaigns whose per-post cap is below this (default 100; "
+                          "user rule 2026-09-27: $60-cap campaigns aren't worth the time)")
     pbf.add_argument("--top", type=int, default=10)
     pbf.set_defaults(func=cmd_board_feed)
 
