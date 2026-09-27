@@ -139,6 +139,10 @@ player + Download (downloads capability).
 - Wrapped by `scripts/tiktok_stats.py` (ledger link via `post_url` video id; `--link`).
   These are raw public counts, not Whop-verified views — payouts use Whop's own numbers.
 
+- YouTube handle checks: `curl https://www.youtube.com/@<handle>` returning 200 proves a handle is
+  TAKEN, but 404 does NOT prove it's free (reserved/unlisted handles 404 yet are unavailable —
+  @chat.clip.that did). Only YouTube's Edit-handle screen is authoritative.
+
 ## TikTok drafts lane (connected 2026-09-26)
 - Account linked via `tiktok_connect` (OAuth opened on the phone logged into
   @chat.clip.that); connector id in `config/account.json`. Higgsfield's grant is broad
