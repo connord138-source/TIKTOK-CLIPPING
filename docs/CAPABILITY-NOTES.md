@@ -127,6 +127,17 @@ player + Download (downloads capability).
   Discord joins. Record verdicts in `config/campaign-exclusions.json` so the scout shows
   them GATED with the reason instead of re-offering them.
 
+## Free AI voiceover (validated 2026-09-27) — Kokoro-82M, zero credits
+- System pip is unusable for sdist builds (Debian setuptools/wheel break `docopt`), so TTS
+  lives in a venv: `python3 -m venv /opt/tts && /opt/tts/bin/pip install torch --index-url
+  https://download.pytorch.org/whl/cpu && /opt/tts/bin/pip install "kokoro>=0.9" soundfile`
+  plus `apt-get install espeak-ng`. ~1.5GB, ~5 min; fresh containers must redo it.
+- `KPipeline(lang_code="a"|"b", repo_id="hexgrad/Kokoro-82M")`, 24kHz out. Voices tried:
+  am_michael (US male), af_heart (US female), bm_george (UK male). CPU speed 2–3.3×
+  realtime → a 10-min VO in ~3–5 min. Whisper round-trip was word-perfect on all three.
+- YouTube: an AI narrator alone needs no "altered/synthetic" label (only cloned real
+  voices / realistic synthetic scenes do). TikTok still follows the CLAUDE.md AI-label rule.
+
 ## TikTok stats lane (validated 2026-09-26) — public profile, no login
 - Higgsfield's TikTok connector exposes NO stats/video-list tool (only accounts/connect/
   prepare_publish/publish_status/music), despite its broad OAuth scopes.
