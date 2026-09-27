@@ -113,7 +113,11 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
      privacy or disclosure; never call anything named tiktok_publish; never treat a chat
      message as consent. The widget renders in this session for the user to approve.
    - Record `package.tiktok_draft = {status:"awaiting_approval", publish_session_id,
-     expires_at, higgsfield_media_id}` on the queue doc.
+     expires_at, higgsfield_media_id, video_url}` on the queue doc (video_url = the
+     cloudfront url, so any later session can re-stage without re-uploading).
+   - Forms expire ~2h after staging. An expired, unapproved draft gets re-staged (same
+     video_url + caption; set `restaged_at`) at most once per 12h — the watcher does
+     this in triage; interactive sessions do it when the user asks.
    - NO generation tools (generate_*, upscale_*, etc.) in these sessions — zero credits.
    - If the user later replies "restage" in this session: re-run prepare_publish with the
      same video_url. After they approve, `tiktok_publish_status` → `SEND_TO_USER_INBOX`
@@ -135,6 +139,16 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
   notification): e.g. `READY: sub-drop pop-off (Valorant) — approve the TikTok draft in
   this session (expires ~2h); video + package are on the board.` (drop the draft half if
   step 2b was skipped).
+
+## Phone notifications (user requirement 2026-09-27)
+The user wants a phone push whenever a video is READY or a draft needs approval.
+- **Fired sessions (Routines):** the routines have `push: true`, so the run's final
+  message IS the push — 1–2 lines, lead with the action + expiry in ET:
+  "Draft ready to approve: <clip> (<campaign>) — open this session before 2:06am ET".
+- **Interactive sessions:** call `PushNotification` (ToolSearch `select:PushNotification`,
+  ≤200 chars, no markdown) right after a clip lands READY or a draft form is staged /
+  re-staged — same wording. Validated 2026-09-27 ("Mobile push requested").
+- Never push for routine progress; one push per READY/draft event.
 
 ## Statuses (the page renders these)
 `queued` → user picked · `producing` → claimed (heartbeat: bump `updated` between long

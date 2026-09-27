@@ -71,6 +71,9 @@ Posting/submitting stays human, as ever. Since 09-26 the 2x-daily run also AUTO-
 campaigns (`whop_scout.py board-feed`: gaming/streamer only, ranked by money) and TRACKS
 TikTok views live (`scripts/tiktok_stats.py`, public profile via yt-dlp + curl_cffi);
 queued `cr-*` campaigns get onboarded by the watcher (PRODUCE-QUEUE §2.5).
+**Notify the user's phone** whenever a clip is READY or a TikTok draft needs approval:
+routine summaries push automatically; in interactive sessions call `PushNotification`
+(PRODUCE-QUEUE "Phone notifications").
 
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow

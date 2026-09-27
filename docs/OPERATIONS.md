@@ -102,7 +102,10 @@ post tracking. Two Routines run it:
   connector on the routine — 👤 user adds it in the Routines UI (not settable via
   the trigger API for this org). Never posts anywhere.
 User touchpoints by design: pick/queue on the board, post from the phone app,
-Mark posted, Submit clip on the campaign page. Fired sessions have no MCP connectors —
+Mark posted, Submit clip on the campaign page. **Phone pushes** fire whenever a clip is
+READY or a TikTok draft needs approval (routine summaries push by design; interactive
+sessions call `PushNotification`) — see PRODUCE-QUEUE "Phone notifications". Draft forms
+expire ~2h; the watcher re-stages expired ones (≤1×/12h) once Higgsfield is on its routine. Fired sessions have no MCP connectors —
 board DB/assets, git, and the Whop API all work without them; Higgsfield lanes
 (sandbox_exec Dropbox listing, AI garnish) run only in interactive sessions.
 
