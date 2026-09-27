@@ -217,7 +217,7 @@ function allSteps(){
     }
   }
   if (subs.length) out.push({key: "submit", kind: "submit", items: subs, prio: 1});
-  for (const m of (S.board.tasks || []).filter(t => !t.done)) out.push({key: "task:" + m.id, kind: "task", m, prio: 4});
+  for (const m of (S.board.tasks || []).filter(t => !t.done)) out.push({key: "task:" + m.id, kind: "task", m, prio: m.urgent ? -1 : 4});
   return out.map((s, i) => ({s, i})).sort((a, b) => a.s.prio - b.s.prio || a.i - b.i).map(x => x.s);
 }
 function label(s){
