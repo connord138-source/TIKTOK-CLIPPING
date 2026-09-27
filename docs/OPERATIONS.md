@@ -56,7 +56,12 @@ Content Rewards campaigns need no application. Flow: produce per the campaign's 
 from its provided sources → 👤 user posts on TikTok → 👤 user submits the post URL →
 platform verifies views → payout. Only application-gated campaigns (e.g. Shuffle) have
 an approval step first.
-**Where "Submit" lives:** Whop's global **Discover → Content Rewards** list
+**Where "Submit" lives (updated 2026-09-27):** each campaign's own Content Rewards page,
+`https://contentrewards.com/discover/<cr_campaign_id>` → sign in with Whop → Join Campaign
+/ Submit → paste the post link (+ the MP4 if asked). The user submitted there successfully
+on 09-27. The board's submit steps link to it. `whop.com/discover/content-rewards/` only
+shows the Content Rewards app's store page in a browser, so don't send the user there.
+Older note: Whop's global **Discover → Content Rewards** list
 (`https://whop.com/discover/content-rewards/`, redirects to
 `/discover/7cbf4d8f-a314-4187-98ff-57e81ec7d803/content-rewards/`) — every campaign card
 there has "Submit clip" (user saw these 09-23). Submit asks for the post link and may ask

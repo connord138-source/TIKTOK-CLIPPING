@@ -162,6 +162,9 @@ const titleOf = (q) => q.title || q.campaign_name || "Clip";
 const allowedOf = (q) => (q.allowed || campOf(q).platforms || ["tiktok"]).filter(p => PLAT[p]);
 const pstat = (q, p) => ((q.platforms || {})[p] || {}).status || "none";
 const pk = (q) => q.package || {};
+// Each campaign's own Content Rewards page (Join / Submit live there). Whop's generic
+// content-rewards URL only shows the app's store page, so it's a last resort.
+const campLink = (q) => { const c = campOf(q); return c.submit_link || (c.cr_campaign_id ? "https://contentrewards.com/discover/" + c.cr_campaign_id : ""); };
 const whopName = (q) => campOf(q).whop_name || campOf(q).name || q.campaign_name || "";
 const videoUrl = (q) => (pk(q).tiktok_draft || {}).video_url || ((q.drafts || {}).tiktok || {}).video_url || "";
 function captionFor(q, p){
@@ -274,7 +277,7 @@ function hero(s){
     <p>New clips land here when they're ready, and your phone buzzes.</p></div>`;
   const eb = `<div class="eyebrow">Next up</div>`;
   if (s.kind === "approve" || s.kind === "wait"){
-    const q = s.q, page = campOf(q).submit_link || WHOP;
+    const q = s.q, page = campLink(q) || WHOP;
     if (s.kind === "wait") return `<div class="hero">${eb}<h3>Waiting for approval: “${esc(titleOf(q))}”</h3>
       <p>Don't post it ${anyPosted(q) ? "anywhere else " : ""}yet. Check the campaign page for their answer.</p>
       <div class="row"><a class="btn alt" href="${esc(page)}" target="_blank" rel="noopener">Open campaign ↗</a>
@@ -315,22 +318,18 @@ function hero(s){
       <div class="row">${postedForm(q, p, `Paste the ${PLAT[p]} link`)}</div></div>`;
   }
   if (s.kind === "submit"){
-    const viaWhop = s.items.some(({q}) => !campOf(q).submit_link);
     return `<div class="hero">${eb}<h3>Submit ${s.items.length > 1 ? s.items.length + " links" : "your link"} on Whop</h3>
-      <p>${viaWhop ? "Whop → Discover → Content Rewards → search the campaign → <b>Submit clip</b> → paste the link. " : ""}Each platform's post is submitted separately.</p>
+      <p>Open the campaign page (sign in with Whop if it asks) → <b>Submit</b> → paste the link. Add the video file if it asks. Each platform is submitted separately.</p>
       <div class="subs">${s.items.map(({q, p}) => {
-        const url = ((q.platforms || {})[p] || {}).url || "";
-        const direct = campOf(q).submit_link;
+        const url = ((q.platforms || {})[p] || {}).url || "", link = campLink(q);
         return `<div class="sub"><div><b>${esc(titleOf(q))}</b> · ${esc(PLAT[p])}</div>
-          <div class="hint">${direct ? `Open the campaign page, sign in with Whop, tap <b>Join Campaign</b>, then submit the link (and the video file if it asks).`
-            : `Search Whop for: <b>${esc(whopName(q))}</b>`}</div>
-          <div class="row">${direct ? `<a class="btn small" href="${esc(direct)}" target="_blank" rel="noopener">Open campaign ↗</a>`
-            : `<button class="btn alt small" data-copyname="${esc(q.id)}">Copy campaign name</button>`}
+          <div class="hint">Campaign: <b>${esc(whopName(q))}</b></div>
+          <div class="row">${link ? `<a class="btn small" href="${esc(link)}" target="_blank" rel="noopener">Open campaign ↗</a>`
+              : `<a class="btn small" href="${WHOP}" target="_blank" rel="noopener">Open Whop ↗</a>`}
             ${url ? `<button class="btn alt small" data-copylink="${esc(q.id + ":" + p)}">Copy link</button>` : ""}
             ${videoButtons(q).replace(/class="btn alt"/g, 'class="btn alt small"')}
             <button class="btn alt small" data-submitted="${esc(q.id + ":" + p)}">Done, I submitted it</button></div></div>`;
-      }).join("")}</div>
-      ${viaWhop ? `<div class="row"><a class="btn" href="${WHOP}" target="_blank" rel="noopener">Open Whop ↗</a></div>` : ""}</div>`;
+      }).join("")}</div></div>`;
   }
   const m = s.m, st = m.steps || twitchSteps(m.id);
   return `<div class="hero">${eb}<h3>${esc(m.text)}</h3>${m.sub ? `<p>${esc(m.sub)}</p>` : ""}

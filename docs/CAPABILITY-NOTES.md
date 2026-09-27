@@ -225,3 +225,10 @@ player + Download (downloads capability).
   `board-feed` adds `post_flow`, `requirements` and chips ("approval before posting", "logo
   on video", "link in bio"). The board holds back every posting step for a `submit_first`
   campaign until the user marks it approved.
+- **Submitting:** `contentrewards.com/discover/<campaign id>` is the working submit surface
+  (sign in with Whop → Join/Submit; it may ask for the MP4). `whop.com/discover/content-rewards/`
+  opened in a browser shows only the Content Rewards app store page ("Join for free"). The
+  board links each campaign's own page (`submit_link`, or built from `cr_campaign_id`).
+- **Terms drift, again:** Valorant's per-platform minimum payout dropped $2 → $1 on 09-27
+  (~19:24 UTC, API `payouts[].minPayoutCents`). The Notion rules were unchanged. Re-read both
+  the API payouts and the rules doc before producing or posting.

@@ -77,8 +77,9 @@ the pick (open campaigns need no join), so onboard, then produce:
    Then encode a `config/campaigns.json` entry (id = board doc id, `cr_campaign_id`, rate/min/max,
    allowed_platforms, `post_flow`, `requirements` (verbatim), `required_caption_tokens`,
    post_recipe, sources, `submit_url` =
-   `https://whop.com/discover/content-rewards/` — the user searches the campaign name there
-   and taps "Submit clip"; brand-whop Bounties feeds may not list CPM campaigns).
+   `https://contentrewards.com/discover/<cr_campaign_id>` — the campaign's own page, where the
+   user signs in with Whop and submits; the generic whop.com content-rewards URL only shows an
+   app store page).
 6. Refresh the board doc: real rules as chips, `url` → submit_url, `post_flow`, `short`,
    `whop_name` (exact campaign name to search on Whop), `submit_link` (the campaign's
    contentrewards.com page, when Whop search can't find it). Then continue at §3.
