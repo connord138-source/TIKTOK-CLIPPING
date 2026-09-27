@@ -81,7 +81,9 @@ public → post on Instagram), then clips with per-platform pills, money, campai
 copy short and plain. Right after a clip is READY the watcher starts a draft-prep session
 (PRODUCE-QUEUE §7): TikTok UPLOAD_TO_DRAFT form (user OKs it in that chat) + YouTube upload
 via Zapier, privacy **private** only. Routine sessions start without the repo: attach it
-with `add_repo` first.
+with `add_repo` first (they may not be able to push). The twice-daily guard runs in a
+persistent ops session created with the repo attached (it can push) and reconciles the
+ledger/configs from the board — see config/dashboard.json `routines`.
 
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow

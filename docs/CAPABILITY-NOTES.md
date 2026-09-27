@@ -237,3 +237,14 @@ player + Download (downloads capability).
   minutes". So: **post and submit right away**, from a social account linked in Whop. The
   public API has no field for the window. It's recorded per campaign as
   `submit_window_minutes`, and the board counts down from the "I posted it" time.
+- **Routine sessions and git (09-27, verified):**
+  - The fresh-session guard run attached the repo with `add_repo`, ran the scripts and
+    synced the board, but **no commit reached the branch**.
+  - A session made with `create_session(source_url, source_revision, outcome_branch)`
+    pushed fine (commit `bea3ef4`, `docs/routine-log.md`).
+  - So the twice-daily guard now fires into a persistent ops session made that way
+    (`session_01HmaDwz3oDBm47za31Qb2Zf`, trigger `trig_01KCci58FqBh9D7VjAwXxjrj`; the old
+    trigger is disabled). It also reconciles ledger and configs from the board, for when
+    the hourly watcher's fresh sessions can't push.
+  - Persistent-session routines reject the `notifications` setting, so the guard calls
+    PushNotification itself, only for alerts.

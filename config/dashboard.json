@@ -28,15 +28,15 @@
     }
   },
   "routines": {
-    "trig_01Bx7y32NN6rLdA2oN47GKrk": "Campaign pool guard + scout + TikTok stats, 13:00+22:00 UTC (9am+6pm ET) — pools/discover/board-feed, config updates, board DB sync (campaigns, posts, meta/board stats + short tasks), mirrors platforms[*].url posts into the ledger",
-    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher, hourly :07 9am-11pm ET — produces queued board items per docs/PRODUCE-QUEUE.md (no draft staging), and starts staging sessions for Approve taps the board couldn't start itself"
+    "trig_01KCci58FqBh9D7VjAwXxjrj": "Scout + pool guard + TikTok stats, 8:52am + 5:52pm ET — fires INTO the persistent ops session session_01HmaDwz3oDBm47za31Qb2Zf (created with source_url + outcome_branch, so it can push). Syncs pools/finds/stats to the board, reconciles ledger + configs from the board, pushes. Notifies via PushNotification only when there are alerts.",
+    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher, hourly :07 9am-11pm ET, fresh session per run (push notifications on). Produces queued clips (repo via add_repo; its git push may be refused — the ops session reconciles), then starts a draft-prep session (PRODUCE-QUEUE §7).",
+    "trig_01Bx7y32NN6rLdA2oN47GKrk": "DISABLED 2026-09-27: old fresh-session guard (its add_repo clone could run scripts and sync the board, but no commit ever reached the branch)"
   },
   "capabilities": {
     "db": {},
     "assets": {},
     "downloads": true
   },
-  "routine_repo_note": "Routine-fired sessions start WITHOUT the repo (trigger sources are empty; create_trigger/update_trigger can't set them). Their prompts attach it with the Claude Code Remote add_repo tool (owner connord138-source, repo TIKTOK-CLIPPING, access push) and clone before touching repo files. Board-spawned staging sessions need no repo.",
   "draft_lanes": {
     "how": "automatic: watcher starts a draft-prep session (Claude Code Remote create_session) right after READY — docs/PRODUCE-QUEUE.md §7",
     "staging_env": "env_01XDJ91xXbQxkUQPcABnpyH3",
@@ -44,5 +44,6 @@
     "tiktok": "Higgsfield tiktok_prepare_publish UPLOAD_TO_DRAFT; the user OKs the form in that session (Claude chat only)",
     "youtube": "Zapier YouTubeV4CLIAPI upload_video, privacy private only; linked channel = Chat Clip That! (UCEpBCiPFGOG4wPxj1JDTiMg)",
     "retired": "board Approve button via the artifact mcp capability (2026-09-27): did not start sessions on the user's phone"
-  }
+  },
+  "routine_repo_note": "Fresh routine sessions start without the repo and their add_repo clone could not push (09-27 22:00 run: board synced, no commit). Sessions created with create_session(source_url, source_revision, outcome_branch) CAN push (verified: commit bea3ef4). So jobs that must save state fire into a persistent ops session made that way (create_trigger persistent_session_id). Such routines can't use the notifications setting, so they call PushNotification themselves."
 }
