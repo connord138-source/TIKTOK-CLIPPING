@@ -315,6 +315,9 @@ STRONG_KW = re.compile(
     r"call of duty|warzone|minecraft|roblox|gta|league of legends|apex legends|"
     r"overwatch|rocket league|speedrun)\b", re.I)
 SKIP_CATS = {"music", "casino", "gambling", "adult", "dating", "politics"}
+GAMBLING = re.compile(
+    r"\b(casino|blackjack|slots?|roulette|sportsbook|betting|gambl\w*|stake\.com|roobet|"
+    r"rollbit|gamdom|shuffle\.com|shuffle streamers?)\b", re.I)
 SKIP_FORMAT = re.compile(
     r"\b(ugc|slideshows?|talking[- ]head|sound campaign|audio[- ]clipping)\b", re.I)
 GEO_LOCK = re.compile(
@@ -380,6 +383,8 @@ def cmd_board_feed(a) -> None:
         why = []
         if cats & SKIP_CATS and not wl_hits:
             why.append("off-niche category")
+        if GAMBLING.search(f"{name} {desc}"):
+            why.append("gambling promotion (TikTok bans it)")
         if SKIP_FORMAT.search(name):
             why.append("format we don't make")
         if GEO_LOCK.search(name):

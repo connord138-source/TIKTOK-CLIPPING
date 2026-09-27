@@ -51,5 +51,22 @@
     "campaign_floor": "skip campaigns with max payout < $100/post (board-feed --min-max-payout 100)",
     "math": "income = verified views x rate; $3k/mo at ~$1/1k = ~3M views/mo (~100k/day across all posts/platforms)",
     "open_question": "user offered a faceless YouTube pivot — assessment given 2026-09-27; decision pending (rule 6)"
+  },
+  "youtube": {
+    "status": "to_create by user (approved 2026-09-27)",
+    "purpose": "Shorts cross-posting of every clip",
+    "name": "CHAT, CLIP THAT",
+    "handle": "@chat.clip.that (verified free 2026-09-27: 404 vs 200 for a real handle)",
+    "profile_picture": "brand/pfp-v2-wordmark.png",
+    "banner": "brand/yt-banner-2560x1440.png",
+    "description": "The moments chat begged us to clip. Daily streamer + esports highlights from Twitch, Kick and tournaments - posted through official creator clipping programs.",
+    "paid_promotion": "YouTube Studio > Details > 'Includes paid promotion' ON for every campaign Short"
+  },
+  "cross_post_policy": "every clip -> TikTok + Instagram Reels + YouTube Shorts when the campaign pays on them; each platform's post URL is submitted separately (campaigns pay per platform). Upload the clean file (never a TikTok download - watermark).",
+  "decisions_2026-09-27": {
+    "youtube_shorts": "YES",
+    "second_account": "NO - same account only",
+    "shuffle": "NOT applying (gambling)",
+    "faceless_longform_youtube": "kickoff 2026-09-27 (user said 'tomorrow')"
   }
 }

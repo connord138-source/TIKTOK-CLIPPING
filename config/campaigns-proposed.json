@@ -101,8 +101,8 @@
     "rate_per_1k": 1.5,
     "min_payout_usd": 4.5,
     "remaining_usd_at_research": 24841,
-    "note": "EXACT streamer niche, biggest fresh pool on the board; REQUIRES APPLICATION - user decision pending",
-    "status": "APPLY_RECOMMENDED (exact niche, niche now locked) - user files application",
+    "note": "gambling brand; also on config/campaign-exclusions.json",
+    "status": "DO NOT APPLY (2026-09-27): Shuffle is a crypto casino - its own example clip is a streamer losing a blackjack hand on Shuffle. Gambling promotion is banned on TikTok -> account-survival risk. Earlier 'apply' recommendation (09-23 shortlist) was made without checking the brand.",
     "shortlist_rank": null
   },
   {
