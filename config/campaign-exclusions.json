@@ -23,10 +23,10 @@
   },
   "2c65001c-d6a8-4b14-9ba6-52400794b085": {
     "name": "Alpha Futures Clipping Campaign",
-    "hard": false,
-    "reason": "off-niche: trading-personality clips (TJR, PB Trading) from their content portal; best rate on the board but dilutes a gaming/streamer page",
+    "hard": true,
+    "reason": "pays only if the posting account's page name includes 'Alpha Futures', and their logo must stay on screen the whole video; that means renaming @chat.clip.that (your call; a second account was ruled out 09-27)",
     "second_account_option": true,
-    "decided": "2026-09-26"
+    "decided": "2026-09-27 (watcher read the rules when the user queued it and killed the item)"
   },
   "117ddb85-e38d-47e2-abc1-9bbaf7ec8d1c": {
     "name": "Roll Anime Girls! [Roblox Game]",
