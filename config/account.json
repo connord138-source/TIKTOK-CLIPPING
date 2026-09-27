@@ -26,7 +26,7 @@
     "connected": true,
     "connector_id": "33520bdb-526f-422b-80e9-6aa523f3e3e1",
     "connected_at": "2026-09-26T16:33:04Z",
-    "drafts_lane": "Board Approve (per clip) → staging session via Claude Code Remote create_session (docs/PRODUCE-QUEUE.md §7): media_upload (presigned PUT from container) -> media_confirm -> tiktok_prepare_publish mode=UPLOAD_TO_DRAFT -> USER completes the publish-form widget in that Claude session (Higgsfield: clients without MCP Apps cannot publish; the board links to the session) -> draft in TikTok Inbox -> user adds location, sets disclosure, posts in-app. DIRECT_POST is never used (hard rule 1). Auto-staging right after production retired 2026-09-27 (user approves on the board first).",
+    "drafts_lane": "automatic after READY (PRODUCE-QUEUE §7): media_upload → curl PUT → media_confirm → tiktok_prepare_publish UPLOAD_TO_DRAFT → user OKs the widget in that Claude session (~2h window) → TikTok Inbox → user adds location/disclosure and posts. Expired form → board falls back to download + caption. DIRECT_POST never used (hard rule 1).",
     "disclosure_choice_paid_campaigns": "Set IN THE TIKTOK APP at post time: More options -> Disclose post content -> Branded content (third party) -> 'Paid partnership' label; required by TikTok's Branded Content Policy for paid promos, on top of the campaign's caption disclosure. Branded content cannot be private.",
     "first_draft": "val-1v1-v9 delivered to TikTok inbox 2026-09-26 16:46 UTC (status SEND_TO_USER_INBOX, publish_id v_inbox_url~v2.7689885652841809934, Higgsfield media 633dc40c-adc6-4600-a781-45910947a96d)",
     "ai_generated_label": "only_when_ai_element_added"
@@ -53,16 +53,16 @@
     "open_question": "user offered a faceless YouTube pivot — assessment given 2026-09-27; decision pending (rule 6)"
   },
   "youtube": {
-    "status": "LIKELY CREATED by user ~2026-09-27: 'Chat Clip That!' at @thechatclipthat (page appeared after the handle list was sent; user to confirm)",
+    "status": "CONFIRMED 2026-09-27: 'Chat Clip That!' (channel UCEpBCiPFGOG4wPxj1JDTiMg) — linked in Zapier; first private uploads landed there",
     "purpose": "Shorts cross-posting of every clip",
     "name": "CHAT, CLIP THAT",
-    "handle": "@thechatclipthat (unconfirmed) — @chat.clip.that was unavailable",
+    "handle": "@thechatclipthat",
     "profile_picture": "brand/pfp-v2-wordmark.png",
     "banner": "brand/yt-banner-2560x1440.png",
     "description": "The moments chat begged us to clip. Daily streamer + esports highlights from Twitch, Kick and tournaments - posted through official creator clipping programs.",
     "paid_promotion": "YouTube Studio > Details > 'Includes paid promotion' ON for every campaign Short",
     "role": "Shorts cross-posting of campaign clips (reused streamer content -> NOT the long-form monetization channel)",
-    "drafts_lane": "Board 'Approve → YouTube draft' → staging session → Zapier YouTubeV4CLIAPI upload_video with privacy_status private ONLY (private upload = draft; user ticks 'Includes paid promotion', adds a location for Valorant, and sets Public in Studio). YouTube linked in Zapier 2026-09-27 18:33 UTC (connection 024af8c3-9cfd-835c-9f3b-a973f0000199, set as default; category Gaming = '20'). Which channel it linked (Chat Clip That! vs personal) is confirmed by the first private upload."
+    "drafts_lane": "automatic after READY (PRODUCE-QUEUE §7): Zapier YouTubeV4CLIAPI upload_video, privacy private ONLY; user ticks 'Includes paid promotion', adds a location for Valorant, sets Public in Studio. Connection 024af8c3-9cfd-835c-9f3b-a973f0000199 (default)."
   },
   "cross_post_policy": "every clip -> TikTok + Instagram Reels + YouTube Shorts when the campaign pays on them; each platform's post URL is submitted separately (campaigns pay per platform). Upload the clean file (never a TikTok download - watermark).",
   "decisions_2026-09-27": {

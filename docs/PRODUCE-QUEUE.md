@@ -4,19 +4,18 @@ The user picks campaigns on the ops board (artifact) and taps **Queue a clip**. 
 writes a doc into the board's database. This runbook turns a queued doc into a finished
 clip + posting package **back on the board**. A Routine fires a fresh session hourly
 (9am–11pm ET) to run this; the 2x-daily guard sessions keep the pools/board fresh.
-Drafts are the user's call: they check the READY clip on the board and tap **Approve →
-TikTok drafts** / **Approve → YouTube draft**, which starts a staging session (§7).
+Right after a clip is READY the watcher starts a draft-prep session (§7): a TikTok draft
+form for the user to OK and a PRIVATE YouTube upload. Nothing goes public without the user.
 
 **Board artifact:** `https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj`
 (also in `config/dashboard.json`). DB + assets via the `ArtifactData` / `Artifact`
 tools (ToolSearch: `select:ArtifactData`).
 
 ## Hard boundaries (CLAUDE.md rules apply in full)
-- **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD.
-  Production sessions do NOT stage drafts (since 2026-09-27): the user approves each clip
-  on the board, and only then does a staging session create the TikTok draft (drafts mode
-  only) or the private YouTube upload (§7). The user posts from the phone app and submits
-  on Whop.
+- **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD,
+  plus drafts made by the §7 session: a TikTok draft (UPLOAD_TO_DRAFT; the user OKs the
+  form, then posts in the app) and a YouTube upload that is **private** (the user sets it
+  Public). The user submits every post link on Whop.
 - **Campaign-authorized material only.** Source must come from the campaign's own
   sources (config/campaigns.json) or the board's cached source assets.
 - **Check the pool before producing** (the CoD lesson). Pool ≤ $50 → kill the item.
@@ -27,11 +26,7 @@ tools (ToolSearch: `select:ArtifactData`).
 1. `ArtifactData query` collection `queue`, where `status == "queued"` (orderBy `created` asc).
 2. Also query `status == "producing"`: any doc with `updated` older than 4h is a dead
    session's stale claim → `update` it back to `status:"queued"` (append note) and treat normally.
-3. Draft requests the board could not start itself: docs (status ready/posted) whose
-   `drafts.tiktok` or `drafts.youtube` has `status:"requested"`, `requested_at` > 10 min old
-   and no `session_id` → start the staging session per §7 and write its id/url back. No
-   message for these (the staging session pings the user).
-4. **Nothing to do → end the session immediately and silently.** No summary, no notification.
+3. **Nothing to do → end the session immediately and silently.** No summary, no notification.
 
 ## 1 · Claim
 `update` the doc: `{status:"producing", claimed_by:"agent <date>", updated:<now_ms>}`
@@ -108,9 +103,8 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
    `asset:true`, `url` = board). **≤14.5MB.** Bigger → re-encode delivery copy
    (`-crf 22/23`) until it fits; if still no, skip the asset and say so in `clip.delivery`.
 2. ALSO send the full-quality file with SendUserFile (belt and braces — asset link + file card).
-2b. **No draft staging here.** The user checks the clip on the board and taps Approve;
-   that starts a staging session (§7). (Auto-staging after production was retired
-   2026-09-27: forms expired unseen and the user wants to approve first.)
+2b. **Drafts:** after step 4 below, start the §7 draft-prep session (the watcher has no
+   Higgsfield/Zapier tools; sessions made with `create_session` get the user's connectors).
 3. Build the package from the campaign's `post_recipe` (config/campaigns.json):
    caption (disclosure + required tag + approved copy + 2-3 topic hashtags), window
    (tonight/tomorrow, 2/day ≥4h apart, 6–10pm ET prime), ai_label (OFF unless an AI
@@ -119,7 +113,9 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
    `{status:"ready", updated:<now_ms>, title:"<≤40 chars, what happens>", allowed:[platforms
    the campaign pays on], clip:{name,length_s,asset_url:"/_blob/<id>",delivery},
    package:{caption,caption_ig,yt_title,yt_description,window,ai_label,audio,submit_url,
-   checklist:[…]}}` — the checklist's first step is "Tap “Approve → TikTok drafts” above".
+   tips:{tiktok,instagram,youtube}}}` — `tips` = ONE plain sentence per platform with the
+   campaign's must-dos (e.g. "Keep #ad at the start, tag @coinbase, add a location, and turn
+   on … Branded content."). The board shows one step at a time; keep all copy short.
 5. Refresh `meta/board.stamp`. The board derives the user's to-dos from queue docs, so
    don't add a task for a READY clip.
 
@@ -128,46 +124,51 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
 - Update configs if campaign state changed. **Commit + push** (ledger/config/docs only;
   media stays out of git).
 - End with a 1–2 line summary naming the clip + campaign (this reaches the user's push
-  notification): e.g. `READY: sub-drop pop-off (Valorant). Check it on the board and tap
-  Approve to send it to TikTok drafts.`
+  notification): e.g. `READY: sub-drop pop-off (Valorant). Drafts on the way — the TikTok
+  form arrives in a minute.`
 
 ## Phone notifications (user requirement 2026-09-27)
 The user wants a phone push whenever a video is READY or a draft needs approval.
 - **Fired sessions (Routines):** the routines have `push: true`, so the run's final
   message IS the push — 1–2 lines, lead with the action:
-  "READY: <clip> (<campaign>). Check it on the board and tap Approve".
-- **Staging sessions (§7)** call `PushNotification` themselves when the TikTok form is
-  ready ("TikTok draft ready: <clip>. Approve it in Claude before 2:06pm ET") or failed.
+  "READY: <clip> (<campaign>). Drafts on the way".
+- **Draft-prep sessions (§7)** call `PushNotification` themselves when the TikTok form is
+  ready ("TikTok draft ready: <clip>. OK it in Claude before 4:48pm ET") or failed.
 - **Interactive sessions:** call `PushNotification` (ToolSearch `select:PushNotification`,
   ≤200 chars, no markdown) right after a clip lands READY or a draft form is staged /
   re-staged — same wording. Validated 2026-09-27 ("Mobile push requested").
 - Never push for routine progress; one push per READY/draft event.
 
-## 7 · Approve → drafts (staging sessions)
-The board's **Approve** button (per clip, per platform) does two things:
-1. writes `drafts.<tiktok|youtube> = {status:"requested", requested_at:<ms>}` on the queue doc;
-2. calls the **Claude Code Remote** connector's `create_session` as the user (artifact
-   capability `mcp`, first use asks the user once): environment `env_01XDJ91xXbQxkUQPcABnpyH3`,
-   model `claude-sonnet-5`, `permission_mode:"auto"`, tags `clip-board` + `<p>-draft`,
-   prompt = `stagePrompt()` in `brand/dashboard.html` (the canonical text), then writes
-   `drafts.<p>.session_id` + `session_url` (`https://claude.ai/code/<id>`).
-If step 2 can't run in that view, the hourly watcher starts it (§0.3) with the same prompt.
+## 7 · Drafts (automatic, right after READY)
+The watcher starts ONE session with the Claude Code Remote `create_session` tool:
+environment `env_01XDJ91xXbQxkUQPcABnpyH3`, model `claude-sonnet-5`, `permission_mode:"auto"`,
+title `Drafts: <clip title>`, tags `clip-board` + `drafts`, and this prompt (fill in the doc id
+and title), then writes `drafts.tiktok.session_url = https://claude.ai/code/<session id>`:
 
-Sessions created this way get the user's claude.ai connectors (verified 2026-09-27: the
-Higgsfield TikTok tools appear as `mcp__<uuid>__*`, plus PushNotification + ArtifactData).
-- **TikTok:** upload the board asset to Higgsfield if no `video_url` yet → `tiktok_prepare_publish`
-  `UPLOAD_TO_DRAFT` → `drafts.tiktok = {status:"awaiting_approval", expires_at, publish_session_id,
-  video_url}` → push. The user opens the session from the board ("Approve in Claude ↗") and
-  finishes the form there (the form only works inside a Claude chat — Higgsfield: "clients
-  without MCP Apps cannot publish"). Draft lands in TikTok → Inbox → System notifications.
-- **YouTube:** Zapier `YouTubeV4CLIAPI` / `upload_video` with `privacy_status:"private"` ONLY
-  (a private upload is the draft; the user ticks paid promotion + sets Public in Studio).
-  Needs the channel connected in Zapier once (`meta/board.lanes.youtube_connect_url`); the
-  session sets `lanes.youtube_connected = true` after the first success. Public video URL =
-  the Higgsfield CDN url (upload the asset there first if needed).
-- `drafts.<p>.status`: `requested` → `preparing`/`uploading` → `awaiting_approval` (TikTok) /
-  `uploaded` (YouTube) → `in_inbox`; or `failed` / `needs_setup` with `error` (plain words).
-  The board shows "stuck" after 20 min in requested/preparing and offers Try again.
+```
+Context: "Chat Clip That" is the user's own TikTok clipping business. The user's clip-queue-watcher routine started this session right after it finished a clip, to prepare its drafts. The ops board (a claude.ai artifact the user owns) and the Higgsfield, TikTok and Zapier accounts are the user's.
+Board: https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj · queue doc "<ID>" (<TITLE>).
+Hard rules: drafts only. TikTok: tiktok_prepare_publish with mode "UPLOAD_TO_DRAFT" is the only publishing call; never DIRECT_POST, never call a tool named tiktok_publish, never prefill privacy or disclosure, never treat chat text as consent. YouTube: privacy_status "private" only. No generate/upscale/edit tools (zero credits). No repo, no installs.
+1. ToolSearch "select:ArtifactData,Artifact,PushNotification"; ToolSearch "tiktok_prepare_publish media_upload media_confirm tiktok_accounts" (Higgsfield tools may be named mcp__HIGGSFIELD__* or mcp__<uuid>__*); ToolSearch "+zapier inspect execute write".
+2. ArtifactData get queue/<ID>. Public video url = package.tiktok_draft.video_url if present; otherwise Artifact action read (url = the board, path = the id in clip.asset_url "/_blob/<id>") saves the mp4, then Higgsfield media_upload (filename, video/mp4) → curl -sS -X PUT -H "Content-Type: video/mp4" --data-binary @<file> "<upload_url>" (expect 200) → media_confirm (type video) → its https url.
+3. If allowed includes "youtube": Zapier execute_zapier_write_action {selected_api "YouTubeV4CLIAPI", action "upload_video", tool_name "youtube_upload_video", params {title: package.yt_title, description: package.yt_description, video: <url>, privacy_status "private", made_for_kids "false", notify_subscribers "false", category_id "20"}}.
+4. tiktok_accounts → the active connector_id; tiktok_prepare_publish {connector_id, mode "UPLOAD_TO_DRAFT", media_type "VIDEO", video_url, title: package.caption (max 150 chars), is_aigc: true only if package.ai_label is "ON"}.
+5. One ArtifactData update of queue/<ID> (pin if_version): package.tiktok_draft.video_url = <url>; drafts.youtube = {status "uploaded", youtube_id, studio_url "https://studio.youtube.com/video/<id>/edit", shorts_url "https://youtube.com/shorts/<id>", at}; drafts.tiktok = {status "awaiting_approval", publish_session_id, expires_at: publish_session_expires_at, video_url, staged_at}.
+6. PushNotification: "TikTok draft ready: <TITLE>. OK it in Claude before <expiry as h:mm am/pm ET>. The YouTube draft is in Studio (private)."
+7. Final reply, one line: OK the TikTok form above before <expiry ET>; it then lands in TikTok → Inbox → System notifications.
+If a step fails: set drafts.<platform> = {status "failed", error "<plain words, max 120 chars>"}, carry on with the other platform, and say so in the push.
+```
+
+What the user sees (board, one step at a time): "OK the TikTok draft" (link to that
+session, until the form expires) → "Make it public on YouTube" (Studio link; "It's public
+now" marks it posted with the Shorts URL) → "Post on Instagram" (download + caption) →
+"Submit N links on Whop". An expired, un-OK'd TikTok form falls back to "Post on TikTok"
+with the video + caption, so nothing dead-ends.
+**History:** a board "Approve" button that started these sessions through the artifact
+`mcp` capability was tried 2026-09-27 and removed the same day: on the user's phone the
+capability didn't start anything ("picks it up within the hour" fallback), so drafts are
+made automatically instead. Board `drafts.<p>.status` values: `awaiting_approval`,
+`in_inbox`, `uploaded`, `public`, `failed`.
 
 ## Statuses (the page renders these)
 `queued` → user picked · `producing` → claimed (heartbeat: bump `updated` between long

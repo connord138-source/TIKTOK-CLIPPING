@@ -204,3 +204,17 @@ player + Download (downloads capability).
   draft); the user ticks paid promotion and sets Public in Studio. The YouTube account link
   inside Zapier is the user's one-time step (connect URL in `meta/board.lanes`). The direct
   YouTube Data API was rejected: uploads from unaudited API projects get locked private.
+- **Update, same day: the board's `mcp` path failed on the user's phone.** The Approve tap
+  saved the request, but no session started, so the page showed its "within the hour"
+  fallback. The Approve buttons were removed. Drafts are now made automatically right after
+  READY (PRODUCE-QUEUE §7).
+- **Zapier YouTube link confirmed:** the first two private uploads (`q5QzmmhbI7U`,
+  `4_jTVOgpzEk`) landed on **Chat Clip That!** (channel `UCEpBCiPFGOG4wPxj1JDTiMg`).
+  `upload_video` takes the Higgsfield CDN mp4 URL as `video` directly. Category Gaming = `20`.
+- **Irubyana campaign page** (`contentrewards.com/discover/<id>`, public) has **Join
+  Campaign** (`/join`) and Submissions. The user couldn't find the campaign by searching
+  Whop, so the board links this page instead (`campaigns/<id>.submit_link`). Its listed
+  requirements go beyond the description: "Include brand logo", "Get approval before
+  publishing", caption hashtags incl. `#irubyanaclips`, and a Twitch banner in the
+  background. The 09-26 clip did none of these, so it may be rejected. It's a $60-max
+  campaign, so no more clips.
