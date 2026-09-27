@@ -62,7 +62,7 @@
     "description": "The moments chat begged us to clip. Daily streamer + esports highlights from Twitch, Kick and tournaments - posted through official creator clipping programs.",
     "paid_promotion": "YouTube Studio > Details > 'Includes paid promotion' ON for every campaign Short",
     "role": "Shorts cross-posting of campaign clips (reused streamer content -> NOT the long-form monetization channel)",
-    "drafts_lane": "Board 'Approve → YouTube draft' → staging session → Zapier YouTubeV4CLIAPI upload_video with privacy_status private ONLY (private upload = draft; user ticks 'Includes paid promotion' and sets Public in Studio). Zapier connector connected 2026-09-27; upload_video enabled on the Zapier MCP server; YouTube account link in Zapier PENDING (user, link on the board)."
+    "drafts_lane": "Board 'Approve → YouTube draft' → staging session → Zapier YouTubeV4CLIAPI upload_video with privacy_status private ONLY (private upload = draft; user ticks 'Includes paid promotion', adds a location for Valorant, and sets Public in Studio). YouTube linked in Zapier 2026-09-27 18:33 UTC (connection 024af8c3-9cfd-835c-9f3b-a973f0000199, set as default; category Gaming = '20'). Which channel it linked (Chat Clip That! vs personal) is confirmed by the first private upload."
   },
   "cross_post_policy": "every clip -> TikTok + Instagram Reels + YouTube Shorts when the campaign pays on them; each platform's post URL is submitted separately (campaigns pay per platform). Upload the clean file (never a TikTok download - watermark).",
   "decisions_2026-09-27": {
