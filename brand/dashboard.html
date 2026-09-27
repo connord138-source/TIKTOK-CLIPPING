@@ -322,11 +322,12 @@ function hero(s){
         const url = ((q.platforms || {})[p] || {}).url || "";
         const direct = campOf(q).submit_link;
         return `<div class="sub"><div><b>${esc(titleOf(q))}</b> · ${esc(PLAT[p])}</div>
-          <div class="hint">${direct ? `Open the campaign page, sign in with Whop, tap <b>Join Campaign</b>, then submit the link.`
+          <div class="hint">${direct ? `Open the campaign page, sign in with Whop, tap <b>Join Campaign</b>, then submit the link (and the video file if it asks).`
             : `Search Whop for: <b>${esc(whopName(q))}</b>`}</div>
           <div class="row">${direct ? `<a class="btn small" href="${esc(direct)}" target="_blank" rel="noopener">Open campaign ↗</a>`
             : `<button class="btn alt small" data-copyname="${esc(q.id)}">Copy campaign name</button>`}
             ${url ? `<button class="btn alt small" data-copylink="${esc(q.id + ":" + p)}">Copy link</button>` : ""}
+            ${videoButtons(q).replace(/class="btn alt"/g, 'class="btn alt small"')}
             <button class="btn alt small" data-submitted="${esc(q.id + ":" + p)}">Done, I submitted it</button></div></div>`;
       }).join("")}</div>
       ${viaWhop ? `<div class="row"><a class="btn" href="${WHOP}" target="_blank" rel="noopener">Open Whop ↗</a></div>` : ""}</div>`;
