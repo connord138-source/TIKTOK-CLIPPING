@@ -43,7 +43,8 @@
   "instagram": {
     "account_created": "2026-09-24",
     "handle": "@chat.clipp.that",
-    "status": "created (note: double-p, differs from TikTok @chat.clip.that). Warm-up through ~Sep 26: scroll Reels gaming lane, follow the 4 required Valorant accounts naturally, no posting/links. Reels posting ~Sep 27+."
+    "status": "created (note: double-p, differs from TikTok @chat.clip.that). Warm-up through ~Sep 26: scroll Reels gaming lane, follow the 4 required Valorant accounts naturally, no posting/links. Reels posting ~Sep 27+.",
+    "login_note": "2026-09-27: desktop Chrome login for @chat.clipp.that loops on Meta's reCAPTCHA page (normal for a 3-day-old account on a new browser). Use the Instagram phone app for this account; post Reels from the phone (save the video from the board). Don't hammer retries on desktop (can trigger a temporary lock)."
   },
   "income_goal": {
     "target": "a few thousand USD/month",
