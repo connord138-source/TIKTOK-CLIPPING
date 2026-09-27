@@ -177,6 +177,9 @@ function draftOf(q, p){
   if (l && ["check_inbox", "SEND_TO_USER_INBOX"].includes(l.status)) return {status: "in_inbox"};
   return null;
 }
+const approvalFirst = (q) => campOf(q).post_flow === "submit_first";
+const approvalOf = (q) => (q.approval || {}).status || "none";   // none | pending | approved | rejected
+const anyPosted = (q) => allowedOf(q).some(p => pstat(q, p) !== "none");
 const formLive = (d) => !!(d && d.status === "awaiting_approval" && d.expires_at && Date.parse(d.expires_at) > Date.now());
 const maybeInbox = (d) => !!(d && (["in_inbox", "check_inbox"].includes(d.status) || d.status === "awaiting_approval"));
 const active = () => S.queue.filter(q => ["ready", "posted"].includes(q.status) && alive(q) && !q.skip_submit);
@@ -189,6 +192,16 @@ function allSteps(){
   const out = [], subs = [];
   const clips = active().filter(q => !finishedClip(q)).sort((a, b) => (a.created || 0) - (b.created || 0));
   for (const q of clips){
+    if (approvalFirst(q) && approvalOf(q) !== "approved"){
+      // Nothing more gets posted until the campaign approves it. A link that's already up still gets submitted.
+      const posted = allowedOf(q).filter(p => pstat(q, p) === "posted");
+      posted.forEach(p => subs.push({q, p}));
+      const left = allowedOf(q).some(p => pstat(q, p) === "none");
+      const asked = approvalOf(q) === "pending" || allowedOf(q).some(p => pstat(q, p) === "submitted");
+      if (left && !posted.length) out.push(asked ? {key: "wait:" + q.id, kind: "wait", q, prio: 5}
+                                                 : {key: "approve:" + q.id, kind: "approve", q, prio: 0});
+      continue;
+    }
     for (const p of ORDER){
       if (!allowedOf(q).includes(p)) continue;
       const st = pstat(q, p);
@@ -205,6 +218,8 @@ function allSteps(){
   return out.map((s, i) => ({s, i})).sort((a, b) => a.s.prio - b.s.prio || a.i - b.i).map(x => x.s);
 }
 function label(s){
+  if (s.kind === "approve") return `Get it approved before posting: ${titleOf(s.q)}`;
+  if (s.kind === "wait") return `Waiting for approval: ${titleOf(s.q)}`;
   if (s.kind === "form") return `OK the TikTok draft: ${titleOf(s.q)}`;
   if (s.kind === "yt") return `Make it public on YouTube: ${titleOf(s.q)}`;
   if (s.kind === "post") return `Post on ${PLAT[s.p]}: ${titleOf(s.q)}`;
@@ -258,6 +273,19 @@ function hero(s){
   if (!s) return `<div class="hero"><div class="eyebrow">All done</div><h3>Nothing to do right now.</h3>
     <p>New clips land here when they're ready, and your phone buzzes.</p></div>`;
   const eb = `<div class="eyebrow">Next up</div>`;
+  if (s.kind === "approve" || s.kind === "wait"){
+    const q = s.q, page = campOf(q).submit_link || WHOP;
+    if (s.kind === "wait") return `<div class="hero">${eb}<h3>Waiting for approval: “${esc(titleOf(q))}”</h3>
+      <p>Don't post it ${anyPosted(q) ? "anywhere else " : ""}yet. Check the campaign page for their answer.</p>
+      <div class="row"><a class="btn alt" href="${esc(page)}" target="_blank" rel="noopener">Open campaign ↗</a>
+        <button class="btn" data-approval="${esc(q.id)}:approved">It's approved</button>
+        <button class="btn link" data-approval="${esc(q.id)}:rejected">It was rejected</button></div></div>`;
+    return `<div class="hero">${eb}<h3>Get “${esc(titleOf(q))}” approved before posting</h3>
+      <p>This campaign wants the <b>video submitted first</b>. Post it only after they approve it.</p>
+      <div class="tip">Save the video → open the campaign → Submit → upload the video.</div>
+      <div class="row">${videoButtons(q)}<a class="btn" href="${esc(page)}" target="_blank" rel="noopener">Open campaign ↗</a></div>
+      <div class="row"><button class="btn alt" data-approval="${esc(q.id)}:pending">I sent it for approval</button></div></div>`;
+  }
   if (s.kind === "form"){
     return `<div class="hero">${eb}<h3>OK the TikTok draft for “${esc(titleOf(s.q))}”</h3>
       <p>The TikTok form is in your Claude chat, open until <b>${esc(clock(s.d.expires_at))}</b>. After you OK it, the video waits in TikTok → Inbox → System notifications.</p>
@@ -331,6 +359,7 @@ function renderNext(){
 
 function pill(q, p){
   const st = pstat(q, p), d = draftOf(q, p);
+  if (st === "none" && approvalFirst(q) && approvalOf(q) !== "approved") return `<span class="pill draft">${PLAT[p]} · needs approval</span>`;
   if (st === "submitted") return `<span class="pill done">${PLAT[p]} ✓</span>`;
   if (st === "skipped") return `<span class="pill">${PLAT[p]} skipped</span>`;
   if (st === "posted") return `<span class="pill todo">${PLAT[p]} · submit</span>`;
@@ -480,6 +509,13 @@ document.addEventListener("click", async (ev) => {
     const url = yd.shorts_url || (yd.youtube_id ? "https://youtube.com/shorts/" + yd.youtube_id : "");
     await write(() => qdoc(q.id).update({status: "posted", updated: Date.now(), drafts: {youtube: {status: "public"}},
       platforms: {youtube: {status: "posted", url, at: Date.now()}}}), "Nice. Next: submit it on Whop.");
+    UI.focus = null; return render();
+  }
+  if (d.approval) {
+    const [id, st] = d.approval.split(":");
+    const extra = st === "rejected" ? {skip_submit: true, skip_reason: "Not approved by the campaign"} : {};
+    await write(() => qdoc(id).update({updated: Date.now(), approval: {status: st, at: Date.now()}, ...extra}),
+      st === "approved" ? "Approved. Now post it." : st === "pending" ? "Got it. Don't post until they approve it." : "OK, taken off your list.");
     UI.focus = null; return render();
   }
   if (d.okd) {

@@ -78,7 +78,10 @@
     "required_caption_tokens": [
       "#ad",
       "@coinbase"
-    ]
+    ],
+    "post_flow": "post_then_submit",
+    "requirements": [],
+    "requirements_note": "API contentRequirements/creatorRequirements are empty (checked 2026-09-27); the rules live in the Notion doc (post_recipe)."
   },
   {
     "id": "cr-d8f10d9f",
@@ -88,7 +91,7 @@
     "platform": "whop-content-rewards",
     "participation": "open_submission - no application, no account restrictions. SUBMIT via Whop Discover -> Content Rewards (https://whop.com/discover/content-rewards/) -> search 'Irubyana' -> Submit clip.",
     "submit_url": "https://whop.com/discover/content-rewards/",
-    "status": "ACTIVE - onboarded 2026-09-26 (discovered by board-feed); $1,971 of $2,000 left at onboarding",
+    "status": "ACTIVE - onboarded 2026-09-26 (discovered by board-feed); $1,971 of $2,000 left at onboarding · 2026-09-27: clip v007 was POSTED BEFORE APPROVAL (rule missed: it lived in contentRequirements); no logo/banner/#irubyanaclips either. No more clips: max $60/post, under the $100 floor.",
     "activated_at": "2026-09-26",
     "rate_per_1k": 1.0,
     "min_payout_usd": 1.0,
@@ -102,6 +105,7 @@
     "required_caption_tokens": [
       "@irubyana",
       "#irubyana",
+      "#irubyanaclips",
       "#twitch"
     ],
     "sources": [
@@ -115,6 +119,14 @@
       "avoid": "her 'first date' stream is full of innuendo/profanity — skip for account safety; skip windows with background music (copyright)"
     },
     "notes": "IRL streamer (music studio, kickboxing, dating bits) — wide 1080p60 shots: use blur layout with --fg focus crop.",
-    "platforms_note": "Whop's payout table also lists YouTube and X ($1/1k, max $60 each), but the written rules say 'post on tiktok and instagram reels' - we post TikTok + Instagram Reels only (checked 2026-09-27)."
+    "platforms_note": "Whop's payout table also lists YouTube and X ($1/1k, max $60 each), but the written rules say 'post on tiktok and instagram reels' - we post TikTok + Instagram Reels only (checked 2026-09-27).",
+    "post_flow": "submit_first",
+    "requirements": [
+      "Include brand logo",
+      "Get approval before publishing",
+      "Minimum video length 15s",
+      "Caption: \"Make sure to @Irubyana and use hastags like irubyana, irubyanaclips, twitch, twitchlive\"",
+      "Make sure to add twitch banner to background of clips for better engagement"
+    ]
   }
 ]

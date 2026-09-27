@@ -104,6 +104,25 @@ def cr_normalize(c: dict) -> dict:
     }
 
 
+# Posting order: some campaigns want the VIDEO submitted for approval BEFORE it is posted
+# (Irubyana, 2026-09-27 — missed because this rule lives in contentRequirements, not the
+# description). Every requirement line is a rule; onboarding reads all of them.
+APPROVAL_FIRST = re.compile(r"approv\w*\s+(before|prior\s+to)\s+(publish|post)|before\s+(publishing|posting)"
+                            r"|pre-?approv|submit\s+(the\s+)?(video|clip)\s+(first|before)", re.I)
+
+
+def cr_requirements(c: dict) -> list:
+    """Every requirement line the campaign page shows: contentRequirements.items + creatorRequirements."""
+    items = list((c.get("contentRequirements") or {}).get("items") or []) + list(c.get("creatorRequirements") or [])
+    return [str(x).strip() for x in items if str(x).strip()]
+
+
+def cr_post_flow(c: dict) -> str:
+    """'submit_first' when the campaign wants approval before posting, else 'post_then_submit'."""
+    text = " ".join(cr_requirements(c) + [c.get("description") or ""])
+    return "submit_first" if APPROVAL_FIRST.search(text) else "post_then_submit"
+
+
 def cr_fetch_all(max_pages: int = 15) -> list:
     rows, cursor, pages = [], None, 0
     while pages < max_pages:
@@ -172,9 +191,14 @@ def cmd_detail(a) -> None:
     if desc:
         print("\n--- description / rules ---\n")
         print(desc[:6000])
+    reqs = cr_requirements(c)
+    print("\n--- REQUIREMENTS (campaign page; every line is a rule) ---")
+    print("\n".join(f"  - {r}" for r in reqs) if reqs else "  (none listed)")
+    if cr_post_flow(c) == "submit_first":
+        print("\n!!! POSTING ORDER: submit the VIDEO for approval FIRST; post only after it is approved.")
     extras = {k: v for k, v in c.items()
-              if k not in ("description", "metrics") and isinstance(v, (str, int, float, bool, list))
-              and k not in cr_normalize(c)}
+              if k not in ("description", "metrics", "contentRequirements", "creatorRequirements")
+              and isinstance(v, (str, int, float, bool, list)) and k not in cr_normalize(c)}
     print("\n--- other fields ---")
     print(json.dumps(extras, indent=1)[:3000])
 
@@ -423,6 +447,12 @@ def cmd_board_feed(a) -> None:
         if x.get("second_account_option"):
             chips.append("second-account option")
         chips += [f"watchlist: {t}" for t in wl_hits]
+        reqs, flow = cr_requirements(c), cr_post_flow(c)
+        if flow == "submit_first":
+            chips.append("approval before posting")
+        req_text = " ".join(reqs).lower()
+        chips += [label for key, label in (("logo", "logo on video"), ("link in bio", "link in bio"),
+                                           ("banner", "banner in video")) if key in req_text]
         chips += sorted(cats - {"gaming"})[:2]
         docs.append({"doc_id": "cr-" + cid[:8], "data": {
             "name": name.strip(), "org": c.get("organizationName"), "rate": rate_s,
@@ -433,8 +463,10 @@ def cmd_board_feed(a) -> None:
                       else f"Your call: {x['reason']} · " if x else "")
                      + ("" if x.get("hard") else f"found {seen.get(cid, today)} · {runway}")
                      + (" · apply on the campaign page first"
-                        if c.get("requiresApplication") else "")),
-            "rules": chips, "discovered": True, "first_seen": seen.get(cid, today),
+                        if c.get("requiresApplication") else "")
+                     + (" · wants the video approved BEFORE you post" if flow == "submit_first" else "")),
+            "rules": chips, "post_flow": flow, "requirements": reqs[:8],
+            "discovered": True, "first_seen": seen.get(cid, today),
             "cr_campaign_id": cid, "money": m, "updated": now_ms}})
 
     docs.sort(key=lambda d: d["data"]["money"]["score"], reverse=True)

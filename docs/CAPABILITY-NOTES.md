@@ -218,3 +218,10 @@ player + Download (downloads capability).
   publishing", caption hashtags incl. `#irubyanaclips`, and a Twitch banner in the
   background. The 09-26 clip did none of these, so it may be rejected. It's a $60-max
   campaign, so no more clips.
+- **Campaign requirements live in two API fields beyond the description:**
+  `contentRequirements.items[]` and `creatorRequirements[]`. That's where "Include brand
+  logo", "Get approval before publishing" and extra hashtags sit. `whop_scout.py detail` now
+  prints them under REQUIREMENTS and flags `!!! POSTING ORDER` for approve-first campaigns.
+  `board-feed` adds `post_flow`, `requirements` and chips ("approval before posting", "logo
+  on video", "link in bio"). The board holds back every posting step for a `submit_first`
+  campaign until the user marks it approved.

@@ -44,7 +44,11 @@ Board cards with ids `cr-XXXXXXXX` (`discovered: true`) come from the money-rank
 that board doc id; its `cr_campaign_id` is on `campaigns/<doc id>`. The user queuing it IS
 the pick (open campaigns need no join), so onboard, then produce:
 1. `whop_scout.py detail <cr_campaign_id>` → rules text, payouts, platforms,
-   `requiresApplication`, `referenceMaterials` (rules + asset links).
+   `requiresApplication`, `referenceMaterials` (rules + asset links), and the
+   **REQUIREMENTS block** (the API's `contentRequirements` + `creatorRequirements`, shown on
+   the campaign page). Every line there is a rule. The Irubyana miss (09-27): "Get approval
+   before publishing" lived only there, so the clip got posted before approval. When the
+   scout prints `!!! POSTING ORDER`, the campaign is **submit_first**.
 2. Read every rules link: Notion → `POST https://www.notion.so/api/v3/loadCachedPageChunkV2`
    `{"page":{"id":"<uuid>"}}`; Google Docs → `…/export?format=txt`; PDFs → Read tool.
 3. Sources = only what the campaign provides or names (Drive via gdown; Dropbox per-file
@@ -54,11 +58,30 @@ the pick (open campaigns need no join), so onboard, then produce:
    something we don't do (face-cam reactions as a hard requirement, app installs, VPN
    sign-ups, a language/geo we don't serve, adult/gambling/political content, bought
    engagement); or anything conflicts with CLAUDE.md hard rules.
-5. Encode a `config/campaigns.json` entry (id = board doc id, `cr_campaign_id`, rate/min/max,
-   allowed_platforms, `required_caption_tokens`, post_recipe, sources, `submit_url` =
+5. Fill the **rules checklist** before producing. Each item gets a verbatim answer or "none
+   stated":
+   - **Posting order** (`post_flow`: `submit_first` = video approved BEFORE posting, or
+     `post_then_submit`).
+   - **Exact caption tokens.**
+   - **On-video elements** (logo, banner, watermark, text).
+   - **Disclosure.**
+   - **Platforms.** The written rules beat the payout table.
+   - **Length.**
+   - **Follows and link in bio.**
+   - **Location.**
+   - **Audio.**
+   - **Application.**
+
+   A rule we can't meet → kill with the reason. A `submit_first` campaign → no §7 drafts. The
+   board shows "Get it approved before posting" instead, and the package's first tip says so.
+   Then encode a `config/campaigns.json` entry (id = board doc id, `cr_campaign_id`, rate/min/max,
+   allowed_platforms, `post_flow`, `requirements` (verbatim), `required_caption_tokens`,
+   post_recipe, sources, `submit_url` =
    `https://whop.com/discover/content-rewards/` — the user searches the campaign name there
    and taps "Submit clip"; brand-whop Bounties feeds may not list CPM campaigns).
-6. Refresh the board doc: real rules as chips, `url` → submit_url. Then continue at §3.
+6. Refresh the board doc: real rules as chips, `url` → submit_url, `post_flow`, `short`,
+   `whop_name` (exact campaign name to search on Whop), `submit_link` (the campaign's
+   contentrewards.com page, when Whop search can't find it). Then continue at §3.
 
 ## 3 · Bootstrap + sources
 Bootstrap only once a real item exists: `pip install yt-dlp faster-whisper` and ffmpeg via
@@ -140,7 +163,9 @@ The user wants a phone push whenever a video is READY or a draft needs approval.
 - Never push for routine progress; one push per READY/draft event.
 
 ## 7 · Drafts (automatic, right after READY)
-The watcher starts ONE session with the Claude Code Remote `create_session` tool:
+**Skip this for `submit_first` campaigns.** Nothing may be staged before the campaign
+approves the video. The board walks the user through approve → post instead.
+Otherwise the watcher starts ONE session with the Claude Code Remote `create_session` tool:
 environment `env_01XDJ91xXbQxkUQPcABnpyH3`, model `claude-sonnet-5`, `permission_mode:"auto"`,
 title `Drafts: <clip title>`, tags `clip-board` + `drafts`, and this prompt (fill in the doc id
 and title), then writes `drafts.tiktok.session_url = https://claude.ai/code/<session id>`:
