@@ -142,6 +142,7 @@ def main() -> None:
                        if posted else str(e.get("posted_at", ""))[5:10]),
             "views": views, "likes": likes, "comments": comments,
             "accruing": round(views / 1000 * t["rate"], 2) if not t["dead"] else 0,
+            "pays_from": pays_from, "payable": (not t["dead"]) and views >= pays_from,
             "state": state, "note": note, "post_url": e.get("post_url"),
             "updated": now_ms}})
 

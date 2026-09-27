@@ -26,7 +26,7 @@
     "connected": true,
     "connector_id": "33520bdb-526f-422b-80e9-6aa523f3e3e1",
     "connected_at": "2026-09-26T16:33:04Z",
-    "drafts_lane": "media_upload (presigned PUT from container) -> media_confirm -> tiktok_prepare_publish mode=UPLOAD_TO_DRAFT -> USER completes the publish-form widget (VERIFIED: renders in the Claude app for these cloud sessions; drafts mode asks only preview-review + agree) -> tiktok_publish_status SEND_TO_USER_INBOX -> user opens the draft from TikTok Inbox, adds location, sets disclosure, posts in-app. DIRECT_POST is never used (hard rule 1).",
+    "drafts_lane": "Board Approve (per clip) → staging session via Claude Code Remote create_session (docs/PRODUCE-QUEUE.md §7): media_upload (presigned PUT from container) -> media_confirm -> tiktok_prepare_publish mode=UPLOAD_TO_DRAFT -> USER completes the publish-form widget in that Claude session (Higgsfield: clients without MCP Apps cannot publish; the board links to the session) -> draft in TikTok Inbox -> user adds location, sets disclosure, posts in-app. DIRECT_POST is never used (hard rule 1). Auto-staging right after production retired 2026-09-27 (user approves on the board first).",
     "disclosure_choice_paid_campaigns": "Set IN THE TIKTOK APP at post time: More options -> Disclose post content -> Branded content (third party) -> 'Paid partnership' label; required by TikTok's Branded Content Policy for paid promos, on top of the campaign's caption disclosure. Branded content cannot be private.",
     "first_draft": "val-1v1-v9 delivered to TikTok inbox 2026-09-26 16:46 UTC (status SEND_TO_USER_INBOX, publish_id v_inbox_url~v2.7689885652841809934, Higgsfield media 633dc40c-adc6-4600-a781-45910947a96d)",
     "ai_generated_label": "only_when_ai_element_added"
@@ -61,25 +61,26 @@
     "banner": "brand/yt-banner-2560x1440.png",
     "description": "The moments chat begged us to clip. Daily streamer + esports highlights from Twitch, Kick and tournaments - posted through official creator clipping programs.",
     "paid_promotion": "YouTube Studio > Details > 'Includes paid promotion' ON for every campaign Short",
-    "role": "Shorts cross-posting of campaign clips (reused streamer content -> NOT the long-form monetization channel)"
+    "role": "Shorts cross-posting of campaign clips (reused streamer content -> NOT the long-form monetization channel)",
+    "drafts_lane": "Board 'Approve → YouTube draft' → staging session → Zapier YouTubeV4CLIAPI upload_video with privacy_status private ONLY (private upload = draft; user ticks 'Includes paid promotion' and sets Public in Studio). Zapier connector connected 2026-09-27; upload_video enabled on the Zapier MCP server; YouTube account link in Zapier PENDING (user, link on the board)."
   },
   "cross_post_policy": "every clip -> TikTok + Instagram Reels + YouTube Shorts when the campaign pays on them; each platform's post URL is submitted separately (campaigns pay per platform). Upload the clean file (never a TikTok download - watermark).",
   "decisions_2026-09-27": {
     "youtube_shorts": "YES",
     "second_account": "NO - same account only",
     "shuffle": "NOT applying (gambling)",
-    "faceless_longform_youtube": "kickoff 2026-09-27 (user said 'tomorrow')"
+    "faceless_longform_youtube": "YES: hybrid format, separate channel, American male AI voice, Twitch app (user)",
+    "approve_flow": "user approves each clip on the board; the board starts the TikTok/YouTube draft (asked 2026-09-27)"
   },
   "faceless_youtube": {
-    "status": "planning — kickoff 2026-09-27, plan in research/faceless-youtube-plan-2026-09-27.md",
+    "status": "decided 2026-09-27 — building after the Twitch app; plan in research/faceless-youtube-plan-2026-09-27.md",
     "deadline": "YPP before 2027-02-01 (after: 8k watch hours or 20M Shorts views instead of 4k / 10M)",
-    "recommended": "format A+B hybrid (streamer stories told with numbers); separate long-form channel; zero-credit pipeline (Kokoro TTS + code-rendered visuals)",
-    "decisions_pending": [
-      "format",
-      "separate channel vs same",
-      "voice (AI sample / own voice / paid TTS)",
-      "free Twitch developer app for stats API"
-    ],
-    "credits_note": "Higgsfield 150.25 on 2026-09-27 = at balance_floor_credits (150) -> no generation without a top-up"
+    "credits_note": "Higgsfield 150.25 on 2026-09-27 = at balance_floor_credits (150) -> no generation without a top-up",
+    "decisions": {
+      "format": "A+B hybrid: streamer stories told with numbers",
+      "channel": "separate long-form channel (not created yet; name ideas come with video 1)",
+      "voice": "American male AI voice: Kokoro-82M am_michael (free, /opt/tts venv)",
+      "twitch_app": "user creates a free Twitch developer app; keys go ONLY in environment variables TWITCH_CLIENT_ID / TWITCH_CLIENT_SECRET (session title bar → environment → Edit), never in chat"
+    }
   }
 }

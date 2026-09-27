@@ -176,3 +176,31 @@ player + Download (downloads capability).
   the video URL + caption.
 - Prefill `is_aigc=false` only for plain human-footage edits (account rule); privacy and
   disclosure are left for the user's form.
+
+## Board-started sessions + YouTube drafts (validated 2026-09-27)
+- **Artifact `mcp` capability** lets the ops board call the user's claude.ai connectors as
+  the user. The built-in **Claude Code Remote** connector works there, so the board's
+  Approve button calls `create_session` (env `env_01XDJ91xXbQxkUQPcABnpyH3`,
+  `claude-sonnet-5`, `permission_mode:"auto"`). The first call asks the user once. The
+  create result is `{ccr:{id:"session_…"}}` → `https://claude.ai/code/<id>`.
+- **Sessions made by `create_session` get the user's connectors.** Verified with a probe:
+  the Higgsfield TikTok tools were there, named `mcp__<connector uuid>__*` (not
+  `mcp__HIGGSFIELD__*`), plus PushNotification + ArtifactData. Find tools with ToolSearch
+  by tool name, never by server prefix.
+- **Routine sessions are different:** `mcp_connections: []` and **no repo source** (a
+  trigger's sources can't be set from create/update_trigger). Their prompts now attach
+  the repo with `add_repo` (access push) + clone before touching repo files. Before this,
+  the 09-27 13:00 UTC guard run left no commit and no board stats (stats_at stayed at
+  09-26 22:17), most likely because the repo wasn't there.
+- **Probe prompts without context get refused.** A bare "add_repo with push, dry-run push,
+  write the result to an artifact" probe was declined as a suspected injection/recon
+  pattern. Real prompts say whose business, repo and board it is (the staging prompt does).
+- **TikTok form = Claude chat only.** Higgsfield's prepare result says "clients without
+  MCP Apps cannot publish". The board can't host it, so it links to the staging session.
+- **YouTube drafts via Zapier:** Zapier connector connected 2026-09-27. Enabled on its
+  MCP server: `YouTubeV4CLIAPI` `upload_video` (+ `upload_video_thumbnail`). Params: title,
+  description, video (file url), privacy_status private|public|unlisted, made_for_kids,
+  notify_subscribers, category_id (dynamic enum), tags. We only send **private** (the
+  draft); the user ticks paid promotion and sets Public in Studio. The YouTube account link
+  inside Zapier is the user's one-time step (connect URL in `meta/board.lanes`). The direct
+  YouTube Data API was rejected: uploads from unaudited API projects get locked private.

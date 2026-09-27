@@ -75,6 +75,14 @@ queued `cr-*` campaigns get onboarded by the watcher (PRODUCE-QUEUE §2.5).
 routine summaries push automatically; in interactive sessions call `PushNotification`
 (PRODUCE-QUEUE "Phone notifications").
 
+**APPROVE → DRAFTS (2026-09-27).** Board simplified to four tabs (Today / Clips /
+Campaigns / YouTube; the user found it overwhelming, so keep copy short and plain).
+Production no longer stages drafts: the user taps **Approve → TikTok drafts** or
+**Approve → YouTube draft** on a clip, and the board starts a staging session through the
+Claude Code Remote connector (PRODUCE-QUEUE §7). TikTok: Higgsfield UPLOAD_TO_DRAFT form,
+finished by the user in that session. YouTube: Zapier `upload_video`, privacy **private**
+only. Routine sessions start without the repo: attach it with `add_repo` first.
+
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow
 OPERATIONS.md. Money model: campaign bounties ~$0.20–$6 per 1k verified views;

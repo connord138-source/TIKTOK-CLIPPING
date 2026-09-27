@@ -1,416 +1,799 @@
 <title>Clip Ops Board</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 :root{
-  --bg:#141416; --surface:#1d1d21; --surface2:#26262b; --line:#2e2e34;
-  --ink:#f5f5f5; --ink2:#a9a9b2; --ink3:#7c7c86;
-  --accent:#ffd100; --accent-ink:#141416;
-  --ok:#3dd68c; --warn:#f5b83d; --dead:#f0564e;
-  --track:#2a2a2f;
+  --bg:#141416; --surface:#1d1d21; --surface2:#27272d; --line:#303037;
+  --ink:#f4f4f1; --ink2:#b6b6be; --ink3:#86868f;
+  --accent:#ffd100; --accent-ink:#141416; --accent-soft:rgba(255,209,0,.14);
+  --ok:#3dd68c; --warn:#f5b83d; --dead:#f0564e; --track:#2c2c32;
+  --radius:12px;
   color-scheme:dark;
 }
 @media (prefers-color-scheme: light){
   :root:not([data-theme="dark"]){
-    --bg:#f4f4f2; --surface:#ffffff; --surface2:#ececea; --line:#dcdcd8;
-    --ink:#17171a; --ink2:#55555e; --ink3:#84848c;
-    --accent:#e0b400; --accent-ink:#141416;
-    --ok:#118a56; --warn:#b07600; --dead:#c62f28;
-    --track:#e2e2de;
+    --bg:#f4f4f1; --surface:#ffffff; --surface2:#ececea; --line:#dededa;
+    --ink:#17171a; --ink2:#50505a; --ink3:#7d7d86;
+    --accent:#e2b500; --accent-ink:#141416; --accent-soft:rgba(226,181,0,.16);
+    --ok:#12844f; --warn:#a86f00; --dead:#c32f28; --track:#e3e3df;
     color-scheme:light;
   }
 }
 :root[data-theme="light"]{
-  --bg:#f4f4f2; --surface:#ffffff; --surface2:#ececea; --line:#dcdcd8;
-  --ink:#17171a; --ink2:#55555e; --ink3:#84848c;
-  --accent:#e0b400; --accent-ink:#141416;
-  --ok:#118a56; --warn:#b07600; --dead:#c62f28;
-  --track:#e2e2de;
+  --bg:#f4f4f1; --surface:#ffffff; --surface2:#ececea; --line:#dededa;
+  --ink:#17171a; --ink2:#50505a; --ink3:#7d7d86;
+  --accent:#e2b500; --accent-ink:#141416; --accent-soft:rgba(226,181,0,.16);
+  --ok:#12844f; --warn:#a86f00; --dead:#c32f28; --track:#e3e3df;
   color-scheme:light;
 }
-body{background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,sans-serif;
-  padding-inline:16px;padding-block:20px 40px;max-width:760px;margin:0 auto;}
-header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
-.brand{font-family:'Archivo Black',Archivo,sans-serif;font-size:1.5rem;letter-spacing:.01em;}
+:root[data-theme="dark"]{ color-scheme:dark; }
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.45 Archivo,system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding-inline:16px;padding-block:0 48px;max-width:680px;margin:0 auto;}
+a{color:var(--accent);}
+button{font:inherit;cursor:pointer;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* header + tabs */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-top:14px;}
+.brandrow{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.brand{font-family:"Archivo Black",Archivo,sans-serif;font-size:1.15rem;letter-spacing:.01em;white-space:nowrap;}
 .brand .tri{color:var(--accent);}
-.sub{color:var(--ink3);font-size:.8rem;}
-.stamp{color:var(--ink3);font-size:.75rem;font-family:'IBM Plex Mono',monospace;margin-bottom:22px;
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);display:inline-block;}
-.dot.live{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent);}
-h2{font-family:'Archivo Black',Archivo,sans-serif;font-size:.8rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--ink2);margin:26px 0 10px;}
-h2 .soft{letter-spacing:0;text-transform:none;font-family:Archivo;font-weight:400;}
-.actions{display:flex;flex-direction:column;gap:8px;}
-.action{display:flex;gap:10px;align-items:flex-start;background:var(--surface);
-  border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 6px 6px 0;}
-.action.muted{border-left-color:var(--line);color:var(--ink2);}
-.action b{font-weight:700;}
-.action .why{color:var(--ink3);font-size:.8rem;display:block;margin-top:2px;}
-.pool{background:var(--surface);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
-.pool-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;}
-.pool-name{font-weight:700;}
-.pool-rate{color:var(--ink3);font-size:.78rem;}
-.flag{font-size:.7rem;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:99px;white-space:nowrap;}
-.flag.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);}
-.flag.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn);}
-.flag.dead{background:color-mix(in srgb,var(--dead) 18%,transparent);color:var(--dead);}
-.flag.hold{background:var(--surface2);color:var(--ink2);}
-.flag.q{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent);}
-.meter{height:8px;background:var(--track);border-radius:4px;margin:10px 0 6px;overflow:hidden;}
-.meter i{display:block;height:100%;border-radius:4px;}
-.meter .ok{background:var(--ok);} .meter .warn{background:var(--warn);} .meter .dead{background:var(--dead);}
-.pool-nums{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;
-  font-size:.8rem;color:var(--ink2);font-variant-numeric:tabular-nums;}
-.pool-note{color:var(--ink3);font-size:.78rem;margin-top:6px;}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
-.chips span{background:var(--surface2);color:var(--ink2);font-size:.7rem;
-  padding:2px 8px;border-radius:99px;}
-.btn{font:600 .8rem Archivo,sans-serif;background:var(--accent);color:var(--accent-ink);
-  border:0;border-radius:6px;padding:8px 14px;cursor:pointer;}
-.btn:disabled{opacity:.5;cursor:default;}
+.status{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--ink3);text-align:right;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink3);flex:none;}
+.dot.live{background:var(--ok);}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:12px;padding:4px;
+  background:var(--surface);border-radius:var(--radius);}
+.tab{border:0;background:transparent;color:var(--ink2);padding:10px 4px;border-radius:9px;
+  font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab[aria-selected="true"]{background:var(--surface2);color:var(--ink);}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--accent);color:var(--accent-ink);
+  font-size:.72rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}
+.badge:empty{display:none;}
+.panel{padding-top:20px;display:flex;flex-direction:column;gap:24px;}
+.panel[hidden]{display:none;}
+
+/* shared */
+h2{font-size:1.05rem;font-weight:700;margin:0;display:flex;align-items:baseline;justify-content:space-between;gap:8px;text-wrap:balance;}
+h2 .count{font-weight:500;color:var(--ink3);font-size:.9rem;}
+.section{display:flex;flex-direction:column;gap:10px;}
+.hint{color:var(--ink3);font-size:.85rem;margin:0;}
+.card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;}
+.empty{background:var(--surface);border-radius:var(--radius);padding:16px;color:var(--ink2);font-size:.95rem;}
+.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:700;font-size:.9rem;background:var(--accent);color:var(--accent-ink);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;white-space:nowrap;min-height:40px;}
 .btn.ghost{background:var(--surface2);color:var(--ink);}
-.btn.danger{background:transparent;color:var(--dead);border:1px solid var(--dead);}
-.btn.small{padding:5px 10px;font-size:.72rem;}
-.qform{display:none;margin-top:10px;gap:8px;flex-direction:column;}
-.qform.open{display:flex;}
-.qform input{background:var(--surface2);border:1px solid var(--line);color:var(--ink);
-  border-radius:6px;padding:8px 10px;font:400 .85rem Archivo,sans-serif;width:100%;box-sizing:border-box;}
-.qform .row{display:flex;gap:8px;}
-.qrow{margin-top:10px;}
-.qcard{background:var(--surface);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
-.qcard.ready{border:1px solid color-mix(in srgb,var(--ok) 45%,transparent);}
-.qcard-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;}
-.qname{font-weight:700;}
-.qmeta{color:var(--ink3);font-size:.75rem;font-family:'IBM Plex Mono',monospace;margin-top:2px;}
-.qnote{color:var(--ink2);font-size:.82rem;margin-top:6px;}
-video{width:100%;max-height:420px;border-radius:8px;background:#000;margin-top:10px;display:block;}
-.cap{position:relative;background:var(--surface2);border:1px solid var(--line);border-radius:6px;
-  padding:10px 12px;margin-top:10px;font:500 .78rem 'IBM Plex Mono',monospace;color:var(--ink);
-  white-space:pre-wrap;word-break:break-word;}
-.cap .copy{position:absolute;top:6px;right:6px;}
-.klist{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;}
-.klist li{display:flex;gap:8px;align-items:flex-start;font-size:.8rem;color:var(--ink2);}
-.klist input{margin-top:2px;accent-color:var(--accent);}
-.qactions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
-.tile{background:var(--surface);border-radius:8px;padding:12px 14px;}
-.tile .k{font-family:'IBM Plex Mono',monospace;font-size:1.5rem;font-weight:600;
-  font-variant-numeric:tabular-nums;}
-.tile .l{color:var(--ink3);font-size:.75rem;margin-top:2px;}
-table{width:100%;border-collapse:collapse;font-size:.85rem;}
-th{color:var(--ink3);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
-  text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);}
-td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top;}
-td.num{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
-.state{font-size:.75rem;font-weight:700;}
-.state.go{color:var(--accent);} .state.ok{color:var(--ok);} .state.dead{color:var(--dead);} .state.wait{color:var(--ink3);}
-.mini{color:var(--ink3);font-size:.78rem;}
-footer{margin-top:30px;color:var(--ink3);font-size:.75rem;line-height:1.6;}
-a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
-.tablewrap{overflow-x:auto;}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);
-  background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
-  padding:10px 16px;font-size:.82rem;transition:transform .25s;max-width:88vw;z-index:9;}
-#toast.show{transform:translateX(-50%) translateY(0);}
-.empty{color:var(--ink3);font-size:.82rem;background:var(--surface);border-radius:8px;
-  padding:12px 14px;}
-[data-dl]{display:none;}
-body.candl [data-dl]{display:inline-block;}
+.btn.quiet{background:transparent;color:var(--ink2);padding:10px 8px;}
+.btn.danger{background:transparent;color:var(--dead);}
+.btn:disabled{opacity:.5;cursor:default;}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.chip{font-size:.75rem;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;background:var(--surface2);color:var(--ink2);}
+.chip.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);}
+.chip.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn);}
+.chip.dead{background:color-mix(in srgb,var(--dead) 16%,transparent);color:var(--dead);}
+.chip.go{background:var(--accent-soft);color:var(--accent);}
+.bar{height:8px;border-radius:4px;background:var(--track);overflow:hidden;}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--accent);}
+.bar i.ok{background:var(--ok);} .bar i.warn{background:var(--warn);} .bar i.dead{background:var(--dead);}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+input[type=text],input[type=url]{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--ink);
+  border-radius:9px;padding:10px 12px;font:inherit;font-size:.95rem;min-height:44px;}
+details > summary{cursor:pointer;color:var(--ink2);font-weight:600;font-size:.9rem;list-style:none;}
+details > summary::-webkit-details-marker{display:none;}
+details > summary::before{content:"▸ ";}
+details[open] > summary::before{content:"▾ ";}
+
+/* today */
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.task{background:var(--surface);border-radius:var(--radius);padding:14px 16px;display:grid;
+  grid-template-columns:28px 1fr auto;gap:12px;align-items:center;}
+.task .n{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
+.task .t{font-weight:600;line-height:1.3;}
+.task .s{color:var(--ink2);font-size:.85rem;margin-top:3px;}
+.task .acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.tile{background:var(--surface);border-radius:var(--radius);padding:14px 16px;}
+.tile .k{font-family:"IBM Plex Mono",monospace;font-size:1.45rem;font-weight:600;font-variant-numeric:tabular-nums;}
+.tile .l{color:var(--ink3);font-size:.8rem;margin-top:2px;}
+.tile.wide{grid-column:1 / -1;display:flex;flex-direction:column;gap:8px;}
+.tile.wide .top2{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;flex-wrap:wrap;}
+
+/* clips */
+.clip{background:var(--surface);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:12px;}
+.clip .head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
+.clip .title{font-weight:700;font-size:1.02rem;line-height:1.3;}
+.clip .meta{color:var(--ink3);font-size:.82rem;margin-top:3px;}
+.plats{display:flex;flex-direction:column;border-top:1px solid var(--line);}
+.plat{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);}
+.plat .ph{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.plat .pn{font-weight:600;}
+.plat .cap{background:var(--surface2);border-radius:9px;padding:10px 12px;font:500 .8rem/1.45 "IBM Plex Mono",monospace;
+  white-space:pre-wrap;word-break:break-word;color:var(--ink);}
+video{width:100%;max-height:460px;border-radius:10px;background:#000;display:block;}
+.steps{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink2);font-size:.88rem;}
+
+/* campaigns */
+.camp{background:var(--surface);border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.camp .ch{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+.camp .cn{font-weight:700;}
+.camp .rate{color:var(--ink2);font-size:.85rem;}
+.camp .cnote{color:var(--ink3);font-size:.82rem;}
+.camp .nums{display:flex;justify-content:space-between;font-size:.8rem;color:var(--ink2);}
+.nope{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.nope li{background:var(--surface);border-radius:10px;padding:10px 14px;font-size:.88rem;}
+.nope li b{display:block;}
+.nope li span{color:var(--ink3);font-size:.82rem;}
+
+/* youtube */
+.ms{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
+.m{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+.m:last-child{border-bottom:0;}
+.m .ic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;
+  background:var(--surface2);color:var(--ink3);}
+.m.done .ic{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok);}
+.m.now .ic{background:var(--accent);color:var(--accent-ink);}
+.m.goal .ic{background:var(--accent-soft);color:var(--accent);}
+.m .ml{font-weight:600;}
+.m.done .ml{color:var(--ink2);}
+.m .mn{color:var(--ink3);font-size:.85rem;margin-top:2px;}
+.owner{font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-left:6px;}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.9rem;}
+.kv dt{color:var(--ink3);} .kv dd{margin:0;}
+
+.dline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--accent-soft);border-radius:9px;
+  padding:10px 12px;font-size:.9rem;line-height:1.35;}
+.dline > span{flex:1 1 180px;}
+.dline.bad{background:color-mix(in srgb,var(--dead) 13%,transparent);}
+.dline.good{background:color-mix(in srgb,var(--ok) 14%,transparent);}
+.spin{flex:0 0 14px !important;width:14px;height:14px;border-radius:50%;border:2px solid var(--accent);
+  border-right-color:transparent;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){.spin{animation:none;}}
+.when{font-size:.88rem;color:var(--ink2);}
+.when b{color:var(--ink);font-weight:600;}
+
+footer{margin-top:32px;color:var(--ink3);font-size:.8rem;line-height:1.6;}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);
+  background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 16px;
+  font-size:.9rem;transition:transform .25s,opacity .25s;max-width:90vw;z-index:9;opacity:0;pointer-events:none;}
+#toast.show{transform:translate(-50%,0);opacity:1;}
+@media (prefers-reduced-motion: reduce){#toast{transition:none;}}
+@media (max-width:420px){
+  .task{grid-template-columns:28px 1fr;}
+  .task .acts{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start;}
+}
 </style>
 
-<header>
-  <div class="brand">CHAT, CL<span class="tri">&#9654;</span>P THAT</div>
-  <div class="sub">mission control</div>
-</header>
-<div class="stamp"><span class="dot" id="livedot"></span><span id="stamp">loading…</span></div>
+<div class="top">
+  <div class="brandrow">
+    <div class="brand">CHAT, CL<span class="tri">&#9654;</span>P THAT</div>
+    <div class="status"><span class="dot" id="livedot"></span><span id="stamp">loading…</span></div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Board sections">
+    <button class="tab" role="tab" id="tab-today" data-tab="today">Today <span class="badge" id="b-today"></span></button>
+    <button class="tab" role="tab" id="tab-clips" data-tab="clips">Clips <span class="badge" id="b-clips"></span></button>
+    <button class="tab" role="tab" id="tab-campaigns" data-tab="campaigns">Campaigns</button>
+    <button class="tab" role="tab" id="tab-youtube" data-tab="youtube">YouTube</button>
+  </nav>
+</div>
 
-<h2>Do next</h2>
-<div class="actions" id="donext"></div>
-
-<h2>Campaigns <span class="soft">· new gaming/streamer finds land here, best-paying first — queue a clip and an agent takes it from there</span></h2>
-<div id="campaigns"></div>
-
-<h2>Production queue <span class="soft">· agents check hourly, 9am–11pm ET</span></h2>
-<div id="queue"></div>
-
-<h2>Posts</h2>
-<div class="tiles" id="tiles"></div>
-<div class="tablewrap" style="margin-top:10px;"><table id="posts"></table></div>
+<section class="panel" id="p-today" role="tabpanel" aria-labelledby="tab-today"></section>
+<section class="panel" id="p-clips" role="tabpanel" aria-labelledby="tab-clips" hidden></section>
+<section class="panel" id="p-campaigns" role="tabpanel" aria-labelledby="tab-campaigns" hidden></section>
+<section class="panel" id="p-youtube" role="tabpanel" aria-labelledby="tab-youtube" hidden></section>
 
 <footer>
-  How the loop works: twice a day (9:00 + 18:00 ET) a scout re-checks pools, adds new
-  gaming/streamer campaigns ranked by what they pay, and pulls live views + likes from the
-  TikTok profile (it also flags captions missing a required tag like #ad). Tap
-  <b>Queue a clip</b> on an open campaign → an agent verifies the pool and rules, cuts a
-  v9-template clip from campaign-authorized material, and posts the video + caption +
-  checklist back here (plus a TikTok draft for your OK once Higgsfield is attached to its
-  routine). You post from the phone app, hit <b>Mark posted</b>, and Submit on Whop.
-  Rule that never bends: campaign-authorized material only — and nothing auto-posts, ever.
+  Stats, pools and new campaigns refresh at 9am and 6pm ET. Approve a clip and an agent puts it in
+  your TikTok drafts; you get a phone alert when it needs your OK. Nothing ever posts without you.
 </footer>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
-// ---------- fallback snapshot (rendered instantly; live db overwrites) ----------
+// ---------- offline snapshot (shown only outside claude.ai; the live database replaces it) ----------
 const FB = {
-  board: {stamp:"2026-09-26", followers:8, do_next:[
-    {text:"Submit the TenZ post to the Valorant campaign — today.",
-     why:"Pool drains ~$800/day. Open the campaign → Submit clip → paste the TikTok link. Do the 5 IG follows first.", urgency:"hot"},
-    {text:"Post val-1v1-v9 tonight, 6–10pm ET — package is on this board.",
-     why:"Caption + checklist under Production queue → READY. Mark posted when it's up, then submit.", urgency:"hot"},
-    {text:"File the Shuffle Streamers application.",
-     why:"$24.5k pool, barely touched, exact niche. Biggest open lever on the board.", urgency:"warm"},
-    {text:"Do NOT post MW4 clip A.",
-     why:"CoD pool hit $0 on 09-26. Clip B stays live (account content) but earns nothing.", urgency:"hold"}]},
-  campaigns: [
-    {id:"coinbase-valorant-oneshot", name:"Coinbase × Valorant — Clipping", rate:"$1.00/1k · TT + IG + Shorts · pays from 2k views",
-     rem:9155, bud:10000, flag:"ok", can_queue:true, url:"https://whop.com/cliphaus-inc/exp_BmRo1Cepnpq46o/app/",
-     note:"terms changed 09-26 — #ad now mandatory for payout", rules:["#ad — mandatory for payout","@coinbase tag","geo-tag","≥7s"]},
-    {id:"shuffle-streamers", name:"Shuffle Streamers", rate:"$1.50/1k · application required",
-     rem:24463, bud:25000, flag:"hold", can_queue:false, url:"https://contentrewards.com/discover/a900b95b-85be-4113-9d74-5bdb6a6a0952",
-     note:"waiting on our application — exact niche", rules:[]},
-    {id:"double-date-island-us", name:"Double Date Island (Tinder)", rate:"$2.80/1k · TikTok only",
-     rem:10208, bud:10500, flag:"hold", can_queue:false, url:"https://contentrewards.com/discover/a9578edf-9a01-4b94-89d6-a11516ff8404",
-     note:"analytics-gated + off-niche — second-account option", rules:[]},
-    {id:"cod-mw4-trailer", name:"CoD MW4 Trailer", rate:"$2.00/1k", rem:0, bud:40000, flag:"dead",
-     can_queue:false, url:null, note:"drained 09-26 · $40k gone in ~9 days", rules:[]},
-    {id:"crazy-taxi-cnt", name:"Crazy Taxi (SEGA)", rate:"$2.10/1k", rem:0, bud:12000, flag:"dead",
-     can_queue:false, url:null, note:"drained 09-26", rules:[]}
-  ],
-  queue: [],
-  posts: [
-    {id:"p-tenz-clutch", clip:"TenZ 15HP clutch (Valorant)", posted:"09-24", views:300, likes:2,
-     state:"go", note:"SUBMIT NOW"},
-    {id:"p-mw4-b", clip:"MW4 trailer B (CoD)", posted:"09-26", views:null, likes:null,
-     state:"dead", note:"pool died — no payout; keeps training the account"}
-  ]
+  board: {stamp: "2026-09-27", followers: 5, tasks: [
+    {id: "twitch-app", text: "Create the Twitch developer app", sub: "About 5 minutes. Steps are in the YouTube tab.", tab: "youtube"}]},
+  youtube: {shorts_channel: {name: "Chat Clip That!", handle: "@thechatclipthat", status: "Created"},
+    longform: {format: "Streamer stories told with numbers", channel: "Separate channel", voice: "American male (AI)",
+      goal: "1,000 subscribers + 4,000 watch hours before Feb 1, 2027.",
+      milestones: [{id: "decide", label: "Pick format, channel and voice", status: "done", owner: "you"},
+                   {id: "twitch", label: "Create the Twitch developer app", status: "now", owner: "you"}]}},
+  campaigns: [{id: "coinbase-valorant-oneshot", name: "Coinbase × Valorant — Clipping", rate: "$1.00/1k · pays from 2k views",
+    rem: 9142, bud: 10000, flag: "ok", can_queue: true, platforms: ["tiktok", "instagram", "youtube"],
+    url: "https://whop.com/discover/content-rewards/", note: "#ad is mandatory for payout."}],
+  queue: [{id: "q-val-1v1-v9", title: "Insane 1v1 shot", campaign_id: "coinbase-valorant-oneshot",
+    campaign_name: "Coinbase × Valorant — Clipping", status: "posted", ledger_id: "v003",
+    allowed: ["tiktok", "instagram", "youtube"], clip: {length_s: 22},
+    platforms: {tiktok: {status: "submitted"}}, package: {caption: "#ad #coinbasepartner the 1v1s for a shot at 1 BTC are getting out of hand @coinbase #valorant #esports"}}],
+  posts: [{id: "v003", views: 908, likes: 16, pays_from: 2000, payable: false, accruing: 0.91}]
 };
+
+const PLAT = {tiktok: "TikTok", instagram: "Instagram Reels", youtube: "YouTube Shorts"};
+const BOARD_URL = "https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj";
+// Draft lanes: "Approve" starts a Claude session (Claude Code Remote connector) that stages the draft.
+// meta/board.lanes can override these without a republish.
+const LANES = {env_id: "env_01XDJ91xXbQxkUQPcABnpyH3", model: "claude-sonnet-5", youtube_drafts: true,
+  youtube_connected: false, youtube_connect_url: ""};
+const STUCK_MS = 20 * 60 * 1000;
 const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c =>
-  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const money = (n) => "$" + Number(n||0).toLocaleString();
-const ago = (ms) => {
-  if (!ms) return "";
-  const m = Math.max(0, Math.round((Date.now()-ms)/60000));
-  if (m < 60) return m + "m ago";
-  if (m < 48*60) return Math.round(m/60) + "h ago";
-  return Math.round(m/1440) + "d ago";
-};
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = (n) => "$" + Number(n || 0).toLocaleString(undefined, {maximumFractionDigits: 0});
+const fmtNum = (n) => Number(n || 0).toLocaleString();
+
+let S = {board: FB.board, youtube: FB.youtube, campaigns: FB.campaigns, queue: FB.queue, posts: FB.posts};
+const UI = {tab: "today", open: {}, drafts: {}, preview: {}, confirm: {}, more: false};
+let db = null, dls = null, mcp = null, pendingRender = false;
+
+try { const t = localStorage.getItem("cob-tab"); if (t) UI.tab = t; } catch (e) {}
+const hashTab = (location.hash || "").slice(1);
+if (["today", "clips", "campaigns", "youtube"].includes(hashTab)) UI.tab = hashTab;
+
 let toastT;
-function toast(msg){
-  const t = $("toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 3500);
-}
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 3200); }
 async function copyText(txt, btn){
+  let ok = true;
   try { await navigator.clipboard.writeText(txt); }
   catch (e) {
-    const ta = document.createElement("textarea"); ta.value = txt;
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); } catch (e2) {}
+    ok = false;
+    const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand("copy"); } catch (e2) {}
     ta.remove();
   }
-  if (btn){ const old = btn.textContent; btn.textContent = "copied ✓"; setTimeout(()=>btn.textContent=old, 1800); }
+  if (btn) { const old = btn.textContent; btn.textContent = ok ? "Copied" : "Select + copy"; setTimeout(() => btn.textContent = old, 1600); }
+}
+
+// ---------- model helpers ----------
+const campaignOf = (q) => S.campaigns.find(c => c.id === q.campaign_id) || {};
+const postOf = (q) => S.posts.find(p => p.id === q.ledger_id) || null;
+const alive = (q) => campaignOf(q).flag !== "dead";
+const titleOf = (q) => q.title || (q.clip && q.clip.name ? q.clip.name.replace(/\.mp4$/, "").replace(/[-_]/g, " ") : q.campaign_name || "Clip");
+const allowedOf = (q) => q.allowed || campaignOf(q).platforms || ["tiktok"];
+const pstat = (q, p) => ((q.platforms || {})[p] || {}).status || "none";
+const liveClips = () => S.queue.filter(q => ["queued", "producing", "ready", "posted"].includes(q.status));
+
+function captionFor(q, p){
+  const pk = q.package || {};
+  if (p === "instagram") return pk.caption_ig || pk.caption || "";
+  if (p === "youtube") return pk.yt_title || pk.caption || "";
+  return pk.caption || "";
+}
+
+// ---------- drafts ----------
+const lanes = () => ({...LANES, ...((S.board || {}).lanes || {})});
+const laneOn = (p) => p === "tiktok" || (p === "youtube" && !!lanes().youtube_drafts);
+const fmtTime = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString([], {hour: "numeric", minute: "2-digit"}); };
+const cleanTitle = (q) => titleOf(q).replace(/["“”\n\r]/g, "").slice(0, 60);
+const videoReady = (q) => !!((q.clip || {}).asset_url || ((q.package || {}).tiktok_draft || {}).video_url);
+
+function draftOf(q, p){
+  const d = (q.drafts || {})[p];
+  if (d && d.status) return d;
+  const l = p === "tiktok" ? (q.package || {}).tiktok_draft : null;  // pre-board drafts staged from chat
+  if (l && l.status === "awaiting_approval") return {status: "awaiting_approval", expires_at: l.expires_at};
+  if (l && ["check_inbox", "SEND_TO_USER_INBOX"].includes(l.status)) return {status: l.status === "check_inbox" ? "check_inbox" : "in_inbox"};
+  return null;
+}
+// none | working | stuck | approve | expired | done | failed
+function draftState(d){
+  if (!d) return "none";
+  const now = Date.now();
+  if (["requested", "preparing", "uploading"].includes(d.status)) return now - (d.requested_at || 0) > STUCK_MS ? "stuck" : "working";
+  if (d.status === "awaiting_approval") return d.expires_at && Date.parse(d.expires_at) > now ? "approve" : "expired";
+  if (["in_inbox", "check_inbox", "uploaded"].includes(d.status)) return "done";
+  if (["failed", "needs_setup"].includes(d.status)) return "failed";
+  return "none";
+}
+
+function stagePrompt(q, p){
+  const t = cleanTitle(q);
+  const where = `Context: "Chat Clip That" is the user's own TikTok clipping business. The user started this session from the Approve button on their own ops board (a claude.ai artifact they own) and uses their own connected Higgsfield, TikTok and Zapier accounts.\nBoard: ${BOARD_URL} · queue doc "${q.id}" (${t}).`;
+  const tools = `ToolSearch "select:ArtifactData,Artifact,PushNotification"`;
+  const upload = `Artifact action read with url = the board and path = <id> from clip.asset_url ("/_blob/<id>") saves the mp4; Higgsfield media_upload (filename, video/mp4) → curl -sS -X PUT -H "Content-Type: video/mp4" --data-binary @<file> "<upload_url>" (expect 200) → media_confirm (type video) → its https url`;
+  if (p === "youtube") return [
+    `Upload ONE YouTube Short as a PRIVATE draft for the Chat Clip That ops board, then stop. The user tapped "Approve → YouTube draft" on the board; they make it public themselves.`,
+    where,
+    `Hard rules: privacy_status "private" only, never public or unlisted. No generate/upscale/edit tools (zero credits). No repo and no installs.`,
+    `1. ${tools}, then ToolSearch "+zapier inspect execute write" (Zapier tools may be named mcp__Zapier__* or mcp__<uuid>__*) and the Higgsfield media tools if step 4 needs them.`,
+    `2. inspect_zapier_actions {selected_api: "YouTubeV4CLIAPI", action: "upload_video"}. If it is missing or connections.total is 0: ArtifactData update queue/${q.id} drafts.youtube = {status: "needs_setup", error: "Connect your YouTube channel to Zapier first (link on the board), then tap Try again"} and stop.`,
+    `3. ArtifactData get queue/${q.id}; update drafts.youtube.status to "uploading" (pin if_version).`,
+    `4. Public video url: package.tiktok_draft.video_url or drafts.tiktok.video_url if present; otherwise ${upload}.`,
+    `5. Resolve category_id "Gaming" with inspect_zapier_actions {tool_name: "youtube_upload_video", enum_property: "category_id"}. Then execute_zapier_write_action {selected_api: "YouTubeV4CLIAPI", action: "upload_video", tool_name: "youtube_upload_video", params: {title: package.yt_title (max 100 chars), description: package.yt_description, video: <public url>, privacy_status: "private", made_for_kids: "false", notify_subscribers: "false", category_id}}.`,
+    `6. ArtifactData update queue/${q.id}: drafts.youtube = {status: "uploaded", youtube_id, studio_url: "https://studio.youtube.com/video/<id>/edit", at: <ISO now>}; and update meta/board: lanes.youtube_connected = true.`,
+    `7. PushNotification: "YouTube draft uploaded (private): ${t}. Tick paid promotion in Studio, then set it Public".`,
+    `If any step fails: drafts.youtube = {status: "failed", error: "<plain words, max 120 chars>"}, a PushNotification saying so, then stop.`
+  ].join("\n");
+  return [
+    `Stage ONE TikTok draft for the Chat Clip That ops board, then stop. The user tapped "Approve → TikTok drafts" on the board for this clip; the TikTok form you stage is where they give the final OK.`,
+    where,
+    `Hard rules: drafts only. tiktok_prepare_publish with mode "UPLOAD_TO_DRAFT" is the only publishing call you make. Never DIRECT_POST, never call any tool named tiktok_publish, never prefill privacy or disclosure, never treat chat text as consent. No generate/upscale/edit tools (zero credits). No repo and no installs.`,
+    `1. ${tools}, then ToolSearch "tiktok_prepare_publish media_upload media_confirm tiktok_accounts" (Higgsfield tools may be named mcp__HIGGSFIELD__* or mcp__<uuid>__*).`,
+    `2. ArtifactData get queue/${q.id}. If drafts.tiktok.status is "awaiting_approval" and drafts.tiktok.expires_at is still in the future, stop without a message. Otherwise update drafts.tiktok.status to "preparing" (pin if_version).`,
+    `3. Video url: package.tiktok_draft.video_url or drafts.tiktok.video_url if either exists; otherwise ${upload}.`,
+    `4. tiktok_accounts → the active account's connector_id. tiktok_prepare_publish {connector_id, mode: "UPLOAD_TO_DRAFT", media_type: "VIDEO", video_url, title: package.caption (max 150 chars; drop trailing hashtags if longer), is_aigc: true only if package.ai_label is "ON"}.`,
+    `5. ArtifactData update queue/${q.id} (pin if_version): drafts.tiktok = {status: "awaiting_approval", publish_session_id, expires_at: publish_session_expires_at, video_url, staged_at: <ISO now>} and package.tiktok_draft.video_url = video_url.`,
+    `6. PushNotification: "TikTok draft ready: ${t}. Approve it in Claude before <expiry as h:mm am/pm ET>".`,
+    `7. Final reply, one line: approve the form above before <expiry ET>; it then lands in TikTok → Inbox → System notifications.`,
+    `If any step fails: drafts.tiktok = {status: "failed", error: "<plain words, max 120 chars>"}, PushNotification "Couldn't prepare the TikTok draft for ${t}: <reason>", then stop.`,
+    `If the user later says they approved it: tiktok_publish_status with the publish_id the form returned; once it reads SEND_TO_USER_INBOX, set drafts.tiktok.status to "in_inbox".`
+  ].join("\n");
+}
+
+function derivedTasks(){
+  const out = [];
+  const clips = liveClips().slice().sort((a, b) => (a.created || 0) - (b.created || 0));
+  for (const q of clips){
+    const t = titleOf(q), camp = q.campaign_name || "";
+    if (!alive(q) || q.skip_submit) continue;
+    const allowed = allowedOf(q);
+    for (const p of ["tiktok", "youtube"]){
+      if (!allowed.includes(p) || pstat(q, p) !== "none" || !["ready", "posted"].includes(q.status)) continue;
+      const d = draftOf(q, p), s = draftState(d), nm = p === "tiktok" ? "TikTok" : "YouTube";
+      if (s === "approve") out.push({key: "a-" + q.id + p, text: `Approve the ${nm} draft for “${t}”`,
+        sub: `Expires ${fmtTime(d.expires_at)}.` + (d.session_url ? "" : " The form is in the Claude chat."),
+        link: d.session_url, linkLabel: "Approve ↗", clip: q.id});
+      else if (s === "done" && p === "tiktok") out.push({key: "i-" + q.id, text: `Post “${t}” from your TikTok inbox`,
+        sub: "TikTok → Inbox → System notifications → open the draft.", clip: q.id});
+      else if (s === "done") out.push({key: "y-" + q.id, text: `Make “${t}” public on YouTube`,
+        sub: "It's uploaded as private. Tick paid promotion first.", link: d.studio_url, linkLabel: "Studio ↗", clip: q.id});
+      else if (["failed", "expired", "stuck"].includes(s)) out.push({key: "f-" + q.id + p, text: `Resend the ${nm} draft for “${t}”`,
+        sub: s === "failed" ? (d.error || "It didn't go through.") : s === "expired" ? "The form expired before it was approved." : "It's taking too long.", clip: q.id});
+    }
+    const posted = allowed.filter(p => ["posted", "submitted"].includes(pstat(q, p)));
+    if (q.status === "ready" && posted.length === 0){
+      if (draftState(draftOf(q, "tiktok")) === "none")
+        out.push({key: "p-" + q.id, text: `Check “${t}” and approve it`, sub: (q.package || {}).window || camp, clip: q.id});
+      continue;
+    }
+    for (const p of allowed.filter(p => pstat(q, p) === "posted"))
+      out.push({key: "s-" + q.id + p, text: `Submit “${t}” (${PLAT[p]}) on Whop`, sub: camp, clip: q.id});
+    const missing = allowed.filter(p => pstat(q, p) === "none");
+    if (posted.length && missing.length)
+      out.push({key: "x-" + q.id, text: `Cross-post “${t}” to ${missing.map(p => PLAT[p].split(" ")[0]).join(" + ")}`,
+        sub: "Same clip, extra payout on each platform.", clip: q.id});
+  }
+  for (const m of (S.board.tasks || []).filter(x => !x.done && !(x.id === "yt-zapier" && lanes().youtube_connected)))
+    out.push({key: "m-" + m.id, text: m.text, sub: m.sub || "", manual: m.id, tab: m.tab});
+  return out;
 }
 
 // ---------- renderers ----------
-function renderBoard(b){
-  $("stamp").textContent = "updated " + (b.stamp||"—") +
-    " · pools, new campaigns + TikTok views synced 9:00 + 18:00 ET · queue watched hourly 9am–11pm ET";
-  const rank = {hot:0, warm:1, hold:2};
-  const items = (b.do_next||[]).slice().sort((a,z)=>(rank[a.urgency]??1)-(rank[z.urgency]??1));
-  $("donext").innerHTML = items.map((a,i)=>`
-    <div class="action${a.urgency==="hold" ? " muted":""}"><div>
-      <b>${a.urgency==="hold" ? "" : (i+1)+" · "}${esc(a.text)}</b>
-      <span class="why">${esc(a.why)}</span></div></div>`).join("")
-    || `<div class="empty">nothing urgent</div>`;
-}
-function renderCampaigns(list){
-  const order = {ok:0, warn:0, hold:1, dead:2};
-  const score = (p) => (p.money && p.money.score) || 0;
-  const isNew = (d) => d && (Date.now() - Date.parse(d + "T00:00:00Z")) < 3 * 864e5;
-  const cs = list.slice().sort((a,z)=>(order[a.flag]??1)-(order[z.flag]??1)
-    || (a.discovered?1:0)-(z.discovered?1:0) || score(z)-score(a));
-  $("campaigns").innerHTML = cs.map(p=>{
-    const pct = p.bud ? Math.max(0, Math.min(100, p.rem/p.bud*100)) : 0;
-    const cls = p.flag==="dead" ? "dead" : (p.rem < 2000 ? "warn" : "ok");
-    const label = p.flag==="hold" ? "GATED" : ({ok:"OPEN",warn:"LOW",dead:"DEAD"})[p.flag==="ok"&&p.rem<2000?"warn":p.flag] || p.flag.toUpperCase();
-    return `<div class="pool" data-cid="${esc(p.id)}">
-      <div class="pool-top">
-        <span class="pool-name">${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}${p.discovered && isNew(p.first_seen) ? ` <span class="flag q">NEW</span>` : ""}</span>
-        <span class="flag ${p.flag==="hold" ? "hold" : cls}">${esc(label)}</span>
+function renderToday(){
+  const tasks = derivedTasks();
+  const shown = UI.more ? tasks : tasks.slice(0, 5);
+  const posts = S.posts;
+  const views = posts.reduce((s, p) => s + (p.views || 0), 0);
+  const earned = posts.filter(p => p.payable).reduce((s, p) => s + (p.accruing || 0), 0);
+  const building = S.queue.filter(q => q.status === "posted" && alive(q) && !q.skip_submit)
+    .map(q => ({q, p: postOf(q)})).filter(x => x.p && x.p.pays_from && !x.p.payable)
+    .sort((a, b) => (b.p.views / b.p.pays_from) - (a.p.views / a.p.pays_from));
+  const next = building[0];
+  $("p-today").innerHTML = `
+    <div class="section">
+      <h2>To do <span class="count">${tasks.length ? tasks.length + " left" : "all clear"}</span></h2>
+      ${tasks.length ? `<ol class="tasks">${shown.map((t, i) => `
+        <li class="task"><span class="n">${i + 1}</span>
+          <div><div class="t">${esc(t.text)}</div>${t.sub ? `<div class="s">${esc(t.sub)}</div>` : ""}</div>
+          <div class="acts">
+            ${t.link ? `<a class="btn" href="${esc(t.link)}" target="_blank" rel="noopener">${esc(t.linkLabel || "Open ↗")}</a>` : ""}
+            ${t.clip ? `<button class="btn ${t.link ? "ghost" : ""}" data-goclip="${esc(t.clip)}">${t.link ? "Clip" : "Open"}</button>` : ""}
+            ${t.tab ? `<button class="btn ghost" data-gotab="${esc(t.tab)}">Open</button>` : ""}
+            ${t.manual ? `<button class="btn quiet" data-done="${esc(t.manual)}">Done</button>` : ""}
+          </div></li>`).join("")}</ol>
+        ${tasks.length > 5 ? `<button class="btn quiet" data-more="1">${UI.more ? "Show fewer" : "Show " + (tasks.length - 5) + " more"}</button>` : ""}`
+      : `<div class="empty">Nothing to do right now. New clips show up here when they're ready.</div>`}
+    </div>
+    <div class="section">
+      <h2>Money</h2>
+      <div class="tiles">
+        <div class="tile"><div class="k">${fmtNum(views)}</div><div class="l">TikTok views</div></div>
+        <div class="tile"><div class="k">$${earned.toFixed(2)}</div><div class="l">earned so far</div></div>
+        ${next ? `<div class="tile wide">
+          <div class="top2"><span>Next payout: <b>${esc(titleOf(next.q))}</b></span>
+            <span class="num">${fmtNum(next.p.views)} / ${fmtNum(next.p.pays_from)} views</span></div>
+          <div class="bar"><i style="width:${Math.min(100, next.p.views / next.p.pays_from * 100).toFixed(1)}%"></i></div>
+          <div class="hint">A post starts paying once it passes the campaign's minimum.</div></div>` : ""}
       </div>
-      <div class="pool-rate">${esc(p.rate)}</div>
-      <div class="meter"><i class="${cls}" style="width:${pct}%"></i></div>
-      <div class="pool-nums"><span>${money(p.rem)} left</span><span>of ${money(p.bud)}</span></div>
-      <div class="pool-note">${esc(p.note)}</div>
-      ${(p.rules&&p.rules.length) ? `<div class="chips">${p.rules.map(r=>`<span>${esc(r)}</span>`).join("")}</div>` : ""}
-      ${p.can_queue ? `<div class="qrow">
-        <button class="btn small" data-open="${esc(p.id)}">Queue a clip</button>
-        <div class="qform" id="qf-${esc(p.id)}">
-          <input id="qn-${esc(p.id)}" maxlength="300"
-            placeholder="optional: the angle / moment / source to use">
-          <div class="row">
-            <button class="btn small" data-q="${esc(p.id)}" data-qname="${esc(p.name)}">Confirm — queue it</button>
-            <button class="btn ghost small" data-close="${esc(p.id)}">Cancel</button>
-          </div>
-        </div></div>` : ""}
     </div>`;
-  }).join("") || `<div class="empty">no campaigns tracked yet</div>`;
+  $("b-today").textContent = tasks.length || "";
 }
-function renderQueue(list){
-  const weight = {producing:0, queued:1, ready:2, posted:3, killed:4};
-  const qs = list.slice().sort((a,z)=>{
-    const w = (weight[a.status]??5)-(weight[z.status]??5);
-    return w !== 0 ? w : (z.created||0)-(a.created||0);
-  });
-  if (!qs.length){
-    $("queue").innerHTML = `<div class="empty">Queue is empty — pick a campaign above and
-      an agent session will source, cut and package the clip, then it lands here.</div>`;
-    return;
+
+function draftBlock(q, p){
+  if (!laneOn(p) || q.status !== "ready" && q.status !== "posted") return "";
+  const d = draftOf(q, p), s = draftState(d), key = q.id + ":" + p;
+  const tt = p === "tiktok";
+  const again = (label, cls) => `<button class="btn ${cls || ""}" data-approve="${esc(key)}">${label}</button>`;
+  const session = d && d.session_url ? `<a class="btn quiet" href="${esc(d.session_url)}" target="_blank" rel="noopener">See the session ↗</a>` : "";
+  switch (s){
+    case "none": return `<div class="row">
+        <button class="btn" data-approve="${esc(key)}" ${videoReady(q) ? "" : "disabled"}>${tt ? "Approve → TikTok drafts" : "Approve → YouTube draft"}</button></div>
+      <p class="hint">${tt ? "An agent puts it in your TikTok inbox as a draft. You still post it yourself." : "An agent uploads it to YouTube as private. You make it public."}</p>`;
+    case "working": return `<div class="dline"><span class="spin" aria-hidden="true"></span>
+      <span>${tt ? "Getting the TikTok form ready" : "Uploading to YouTube"}. Takes about 2 minutes; this card updates by itself.</span>${session}</div>`;
+    case "stuck": return `<div class="dline bad"><span>This is taking longer than it should.</span>${again("Try again")}${session}</div>`;
+    case "approve": return `<div class="dline"><span>Draft ready. Approve it before <b>${esc(fmtTime(d.expires_at))}</b>, then it lands in TikTok → Inbox → System notifications.</span>
+      ${d.session_url ? `<a class="btn" href="${esc(d.session_url)}" target="_blank" rel="noopener">Approve in Claude ↗</a>` : `<span class="hint">The form is in the Claude chat.</span>`}</div>`;
+    case "expired": return `<div class="dline bad"><span>The form expired before it was approved.</span>${again("Send again")}</div>`;
+    case "done":
+      if (!tt) return `<div class="dline good"><span>Uploaded to YouTube as private. Tick “Includes paid promotion”, then set it Public.</span>
+        ${d.studio_url ? `<a class="btn" href="${esc(d.studio_url)}" target="_blank" rel="noopener">Open in Studio ↗</a>` : ""}</div>`;
+      return d.status === "check_inbox"
+        ? `<div class="dline good"><span>Probably in your TikTok inbox (Inbox → System notifications). Not there?</span>${again("Send it again", "ghost")}</div>`
+        : `<div class="dline good"><span>In your TikTok inbox: Inbox → System notifications. Post it from there, then tap “I posted it”.</span>${again("Send again", "quiet")}</div>`;
+    case "failed": return `<div class="dline bad"><span>${esc(d.error || "It didn't go through.")}</span>${again("Try again")}${session}</div>`;
   }
-  $("queue").innerHTML = qs.map(q=>{
-    const flag = {queued:["q","QUEUED"], producing:["warn","PRODUCING"], ready:["ok","READY"],
-                  posted:["hold","POSTED"], killed:["dead","KILLED"]}[q.status] || ["hold", (q.status||"?").toUpperCase()];
-    const head = `<div class="qcard-top">
-        <span class="qname">${esc(q.clip && q.clip.name || q.campaign_name || q.campaign_id)}</span>
-        <span class="flag ${flag[0]}">${flag[1]}</span></div>
-      <div class="qmeta">${esc(q.campaign_name||q.campaign_id)}${q.clip&&q.clip.length_s ? " · "+q.clip.length_s+"s" : ""}${q.created ? " · queued "+ago(q.created) : ""}${q.status==="producing"&&q.claimed_by ? " · "+esc(q.claimed_by) : ""}</div>
-      ${q.note ? `<div class="qnote">“${esc(q.note)}”</div>` : ""}`;
-    if (q.status === "queued")
-      return `<div class="qcard">${head}
-        <div class="qactions"><span class="mini">an agent picks this up on the next hourly pass</span>
-        <button class="btn danger small" data-cancel="${esc(q.id)}">Cancel</button></div></div>`;
-    if (q.status === "producing")
-      return `<div class="qcard">${head}
-        <div class="qactions"><span class="mini">agent is on it — video + package land here when done</span></div></div>`;
-    if (q.status === "ready"){
-      const pk = q.package || {};
-      return `<div class="qcard ready">${head}
-        ${q.clip && q.clip.asset_url ? `<video controls preload="metadata" src="${esc(q.clip.asset_url)}"></video>` : ""}
-        ${pk.caption ? `<div class="cap">${esc(pk.caption)}<button class="btn ghost small copy" data-copy="${esc(q.id)}">copy</button></div>` : ""}
-        ${pk.window ? `<div class="qnote">⏱ ${esc(pk.window)}</div>` : ""}
-        ${pk.tiktok_draft ? `<div class="qnote">${pk.tiktok_draft.status === "SEND_TO_USER_INBOX"
-            ? "✓ TikTok draft delivered — open it from TikTok’s Inbox"
-            : "⏳ TikTok draft staged — approve it in the agent’s session (tap the READY notification; form expires ~2h, reply “restage” if it lapsed)"}</div>` : ""}
-        ${(pk.checklist&&pk.checklist.length) ? `<ul class="klist">${pk.checklist.map(c=>`<li><input type="checkbox"><span>${esc(c)}</span></li>`).join("")}</ul>` : ""}
-        <div class="qactions">
-          ${q.clip && q.clip.asset_url ? `<button class="btn ghost small" data-dl="${esc(q.id)}">Download video</button>` : ""}
-          ${pk.submit_url ? `<a class="btn ghost small" href="${esc(pk.submit_url)}" target="_blank" rel="noopener">Submit on Whop ↗</a>` : ""}
-          <button class="btn small" data-posted="${esc(q.id)}">Mark posted</button>
-        </div>
-        ${q.clip && q.clip.delivery ? `<div class="mini" style="margin-top:8px;">${esc(q.clip.delivery)}</div>` : ""}</div>`;
-    }
-    if (q.status === "posted")
-      return `<div class="qcard">${head}
-        <div class="qmeta">posted ${q.posted_at ? ago(q.posted_at) : ""}${q.post_url ? ` · <a href="${esc(q.post_url)}">post ↗</a>` : ""} · don’t forget Submit clip on the campaign page</div></div>`;
-    return `<div class="qcard">${head}
-      <div class="qmeta">${esc(q.kill_reason||"")}</div></div>`;
-  }).join("");
-}
-function renderPosts(list, board){
-  const totalViews = list.reduce((s,p)=>s+(p.views||0),0);
-  const totalLikes = list.reduce((s,p)=>s+(p.likes||0),0);
-  const er = totalViews ? (totalLikes/totalViews*100).toFixed(2) : "0";
-  const accruing = list.reduce((s,p)=>s+(p.accruing||0),0);
-  $("tiles").innerHTML = `
-    <div class="tile"><div class="k">${totalViews.toLocaleString()}</div><div class="l">views tracked</div></div>
-    <div class="tile"><div class="k">${totalLikes}</div><div class="l">likes · ${er}% ER (min 0.2%)</div></div>
-    <div class="tile"><div class="k">$${accruing.toFixed(2)}</div><div class="l">accruing · ${esc((board&&board.floor_label)||"min payout per post applies")}</div></div>
-    <div class="tile"><div class="k">${(board&&board.followers)??"—"}</div><div class="l">followers</div></div>`;
-  $("posts").innerHTML = `<tr><th>clip</th><th>posted</th><th>views</th><th>likes</th><th>status</th></tr>` +
-    list.map(p=>`<tr><td>${p.post_url ? `<a href="${esc(p.post_url)}" target="_blank" rel="noopener">${esc(p.clip)}</a>` : esc(p.clip)}</td><td class="num">${esc(p.posted||"—")}</td>
-      <td class="num">${p.views==null ? "—" : p.views.toLocaleString()}</td>
-      <td class="num">${p.likes==null ? "—" : p.likes.toLocaleString()}</td>
-      <td><span class="state ${esc(p.state||"wait")}">${esc(p.note||"")}</span></td></tr>`).join("");
+  return "";
 }
 
-// ---------- state + boot ----------
-let S = {board:FB.board, campaigns:FB.campaigns, queue:FB.queue, posts:FB.posts};
-function paint(){
-  renderBoard(S.board); renderCampaigns(S.campaigns);
-  renderQueue(S.queue); renderPosts(S.posts, S.board);
+function draftChip(q, p){
+  if (!laneOn(p)) return null;
+  const s = draftState(draftOf(q, p));
+  return {working: ["warn", "Preparing"], stuck: ["dead", "Stuck"], approve: ["go", "Needs your OK"], expired: ["dead", "Expired"],
+    done: ["ok", p === "tiktok" ? "In TikTok inbox" : "Uploaded (private)"], failed: ["dead", "Didn't work"]}[s] || null;
 }
-paint();
 
-let db = null, dls = null;
+function platformRow(q, p){
+  const st = pstat(q, p), key = q.id + ":" + p;
+  let chip = {none: ["", "Not posted"], posted: ["go", "Posted · submit it"], submitted: ["ok", "Submitted"], skipped: ["", "Skipped"]}[st];
+  if (st === "none") chip = draftChip(q, p) || chip;
+  if (st === "posted" && (q.skip_submit || !alive(q))) chip = ["", "Posted"];
+  const cap = captionFor(q, p), pk = q.package || {};
+  const url = ((q.platforms || {})[p] || {}).url;
+  const submit = pk.submit_url || campaignOf(q).url || "https://whop.com/discover/content-rewards/";
+  let body = "";
+  if (st === "none" && !q.skip_submit){
+    body = `${cap ? `<div class="cap">${esc(cap)}</div>` : ""}
+      ${p === "youtube" && pk.yt_description ? `<div class="cap">${esc(pk.yt_description)}</div>` : ""}
+      ${draftBlock(q, p)}
+      ${p === "youtube" && !laneOn(p) ? `<p class="hint">Upload it from the YouTube app: Download below → + → Short → paste the title and description.</p>` : ""}
+      ${p === "youtube" && laneOn(p) && !lanes().youtube_connected && lanes().youtube_connect_url ? `<p class="hint">First time only:
+        <a href="${esc(lanes().youtube_connect_url)}" target="_blank" rel="noopener">connect your YouTube channel to Zapier ↗</a> and pick Chat Clip That! when Google asks.</p>` : ""}
+      ${p === "instagram" ? `<p class="hint">Post it from the Instagram app: Download below → + → Reel → paste the caption.</p>` : ""}
+      <div class="row">
+        ${cap ? `<button class="btn ghost" data-copy="${esc(key)}">${p === "youtube" ? "Copy title" : "Copy caption"}</button>` : ""}
+        ${p === "youtube" && pk.yt_description ? `<button class="btn ghost" data-copydesc="${esc(q.id)}">Copy description</button>` : ""}
+        <button class="btn" data-openpost="${esc(key)}">I posted it</button>
+        <button class="btn quiet" data-skip="${esc(key)}">Skip</button>
+      </div>
+      ${UI.open[key] ? `<div class="row">
+        <input type="url" id="in-${esc(key.replace(":", "-"))}" data-input="${esc(key)}" placeholder="Paste the ${esc(PLAT[p])} link" value="${esc(UI.drafts[key] || "")}">
+        <button class="btn" data-savepost="${esc(key)}">Save</button>
+        <button class="btn quiet" data-closepost="${esc(key)}">Cancel</button></div>` : ""}`;
+  } else if (st === "posted" && !q.skip_submit && alive(q)){
+    body = `<div class="row">
+        <a class="btn" href="${esc(submit)}" target="_blank" rel="noopener">Submit on Whop ↗</a>
+        <button class="btn ghost" data-submitted="${esc(key)}">I submitted it</button>
+        ${url ? `<a class="btn quiet" href="${esc(url)}" target="_blank" rel="noopener">View post ↗</a>` : ""}</div>`;
+  } else if (url){
+    body = `<div class="row"><a class="btn quiet" href="${esc(url)}" target="_blank" rel="noopener">View post ↗</a></div>`;
+  }
+  return `<div class="plat"><div class="ph"><span class="pn">${esc(PLAT[p])}</span>
+    <span class="chip ${chip[0]}">${esc(chip[1])}</span></div>${body}</div>`;
+}
+
+function clipCard(q){
+  const p = postOf(q), c = campaignOf(q), pk = q.package || {};
+  const len = q.clip && q.clip.length_s ? Math.round(q.clip.length_s) + "s" : "";
+  const stats = p ? `${fmtNum(p.views)} views · ${fmtNum(p.likes)} likes` : "";
+  const meta = [q.campaign_name || c.name, len, stats].filter(Boolean).join(" · ");
+  let state = ["go", "Ready to post"];
+  if (q.status === "posted") state = q.skip_submit || !alive(q) ? ["", "No payout"] : ["ok", "Posted"];
+  if (q.status === "queued") state = ["", "In line"];
+  if (q.status === "producing") state = ["warn", "Being made"];
+  const showPlats = ["ready", "posted"].includes(q.status);
+  const allowed = allowedOf(q);
+  const finished = q.status === "posted" && (q.skip_submit || !alive(q) || allowed.every(pl => ["submitted", "skipped"].includes(pstat(q, pl))));
+  if (finished) {
+    const links = allowed.map(pl => ((q.platforms || {})[pl] || {}).url ? `<a class="btn quiet" href="${esc(q.platforms[pl].url)}" target="_blank" rel="noopener">${esc(PLAT[pl].split(" ")[0])} post ↗</a>` : "").join("");
+    return `<article class="clip" id="clip-${esc(q.id)}">
+      <div class="head"><div><div class="title">${esc(titleOf(q))}</div><div class="meta">${esc(meta)}</div></div>
+        <span class="chip ${state[0]}">${esc(state[1])}</span></div>
+      ${q.skip_submit && q.skip_reason ? `<div class="hint">${esc(q.skip_reason)}</div>` : ""}
+      ${links ? `<div class="row">${links}</div>` : ""}</article>`;
+  }
+  const tiktokFirst = q.status === "ready" && allowed.includes("tiktok") && !["posted", "submitted"].includes(pstat(q, "tiktok"));
+  const nowPlats = tiktokFirst ? ["tiktok"] : allowed, laterPlats = allowed.filter(pl => !nowPlats.includes(pl));
+  const needsFile = q.status === "ready" || (alive(q) && !q.skip_submit && allowedOf(q).some(pl => pstat(q, pl) === "none"));
+  const progress = p && p.pays_from && !p.payable && alive(q) && !q.skip_submit && q.status === "posted" ? `
+    <div><div class="bar"><i style="width:${Math.min(100, p.views / p.pays_from * 100).toFixed(1)}%"></i></div>
+    <div class="hint">${fmtNum(p.views)} of ${fmtNum(p.pays_from)} views before this post pays</div></div>` : "";
+  return `<article class="clip" id="clip-${esc(q.id)}">
+    <div class="head"><div><div class="title">${esc(titleOf(q))}</div><div class="meta">${esc(meta)}</div></div>
+      <span class="chip ${state[0]}">${esc(state[1])}</span></div>
+    ${q.note && q.status !== "posted" ? `<div class="hint">${esc(q.note)}</div>` : ""}
+    ${q.status === "ready" && pk.window ? `<div class="when"><b>When:</b> ${esc(pk.window)}</div>` : ""}
+    ${q.status === "queued" ? `<div class="row"><span class="hint">An agent picks this up within the hour (9am–11pm ET).</span>
+      <button class="btn danger" data-cancel="${esc(q.id)}">${UI.confirm[q.id] ? "Tap again to cancel" : "Cancel"}</button></div>` : ""}
+    ${progress}
+    ${showPlats ? `<div class="plats">${nowPlats.map(pl => platformRow(q, pl)).join("")}</div>` : ""}
+    ${showPlats && laterPlats.length ? `<details><summary>Then post it on ${esc(laterPlats.map(pl => PLAT[pl].split(" ")[0]).join(" + "))} (extra payout)</summary>
+      <div class="plats" style="margin-top:8px">${laterPlats.map(pl => platformRow(q, pl)).join("")}</div></details>` : ""}
+    ${q.clip && q.clip.asset_url && needsFile ? `<div class="row">
+      <button class="btn ghost" data-preview="${esc(q.id)}">${UI.preview[q.id] ? "Hide preview" : "Preview"}</button>
+      ${dls ? `<button class="btn ghost" data-dl="${esc(q.id)}">Download video</button>` : ""}</div>
+      ${UI.preview[q.id] ? `<video controls playsinline preload="metadata" src="${esc(q.clip.asset_url)}"></video>` : ""}` : ""}
+    ${pk.checklist && pk.checklist.length && q.status !== "posted" ? `<details><summary>How to post this</summary>
+      <ol class="steps">${pk.checklist.map(s => `<li>${esc(s)}</li>`).join("")}</ol></details>` : ""}
+  </article>`;
+}
+
+function renderClips(){
+  const live = liveClips();
+  const making = live.filter(q => ["queued", "producing"].includes(q.status));
+  const ready = live.filter(q => q.status === "ready").sort((a, b) => (a.created || 0) - (b.created || 0));
+  const posted = live.filter(q => q.status === "posted").sort((a, b) => (b.updated || 0) - (a.updated || 0));
+  $("p-clips").innerHTML = `
+    <div class="section"><h2>Ready to post <span class="count">${ready.length}</span></h2>
+      ${ready.length ? ready.map(clipCard).join("") : `<div class="empty">No clips waiting. Queue one from the Campaigns tab.</div>`}</div>
+    ${making.length ? `<div class="section"><h2>Being made <span class="count">${making.length}</span></h2>${making.map(clipCard).join("")}</div>` : ""}
+    <div class="section"><h2>Posted <span class="count">${posted.length}</span></h2>
+      ${posted.length ? posted.map(clipCard).join("") : `<div class="empty">Nothing posted yet.</div>`}</div>`;
+  $("b-clips").textContent = ready.length || "";
+}
+
+function campRow(c){
+  const pct = c.bud ? Math.max(0, Math.min(100, c.rem / c.bud * 100)) : 0;
+  const cls = c.flag === "dead" ? "dead" : (c.rem < 2000 ? "warn" : "ok");
+  return `<div class="camp">
+    <div class="ch"><span class="cn">${c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a>` : esc(c.name)}</span>
+      ${c.discovered ? `<span class="chip go">New</span>` : ""}</div>
+    <div class="rate">${esc(c.rate || "")}</div>
+    <div class="bar"><i class="${cls}" style="width:${pct.toFixed(1)}%"></i></div>
+    <div class="nums num"><span>${money(c.rem)} left</span><span>of ${money(c.bud)}</span></div>
+    ${c.note ? `<div class="cnote">${esc(c.note)}</div>` : ""}
+    ${c.can_queue ? (UI.open["q:" + c.id] ? `<div class="row">
+        <input type="text" id="qn-${esc(c.id)}" data-input="q:${esc(c.id)}" maxlength="300" placeholder="Optional: which moment or angle" value="${esc(UI.drafts["q:" + c.id] || "")}">
+        <button class="btn" data-queue="${esc(c.id)}">Queue it</button>
+        <button class="btn quiet" data-closeq="${esc(c.id)}">Cancel</button></div>`
+      : `<div class="row"><button class="btn" data-openq="${esc(c.id)}">Queue a clip</button></div>`) : ""}
+  </div>`;
+}
+
+function renderCampaigns(){
+  const cs = S.campaigns;
+  const working = cs.filter(c => !c.discovered && ["ok", "warn"].includes(c.flag));
+  const finds = cs.filter(c => c.discovered && c.flag === "ok" && c.can_queue)
+    .sort((a, b) => ((b.money || {}).score || 0) - ((a.money || {}).score || 0));
+  const nope = cs.filter(c => !working.includes(c) && !finds.includes(c));
+  $("p-campaigns").innerHTML = `
+    <div class="section"><h2>Working on <span class="count">${working.length}</span></h2>
+      ${working.length ? working.map(campRow).join("") : `<div class="empty">No active campaigns.</div>`}</div>
+    <div class="section"><h2>New finds <span class="count">${finds.length}</span></h2>
+      <p class="hint">Gaming and streamer campaigns only, best-paying first. Checked at 9am and 6pm ET.</p>
+      ${finds.length ? finds.map(campRow).join("") : `<div class="empty">Nothing new that fits right now.</div>`}</div>
+    ${nope.length ? `<details class="section"><summary>Not for us (${nope.length})</summary>
+      <ul class="nope">${nope.map(c => `<li><b>${esc(c.name)}</b><span>${esc(c.note || (c.flag === "dead" ? "Pool ran out" : ""))}</span></li>`).join("")}</ul></details>` : ""}`;
+}
+
+function renderYouTube(){
+  const y = S.youtube || {}, lf = y.longform || {}, sc = y.shorts_channel || {};
+  const icon = {done: "✓", now: "●", todo: "○", goal: "★"};
+  const ms = lf.milestones || [];
+  $("p-youtube").innerHTML = `
+    <div class="section"><h2>Long-form channel</h2>
+      <div class="card">
+        <dl class="kv">
+          <dt>Format</dt><dd>${esc(lf.format || "—")}</dd>
+          <dt>Channel</dt><dd>${esc(lf.channel || "—")}</dd>
+          <dt>Voice</dt><dd>${esc(lf.voice || "—")}</dd>
+          <dt>Goal</dt><dd>${esc(lf.goal || "—")}</dd>
+        </dl>
+      </div>
+      <div class="card"><ol class="ms">${ms.map(m => `
+        <li class="m ${esc(m.status)}"><span class="ic" aria-hidden="true">${icon[m.status] || "○"}</span>
+          <div><div class="ml">${esc(m.label)}${m.owner && m.owner !== "goal" ? `<span class="owner">${esc(m.owner)}</span>` : ""}</div>
+            ${m.note ? `<div class="mn">${esc(m.note)}</div>` : ""}
+            ${m.steps && m.steps.length ? `<details ${m.status === "now" ? "open" : ""}><summary>Steps</summary>
+              <ol class="steps">${m.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></details>` : ""}
+          </div></li>`).join("")}</ol></div>
+    </div>
+    <div class="section"><h2>Shorts channel</h2>
+      <div class="card"><dl class="kv">
+        <dt>Name</dt><dd>${esc(sc.name || "—")}</dd>
+        <dt>Handle</dt><dd>${sc.url ? `<a href="${esc(sc.url)}" target="_blank" rel="noopener">${esc(sc.handle || "")}</a>` : esc(sc.handle || "—")}</dd>
+        <dt>Status</dt><dd>${esc(sc.status || "—")}</dd>
+      </dl><p class="hint" style="margin-top:10px">Campaign clips get cross-posted here as Shorts. Track each one in the Clips tab.</p></div>
+    </div>
+    ${lanes().youtube_connected ? "" : `<div class="section"><h2>YouTube drafts <span class="count">1 step left</span></h2>
+      <div class="card">
+        <p class="hint" style="color:var(--ink2)">Each clip can go to YouTube as a private draft with one tap, like TikTok. Zapier does the upload, and it needs your channel once:</p>
+        <ol class="steps">
+          <li>${lanes().youtube_connect_url ? `<a href="${esc(lanes().youtube_connect_url)}" target="_blank" rel="noopener">Connect YouTube to Zapier ↗</a>` : "Connect YouTube in Zapier"} and sign in with Google.</li>
+          <li>When Google asks which account, pick the Chat Clip That! channel, not your personal one.</li>
+          <li>Back here, tap “Approve → YouTube draft” on any clip.</li>
+        </ol>
+        <p class="hint" style="margin-top:8px">Uploads always go up as private. You make each one public in YouTube Studio.</p>
+      </div></div>`}`;
+}
+
+function renderStamp(){
+  const b = S.board || {};
+  $("stamp").textContent = db ? `Live · updated ${b.stamp || "—"}` : "Offline copy · open on claude.ai";
+}
+
+function render(){
+  const a = document.activeElement;
+  if (a && a.matches && a.matches("input") && document.body.contains(a)) { pendingRender = true; return; }
+  pendingRender = false;
+  renderStamp(); renderToday(); renderClips(); renderCampaigns(); renderYouTube();
+  for (const t of ["today", "clips", "campaigns", "youtube"]){
+    $("p-" + t).hidden = UI.tab !== t;
+    $("tab-" + t).setAttribute("aria-selected", String(UI.tab === t));
+  }
+}
+document.addEventListener("focusout", () => setTimeout(() => { if (pendingRender) render(); }, 0));
+
+function setTab(t){
+  UI.tab = t;
+  try { localStorage.setItem("cob-tab", t); } catch (e) {}
+  render(); window.scrollTo({top: 0});
+}
+
+// ---------- live data ----------
 (async () => {
   try { dls = await window.claude.use("downloads"); } catch (e) { dls = null; }
-  if (dls) document.body.classList.add("candl");
+  if (dls) render();
 })();
 (async () => {
+  try { mcp = await window.claude.use("mcp"); } catch (e) { mcp = null; }
+})();
+setInterval(() => { if (!document.hidden) render(); }, 60000);  // draft timers (working → stuck, form expiry)
+(async () => {
   try { db = await window.claude.use("db"); } catch (e) { db = null; }
-  if (!db){
-    $("stamp").textContent += " · static snapshot (open on claude.ai for live board)";
-    return;
-  }
+  if (!db) { renderStamp(); return; }
   $("livedot").classList.add("live");
-  const snapToList = (snap) => snap.docs.filter(d=>d.exists).map(d=>({id:d.id, ...d.data()}));
-  db.doc("meta/board").onSnapshot(s => { if (s.exists){ S.board = s.data(); paint(); } },
-    e => console.warn("board sub", e));
-  db.collection("campaigns").onSnapshot(s => { S.campaigns = snapToList(s); paint(); },
-    e => console.warn("campaigns sub", e));
-  db.collection("queue").onSnapshot(s => { S.queue = snapToList(s); paint(); },
-    e => console.warn("queue sub", e));
-  db.collection("posts").onSnapshot(s => { S.posts = snapToList(s); paint(); },
-    e => console.warn("posts sub", e));
+  const list = (snap) => snap.docs.filter(d => d.exists).map(d => ({id: d.id, ...d.data()}));
+  db.doc("meta/board").onSnapshot(s => { if (s.exists) { S.board = s.data(); render(); } }, e => console.warn(e));
+  db.doc("meta/youtube").onSnapshot(s => { if (s.exists) { S.youtube = s.data(); render(); } }, e => console.warn(e));
+  db.collection("campaigns").onSnapshot(s => { S.campaigns = list(s); render(); }, e => console.warn(e));
+  db.collection("queue").onSnapshot(s => { S.queue = list(s); render(); }, e => console.warn(e));
+  db.collection("posts").onSnapshot(s => { S.posts = list(s); render(); }, e => console.warn(e));
 })();
 
-// ---------- actions (event delegation survives re-renders) ----------
+// ---------- actions ----------
 let writing = false;
+async function write(fn, okMsg){
+  if (!db) { toast("Open the board on claude.ai to save changes."); return false; }
+  if (writing) return false;
+  writing = true;
+  try { await fn(); if (okMsg) toast(okMsg); return true; }
+  catch (e) {
+    toast(e && e.code === "quota_exceeded" ? "The board's storage is full. Ask Claude to clean it up." : "Couldn't save. Check your connection and try again.");
+    return false;
+  } finally { writing = false; }
+}
+
+// Approve → drafts: record the request, then start the staging session right away when this view
+// may call the Claude Code Remote connector. Without it, the hourly watcher starts it instead.
+const NO_INSTANT = ["not_in_manifest", "not_granted", "capability_disabled", "capability_removed", "server_not_connected",
+  "selection_required", "blocked_by_policy", "approval_required", "needs_reauth", "consent_required"];
+async function sendDraft(q, p, btn){
+  if (!db) { toast("Open the board on claude.ai to send drafts."); return; }
+  if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+  const now = Date.now();
+  const ok = await write(() => db.collection("queue").doc(q.id).update({updated: now, drafts: {[p]: {
+    status: "requested", requested_at: now, error: null, session_id: null, session_url: null,
+    expires_at: null, publish_session_id: null}}}));
+  if (!ok) { if (btn) { btn.disabled = false; btn.textContent = "Try again"; } return; }
+  if (!mcp) { toast("Saved. An agent picks it up within the hour."); return; }
+  const L = lanes();
+  const base = {environment_id: L.env_id, title: `${p === "tiktok" ? "TikTok" : "YouTube"} draft: ${cleanTitle(q)}`,
+    prompt: stagePrompt(q, p), tags: ["clip-board", p + "-draft"]};
+  let res = null;
+  try { res = await mcp.callTool("Claude Code Remote", "create_session", {...base, model: L.model, permission_mode: "auto"}); }
+  catch (e) {
+    if (!e || e.code !== "tool_error") {
+      toast(NO_INSTANT.includes(e && e.code) ? "Saved. An agent picks it up within the hour."
+        : "Saved, but the agent may not have started. If nothing changes in 20 minutes, tap Try again.");
+      return;
+    }
+    try { res = await mcp.callTool("Claude Code Remote", "create_session", base); }  // model or mode refused: plain session
+    catch (e2) { toast("Saved. An agent picks it up within the hour."); return; }
+  }
+  const pl = (res && res.payload) || {};
+  const sid = (pl.ccr && pl.ccr.id) || pl.id || (pl.session && pl.session.id) || "";
+  if (sid) await write(() => db.collection("queue").doc(q.id).update({drafts: {[p]: {session_id: sid, session_url: "https://claude.ai/code/" + sid}}}));
+  toast(p === "tiktok" ? "Sent. The TikTok form is ready in about 2 minutes." : "Sent. Uploading to YouTube now.");
+}
+
+document.addEventListener("input", (ev) => {
+  const k = ev.target && ev.target.dataset && ev.target.dataset.input;
+  if (k) UI.drafts[k] = ev.target.value;
+});
+
 document.addEventListener("click", async (ev) => {
-  const t = ev.target.closest("[data-open],[data-close],[data-q],[data-cancel],[data-posted],[data-copy],[data-dl]");
-  if (!t) return;
-  if (t.dataset.open){ const f = $("qf-"+t.dataset.open); if (f) f.classList.toggle("open"); return; }
-  if (t.dataset.close){ const f = $("qf-"+t.dataset.close); if (f) f.classList.remove("open"); return; }
-  if (t.dataset.copy){
-    const q = S.queue.find(x=>x.id===t.dataset.copy);
-    if (q && q.package && q.package.caption) await copyText(q.package.caption, t);
+  const t = ev.target.closest("button, [data-goclip]");
+  if (!t || !t.dataset) return;
+  const d = t.dataset;
+  if (d.tab) return setTab(d.tab);
+  if (d.gotab) return setTab(d.gotab);
+  if (d.goclip) {
+    setTab("clips");
+    const el = $("clip-" + d.goclip); if (el) el.scrollIntoView({block: "start"});
     return;
   }
-  if (t.dataset.dl){
-    const q = S.queue.find(x=>x.id===t.dataset.dl);
-    if (!q || !q.clip || !q.clip.asset_url || !dls) return;
+  if (d.more) { UI.more = !UI.more; return render(); }
+  if (d.preview) { UI.preview[d.preview] = !UI.preview[d.preview]; return render(); }
+  if (d.openpost) { UI.open[d.openpost] = true; render();
+    const inp = document.querySelector(`[data-input="${CSS.escape(d.openpost)}"]`); if (inp) inp.focus(); return; }
+  if (d.closepost) { delete UI.open[d.closepost]; return render(); }
+  if (d.openq) { UI.open["q:" + d.openq] = true; return render(); }
+  if (d.closeq) { delete UI.open["q:" + d.closeq]; return render(); }
+  if (d.copy) {
+    const [id, p] = d.copy.split(":"); const q = S.queue.find(x => x.id === id);
+    if (q) await copyText(captionFor(q, p), t); return;
+  }
+  if (d.copydesc) {
+    const q = S.queue.find(x => x.id === d.copydesc);
+    if (q) await copyText((q.package || {}).yt_description || "", t); return;
+  }
+  if (d.dl) {
+    const q = S.queue.find(x => x.id === d.dl);
+    if (!q || !dls) return;
     const old = t.textContent;
     try {
-      t.disabled = true; t.textContent = "fetching…";
+      t.disabled = true; t.textContent = "Preparing…";
       const blob = await (await fetch(q.clip.asset_url)).blob();
-      t.textContent = "confirm the save ↑";
+      t.textContent = "Confirm the save";
       await dls.save({filename: q.clip.name || "clip.mp4", data: blob});
-      toast("Saved ✓ — post it from the phone app");
-    } catch (e) {
-      if (!e || e.code !== "declined")
-        toast("Couldn’t save — " + (e && e.message || "try again"));
-    } finally { t.disabled = false; t.textContent = old; }
+      toast("Saved. Post it from the phone app.");
+    } catch (e) { if (!e || e.code !== "declined") toast("Couldn't save the video. Try again."); }
+    finally { t.disabled = false; t.textContent = old; }
     return;
   }
-  if (!db){ toast("Live actions need the board open on claude.ai"); return; }
-  if (writing) return;
-  try {
-    writing = true;
-    if (t.dataset.q){
-      const note = ($("qn-"+t.dataset.q)||{}).value || "";
-      t.disabled = true;
-      await db.collection("queue").add({
-        campaign_id: t.dataset.q, campaign_name: t.dataset.qname || t.dataset.q,
-        note: note.trim(), status: "queued", created: Date.now(), updated: Date.now()
-      });
-      toast("Queued ✓ — an agent picks it up within the hour (9am–11pm ET)");
-    } else if (t.dataset.cancel){
-      if (!confirm("Cancel this queued clip?")) return;
-      await db.collection("queue").doc(t.dataset.cancel).update(
-        {status:"killed", kill_reason:"cancelled from the board", updated: Date.now()});
-      toast("Cancelled");
-    } else if (t.dataset.posted){
-      const url = prompt("Paste the TikTok post URL (or leave blank):") ;
-      if (url === null) return;
-      await db.collection("queue").doc(t.dataset.posted).update(
-        {status:"posted", post_url: url.trim(), posted_at: Date.now(), updated: Date.now()});
-      toast("Marked posted ✓ — now hit Submit clip on the campaign page");
-    }
-  } catch (e) {
-    toast(e && e.code === "quota_exceeded" ? "Board database is full — tell Claude to prune old items"
-      : "Couldn’t save — " + (e && e.message || "try again"));
-    if (t.dataset.q) t.disabled = false;
-  } finally { writing = false; }
+  if (d.savepost) {
+    const [id, p] = d.savepost.split(":");
+    const url = (UI.drafts[d.savepost] || "").trim();
+    if (url && !/^https?:\/\//i.test(url)) { toast("That doesn't look like a link. Paste the full post link."); return; }
+    const q = S.queue.find(x => x.id === id); if (!q) return;
+    const ok = await write(() => db.collection("queue").doc(id).update({
+      status: "posted", updated: Date.now(),
+      platforms: {[p]: {status: "posted", url, at: Date.now()}}}), `Saved. Now submit it on Whop.`);
+    if (ok) { delete UI.open[d.savepost]; delete UI.drafts[d.savepost]; render(); }
+    return;
+  }
+  if (d.approve) {
+    const [id, p] = d.approve.split(":");
+    const q = S.queue.find(x => x.id === id);
+    if (q) await sendDraft(q, p, t);
+    return;
+  }
+  if (d.submitted) {
+    const [id, p] = d.submitted.split(":");
+    await write(() => db.collection("queue").doc(id).update({
+      updated: Date.now(), platforms: {[p]: {status: "submitted", submitted_at: Date.now()}}}), "Marked as submitted.");
+    return;
+  }
+  if (d.skip) {
+    const [id, p] = d.skip.split(":");
+    await write(() => db.collection("queue").doc(id).update({
+      updated: Date.now(), platforms: {[p]: {status: "skipped", at: Date.now()}}}), `Skipped ${PLAT[p]}.`);
+    return;
+  }
+  if (d.done) {
+    const tasks = (S.board.tasks || []).map(x => x.id === d.done ? {...x, done: true} : x);
+    await write(() => db.doc("meta/board").update({tasks, updated: Date.now()}), "Nice. Crossed off.");
+    return;
+  }
+  if (d.queue) {
+    const c = S.campaigns.find(x => x.id === d.queue); if (!c) return;
+    const note = (UI.drafts["q:" + c.id] || "").trim();
+    const ok = await write(() => db.collection("queue").add({
+      campaign_id: c.id, campaign_name: c.name, note, status: "queued", allowed: c.platforms || ["tiktok"],
+      created: Date.now(), updated: Date.now()}), "Queued. An agent starts on it within the hour.");
+    if (ok) { delete UI.open["q:" + c.id]; delete UI.drafts["q:" + c.id]; render(); }
+    return;
+  }
+  if (d.cancel) {
+    if (!UI.confirm[d.cancel]) { UI.confirm[d.cancel] = true; render();
+      setTimeout(() => { delete UI.confirm[d.cancel]; render(); }, 3000); return; }
+    delete UI.confirm[d.cancel];
+    await write(() => db.collection("queue").doc(d.cancel).update({
+      status: "killed", kill_reason: "cancelled from the board", updated: Date.now()}), "Cancelled.");
+    return;
+  }
 });
+
+render();
 </script>

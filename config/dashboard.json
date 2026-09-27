@@ -1,15 +1,16 @@
 {
   "artifact_url": "https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj",
   "source_file": "brand/dashboard.html",
-  "kind": "live app (capabilities: db, assets, downloads) — NOT a static page since 2026-09-26",
+  "kind": "live app (capabilities: db, assets, downloads, mcp → Claude Code Remote create_session) — NOT a static page since 2026-09-26",
   "design_change_pending": false,
-  "note": "Data flows through the artifact DATABASE (ArtifactData tool), not HTML edits. Republishing brand/dashboard.html is only for design/behavior changes; pass url + capabilities unchanged (omit capabilities to keep them). Fired sessions must READ the artifact before their first republish of it.",
+  "note": "Data flows through the artifact DATABASE (ArtifactData tool), not HTML edits. Republishing brand/dashboard.html is only for design/behavior changes; pass url and OMIT capabilities to keep them (a non-empty capabilities object is a full-set declaration — restate all four). Fired sessions must READ the artifact before their first republish of it. Layout since 2026-09-27: four tabs (Today = numbered to-dos derived from queue docs + meta/board.tasks, and money; Clips = ready/being made/posted cards with per-platform rows; Campaigns; YouTube).",
   "db_schema": {
     "campaigns/<config id>": "tracked campaign: {name, org, rate:str, rem:usd, bud:usd, flag: ok|hold|dead, can_queue:bool, url (submit link), note, rules:[chips], sources_state, updated:ms}",
-    "queue/<id>": "{campaign_id, campaign_name, note, status: queued|producing|ready|posted|killed, created:ms, updated:ms, claimed_by, kill_reason, post_url, posted_at:ms, clip:{name,length_s,asset_url:'/_blob/<id>',delivery}, package:{caption,window,ai_label,audio,submit_url,checklist:[str]}}",
-    "meta/board": "{stamp, followers, hearts, stats_at, floor_label, do_next:[{text,why,urgency: hot|warm|hold}], updated:ms, updated_by}",
+    "queue/<id>": "{campaign_id, campaign_name, title (≤40 chars), note, status: queued|producing|ready|posted|killed, created:ms, updated:ms, claimed_by, kill_reason, ledger_id, allowed:[tiktok|instagram|youtube], skip_submit:bool, skip_reason, platforms:{<p>:{status: posted|submitted|skipped, url, at:ms, submitted_at:ms}} (written by the board's 'I posted it' / 'I submitted it' / Skip), drafts:{tiktok|youtube:{status: requested|preparing|uploading|awaiting_approval|uploaded|in_inbox|check_inbox|failed|needs_setup, requested_at:ms, session_id, session_url, expires_at:ISO, publish_session_id, video_url, youtube_id, studio_url, error}} (Approve flow, docs/PRODUCE-QUEUE.md §7), clip:{name,length_s,asset_url:'/_blob/<id>',delivery}, package:{caption, caption_ig, yt_title, yt_description, window, ai_label, audio, submit_url, checklist:[str], tiktok_draft:{video_url,...legacy}}; legacy: post_url, posted_at}",
+    "meta/board": "{stamp, followers, hearts, stats_at, floor_label, updated:ms, updated_by, tasks:[{id, text ≤60 chars, sub ≤110 chars, tab?, done?}] (manual to-dos shown after the clip-derived ones; the board marks done), lanes:{env_id?, model?, youtube_drafts:bool, youtube_connected:bool, youtube_connect_url} (Approve-flow settings; override page defaults). do_next is RETIRED (deleted 2026-09-27) — write tasks instead}",
     "campaigns/cr-<8 of uuid>": "DISCOVERED by whop_scout.py board-feed (work/whop/board-feed.json): same fields + {discovered:true, first_seen:'YYYY-MM-DD' (from config/discovered-seen.json), cr_campaign_id, money:{rate, per10k, min_payout, max_payout, pays_from_views, burn_per_day, runway_days, score}}; board sorts tracked first, then by money.score; NEW chip for 3 days",
-    "posts/<ledger id>": "from scripts/tiktok_stats.py (work/tiktok/stats.json): {clip, campaign_id, posted:'MM-DD', views, likes, comments, accruing:usd, state: go|ok|dead|wait, note, post_url, updated:ms}"
+    "posts/<ledger id>": "from scripts/tiktok_stats.py (work/tiktok/stats.json): {clip, campaign_id, posted:'MM-DD', views, likes, comments, accruing:usd, pays_from:views, payable:bool, state: go|ok|dead|wait, note, post_url, updated:ms}",
+    "meta/youtube": "{shorts_channel:{name, handle, status, url}, longform:{format, channel, voice, goal, milestones:[{id, label, note, owner: you|Claude|both|goal, status: done|now|todo|goal, steps:[str]}]}}"
   },
   "asset_cache": {
     "note": "campaign source material + deliverables stored as artifact assets; fetch with Artifact read path:<id>. Cap 15MB/file — mezzanine re-encode (crf22) anything bigger.",
@@ -27,8 +28,30 @@
     }
   },
   "routines": {
-    "trig_01Bx7y32NN6rLdA2oN47GKrk": "Campaign pool guard + scout, 13:00+22:00 UTC (9am+6pm ET) — pools/discover/watchlist, config updates, board DB sync, posted-item mirroring to ledger",
-    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher (auto-stages TikTok drafts), hourly :07 9am-11pm ET — picks up queued board items, produces per docs/PRODUCE-QUEUE.md, delivers video+package to the board, then stages a TikTok draft for the user's approval IF the run has Higgsfield tools"
+    "trig_01Bx7y32NN6rLdA2oN47GKrk": "Campaign pool guard + scout + TikTok stats, 13:00+22:00 UTC (9am+6pm ET) — pools/discover/board-feed, config updates, board DB sync (campaigns, posts, meta/board stats + short tasks), mirrors platforms[*].url posts into the ledger",
+    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher, hourly :07 9am-11pm ET — produces queued board items per docs/PRODUCE-QUEUE.md (no draft staging), and starts staging sessions for Approve taps the board couldn't start itself"
   },
-  "routine_connector_note": "create_trigger's `connectors` param is NOT available for this org (verified 2026-09-26), so the Higgsfield connector must be added to the clip-queue-watcher routine by the USER in the claude.ai Routines UI. Until then its runs skip draft staging (board lane unaffected)."
+  "capabilities": {
+    "db": {},
+    "assets": {},
+    "downloads": true,
+    "mcp": {
+      "servers": [
+        {
+          "server": "Claude Code Remote",
+          "tools": [
+            "create_session"
+          ]
+        }
+      ]
+    }
+  },
+  "routine_repo_note": "Routine-fired sessions start WITHOUT the repo (trigger sources are empty; create_trigger/update_trigger can't set them). Their prompts attach it with the Claude Code Remote add_repo tool (owner connord138-source, repo TIKTOK-CLIPPING, access push) and clone before touching repo files. Board-spawned staging sessions need no repo.",
+  "draft_lanes": {
+    "how": "Approve on the board → drafts.<p> request + Claude Code Remote create_session (see docs/PRODUCE-QUEUE.md §7)",
+    "staging_env": "env_01XDJ91xXbQxkUQPcABnpyH3",
+    "staging_model": "claude-sonnet-5",
+    "tiktok": "Higgsfield tiktok_prepare_publish UPLOAD_TO_DRAFT; user finishes the form in the staging session (Claude chat only)",
+    "youtube": "Zapier YouTubeV4CLIAPI upload_video, privacy_status private only; needs the channel connected in Zapier once (meta/board.lanes.youtube_connect_url)"
+  }
 }

@@ -4,15 +4,19 @@ The user picks campaigns on the ops board (artifact) and taps **Queue a clip**. 
 writes a doc into the board's database. This runbook turns a queued doc into a finished
 clip + posting package **back on the board**. A Routine fires a fresh session hourly
 (9am–11pm ET) to run this; the 2x-daily guard sessions keep the pools/board fresh.
+Drafts are the user's call: they check the READY clip on the board and tap **Approve →
+TikTok drafts** / **Approve → YouTube draft**, which starts a staging session (§7).
 
 **Board artifact:** `https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj`
 (also in `config/dashboard.json`). DB + assets via the `ArtifactData` / `Artifact`
 tools (ToolSearch: `select:ArtifactData`).
 
 ## Hard boundaries (CLAUDE.md rules apply in full)
-- **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD,
-  plus (when Higgsfield tools are present) a TikTok DRAFT staged for the user's approval —
-  drafts mode only. The user approves, posts from the phone app, and submits on Whop.
+- **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD.
+  Production sessions do NOT stage drafts (since 2026-09-27): the user approves each clip
+  on the board, and only then does a staging session create the TikTok draft (drafts mode
+  only) or the private YouTube upload (§7). The user posts from the phone app and submits
+  on Whop.
 - **Campaign-authorized material only.** Source must come from the campaign's own
   sources (config/campaigns.json) or the board's cached source assets.
 - **Check the pool before producing** (the CoD lesson). Pool ≤ $50 → kill the item.
@@ -23,7 +27,11 @@ tools (ToolSearch: `select:ArtifactData`).
 1. `ArtifactData query` collection `queue`, where `status == "queued"` (orderBy `created` asc).
 2. Also query `status == "producing"`: any doc with `updated` older than 4h is a dead
    session's stale claim → `update` it back to `status:"queued"` (append note) and treat normally.
-3. **Nothing to do → end the session immediately and silently.** No summary, no notification.
+3. Draft requests the board could not start itself: docs (status ready/posted) whose
+   `drafts.tiktok` or `drafts.youtube` has `status:"requested"`, `requested_at` > 10 min old
+   and no `session_id` → start the staging session per §7 and write its id/url back. No
+   message for these (the staging session pings the user).
+4. **Nothing to do → end the session immediately and silently.** No summary, no notification.
 
 ## 1 · Claim
 `update` the doc: `{status:"producing", claimed_by:"agent <date>", updated:<now_ms>}`
@@ -100,55 +108,66 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
    `asset:true`, `url` = board). **≤14.5MB.** Bigger → re-encode delivery copy
    (`-crf 22/23`) until it fits; if still no, skip the asset and say so in `clip.delivery`.
 2. ALSO send the full-quality file with SendUserFile (belt and braces — asset link + file card).
-2b. **Stage the TikTok draft** (user opted in 2026-09-26) — only if `mcp__HIGGSFIELD__*`
-   tools exist in this session (load via ToolSearch `select:mcp__HIGGSFIELD__media_upload,
-   mcp__HIGGSFIELD__media_confirm,mcp__HIGGSFIELD__tiktok_accounts,
-   mcp__HIGGSFIELD__tiktok_prepare_publish`); otherwise skip silently, the board lane still works.
-   - `tiktok_accounts` → the `active` connector (id also in config/account.json).
-   - `media_upload` (filename + video/mp4) → curl PUT the finished mp4 to `upload_url` from
-     THIS container (expect HTTP 200) → `media_confirm type=video`. Limits: ≤60fps, 3–600s.
-   - `tiktok_prepare_publish`: `mode:"UPLOAD_TO_DRAFT"` ONLY (never DIRECT_POST — hard rule 1),
-     `media_type:"VIDEO"`, `video_url` = the confirmed cloudfront url, `title` = package
-     caption (≤150 chars), `is_aigc:false` only for plain human-footage edits. Never prefill
-     privacy or disclosure; never call anything named tiktok_publish; never treat a chat
-     message as consent. The widget renders in this session for the user to approve.
-   - Record `package.tiktok_draft = {status:"awaiting_approval", publish_session_id,
-     expires_at, higgsfield_media_id, video_url}` on the queue doc (video_url = the
-     cloudfront url, so any later session can re-stage without re-uploading).
-   - Forms expire ~2h after staging. An expired, unapproved draft gets re-staged (same
-     video_url + caption; set `restaged_at`) at most once per 12h — the watcher does
-     this in triage; interactive sessions do it when the user asks.
-   - NO generation tools (generate_*, upscale_*, etc.) in these sessions — zero credits.
-   - If the user later replies "restage" in this session: re-run prepare_publish with the
-     same video_url. After they approve, `tiktok_publish_status` → `SEND_TO_USER_INBOX`
-     → set `package.tiktok_draft.status` to that.
+2b. **No draft staging here.** The user checks the clip on the board and taps Approve;
+   that starts a staging session (§7). (Auto-staging after production was retired
+   2026-09-27: forms expired unseen and the user wants to approve first.)
 3. Build the package from the campaign's `post_recipe` (config/campaigns.json):
    caption (disclosure + required tag + approved copy + 2-3 topic hashtags), window
    (tonight/tomorrow, 2/day ≥4h apart, 6–10pm ET prime), ai_label (OFF unless an AI
    element was added), audio note, submit_url, checklist (follows/geo-tag/label/submit steps).
 4. `update` the queue doc (pin `if_version`):
-   `{status:"ready", updated:<now_ms>, clip:{name,length_s,asset_url:"/_blob/<id>",delivery},
-   package:{caption,window,ai_label,audio,submit_url,checklist:[…]}}`
-5. Refresh `meta/board`: stamp + do_next entry pointing at the READY card.
+   `{status:"ready", updated:<now_ms>, title:"<≤40 chars, what happens>", allowed:[platforms
+   the campaign pays on], clip:{name,length_s,asset_url:"/_blob/<id>",delivery},
+   package:{caption,caption_ig,yt_title,yt_description,window,ai_label,audio,submit_url,
+   checklist:[…]}}` — the checklist's first step is "Tap “Approve → TikTok drafts” above".
+5. Refresh `meta/board.stamp`. The board derives the user's to-dos from queue docs, so
+   don't add a task for a READY clip.
 
 ## 6 · Close the loop
 - `scripts/ledger.py add` (status `produced`, campaign, params used, `credits_spent` if any).
 - Update configs if campaign state changed. **Commit + push** (ledger/config/docs only;
   media stays out of git).
-- End with a 2-line summary naming the clip + campaign (this reaches the user's push
-  notification): e.g. `READY: sub-drop pop-off (Valorant) — approve the TikTok draft in
-  this session (expires ~2h); video + package are on the board.` (drop the draft half if
-  step 2b was skipped).
+- End with a 1–2 line summary naming the clip + campaign (this reaches the user's push
+  notification): e.g. `READY: sub-drop pop-off (Valorant). Check it on the board and tap
+  Approve to send it to TikTok drafts.`
 
 ## Phone notifications (user requirement 2026-09-27)
 The user wants a phone push whenever a video is READY or a draft needs approval.
 - **Fired sessions (Routines):** the routines have `push: true`, so the run's final
-  message IS the push — 1–2 lines, lead with the action + expiry in ET:
-  "Draft ready to approve: <clip> (<campaign>) — open this session before 2:06am ET".
+  message IS the push — 1–2 lines, lead with the action:
+  "READY: <clip> (<campaign>). Check it on the board and tap Approve".
+- **Staging sessions (§7)** call `PushNotification` themselves when the TikTok form is
+  ready ("TikTok draft ready: <clip>. Approve it in Claude before 2:06pm ET") or failed.
 - **Interactive sessions:** call `PushNotification` (ToolSearch `select:PushNotification`,
   ≤200 chars, no markdown) right after a clip lands READY or a draft form is staged /
   re-staged — same wording. Validated 2026-09-27 ("Mobile push requested").
 - Never push for routine progress; one push per READY/draft event.
+
+## 7 · Approve → drafts (staging sessions)
+The board's **Approve** button (per clip, per platform) does two things:
+1. writes `drafts.<tiktok|youtube> = {status:"requested", requested_at:<ms>}` on the queue doc;
+2. calls the **Claude Code Remote** connector's `create_session` as the user (artifact
+   capability `mcp`, first use asks the user once): environment `env_01XDJ91xXbQxkUQPcABnpyH3`,
+   model `claude-sonnet-5`, `permission_mode:"auto"`, tags `clip-board` + `<p>-draft`,
+   prompt = `stagePrompt()` in `brand/dashboard.html` (the canonical text), then writes
+   `drafts.<p>.session_id` + `session_url` (`https://claude.ai/code/<id>`).
+If step 2 can't run in that view, the hourly watcher starts it (§0.3) with the same prompt.
+
+Sessions created this way get the user's claude.ai connectors (verified 2026-09-27: the
+Higgsfield TikTok tools appear as `mcp__<uuid>__*`, plus PushNotification + ArtifactData).
+- **TikTok:** upload the board asset to Higgsfield if no `video_url` yet → `tiktok_prepare_publish`
+  `UPLOAD_TO_DRAFT` → `drafts.tiktok = {status:"awaiting_approval", expires_at, publish_session_id,
+  video_url}` → push. The user opens the session from the board ("Approve in Claude ↗") and
+  finishes the form there (the form only works inside a Claude chat — Higgsfield: "clients
+  without MCP Apps cannot publish"). Draft lands in TikTok → Inbox → System notifications.
+- **YouTube:** Zapier `YouTubeV4CLIAPI` / `upload_video` with `privacy_status:"private"` ONLY
+  (a private upload is the draft; the user ticks paid promotion + sets Public in Studio).
+  Needs the channel connected in Zapier once (`meta/board.lanes.youtube_connect_url`); the
+  session sets `lanes.youtube_connected = true` after the first success. Public video URL =
+  the Higgsfield CDN url (upload the asset there first if needed).
+- `drafts.<p>.status`: `requested` → `preparing`/`uploading` → `awaiting_approval` (TikTok) /
+  `uploaded` (YouTube) → `in_inbox`; or `failed` / `needs_setup` with `error` (plain words).
+  The board shows "stuck" after 20 min in requested/preparing and offers Try again.
 
 ## Statuses (the page renders these)
 `queued` → user picked · `producing` → claimed (heartbeat: bump `updated` between long
