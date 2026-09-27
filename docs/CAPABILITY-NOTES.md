@@ -232,3 +232,8 @@ player + Download (downloads capability).
 - **Terms drift, again:** Valorant's per-platform minimum payout dropped $2 → $1 on 09-27
   (~19:24 UTC, API `payouts[].minPayoutCents`). The Notion rules were unchanged. Re-read both
   the API payouts and the rules doc before producing or posting.
+- **Whop's submit dialog runs three checks** (Valorant, 09-27): "Posted from one of your
+  linked accounts", "Not already submitted to this campaign", "Posted within the last 30
+  minutes". So: **post and submit right away**, from a social account linked in Whop. The
+  public API has no field for the window. It's recorded per campaign as
+  `submit_window_minutes`, and the board counts down from the "I posted it" time.

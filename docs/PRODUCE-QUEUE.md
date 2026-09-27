@@ -71,6 +71,10 @@ the pick (open campaigns need no join), so onboard, then produce:
    - **Location.**
    - **Audio.**
    - **Application.**
+   - **Submit window.** How soon after posting the link must be submitted. Whop's submit
+     dialog checks "Posted within the last 30 minutes" for Valorant (seen 09-27). Store it as
+     `submit_window_minutes` so the board shows a timer.
+   - **Linked accounts.** The post must come from a social account linked in Whop.
 
    A rule we can't meet → kill with the reason. A `submit_first` campaign → no §7 drafts. The
    board shows "Get it approved before posting" instead, and the package's first tip says so.

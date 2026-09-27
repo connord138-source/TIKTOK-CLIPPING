@@ -92,7 +92,13 @@
     ],
     "post_flow": "post_then_submit",
     "requirements": [],
-    "requirements_note": "API contentRequirements/creatorRequirements are empty (checked 2026-09-27); the rules live in the Notion doc (post_recipe)."
+    "requirements_note": "API contentRequirements/creatorRequirements are empty (checked 2026-09-27); the rules live in the Notion doc (post_recipe).",
+    "submit_window_minutes": 30,
+    "submit_checks": [
+      "Posted from one of your linked accounts (Whop → connected social accounts)",
+      "Not already submitted to this campaign",
+      "Posted within the last 30 minutes"
+    ]
   },
   {
     "id": "cr-d8f10d9f",

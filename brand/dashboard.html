@@ -315,6 +315,7 @@ function hero(s){
         ${p === "youtube" && pk(q).yt_description ? `<button class="btn alt" data-copydesc="${esc(q.id)}">Copy description</button>` : ""}
         ${videoButtons(q)}</div>
       ${tips ? `<div class="tip">${esc(tips)}</div>` : ""}
+      ${campOf(q).submit_window_minutes ? `<div class="tip"><b>Submit within ${campOf(q).submit_window_minutes} minutes of posting.</b> Post only when you can submit right after.</div>` : ""}
       <div class="row">${postedForm(q, p, `Paste the ${PLAT[p]} link`)}</div></div>`;
   }
   if (s.kind === "submit"){
@@ -322,8 +323,13 @@ function hero(s){
       <p>Open the campaign page (sign in with Whop if it asks) → <b>Submit</b> → paste the link. Add the video file if it asks. Each platform is submitted separately.</p>
       <div class="subs">${s.items.map(({q, p}) => {
         const url = ((q.platforms || {})[p] || {}).url || "", link = campLink(q);
+        const at = ((q.platforms || {})[p] || {}).at, win = campOf(q).submit_window_minutes;
+        const mins = at ? Math.floor((Date.now() - at) / 60000) : null;
+        const clock = win && mins != null ? (mins <= win
+          ? `<div class="tip">Posted ${mins} min ago. Submit within ${win} min: <b>${win - mins} min left</b>.</div>`
+          : `<div class="tip">Posted ${mins} min ago, past the ${win}-minute submit window. If Whop rejects it: delete the post, post it again, and submit right away.</div>`) : "";
         return `<div class="sub"><div><b>${esc(titleOf(q))}</b> · ${esc(PLAT[p])}</div>
-          <div class="hint">Campaign: <b>${esc(whopName(q))}</b></div>
+          <div class="hint">Campaign: <b>${esc(whopName(q))}</b></div>${clock}
           <div class="row">${link ? `<a class="btn small" href="${esc(link)}" target="_blank" rel="noopener">Open campaign ↗</a>`
               : `<a class="btn small" href="${WHOP}" target="_blank" rel="noopener">Open Whop ↗</a>`}
             ${url ? `<button class="btn alt small" data-copylink="${esc(q.id + ":" + p)}">Copy link</button>` : ""}
@@ -499,7 +505,7 @@ document.addEventListener("click", async (ev) => {
     const url = (UI.text[d.savepost] || "").trim();
     if (url && !/^https?:\/\//i.test(url)) { toast("That doesn't look like a link. Paste the full post link."); return; }
     const ok = await write(() => qdoc(id).update({status: "posted", updated: Date.now(),
-      platforms: {[p]: {status: "posted", url, at: Date.now()}}}), "Saved. Next: submit it on Whop.");
+      platforms: {[p]: {status: "posted", url, at: Date.now()}}}), "Saved. Submit it on Whop now.");
     if (ok) { delete UI.open[d.savepost]; delete UI.text[d.savepost]; UI.focus = null; render(); }
     return;
   }
