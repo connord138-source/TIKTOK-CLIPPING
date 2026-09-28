@@ -198,6 +198,14 @@
       "secondary": "TJR TikTok @.tjr.him / Instagram @tjr (yt-dlp --impersonate chrome) - only with real editorial, never raw re-uploads",
       "blocked_here": "YouTube @TJRTrades / @TRichesTrades (YouTube bot-check in this container)"
     },
-    "account_note": "Reach strongly recommends a dedicated TJR page if your clipping page has <100 followers (ours: 5). User chose to run it on @chat.clip.that (2026-09-28)."
+    "account_note": "Reach strongly recommends a dedicated TJR page if your clipping page has <100 followers (ours: 5). User chose to run it on @chat.clip.that (2026-09-28).",
+    "layout": {
+      "stream_1080p": "facecam x0-662 y708-1080; sponsor banner (USE CODE TJR + rotating Alpha Futures/tradeify/Lucid/fomo logos) x693-1228 y938-1080; 'NOT FINANCIAL ADVICE' y40-90; TradingView header y<100 (logo top-left) + watchlist x>1630 (company logos)",
+      "shipped_crops": "--layout stack --cam 40,710,490,290 --cam-h 640 --game 925,190,615,729 --cap-y 620 (game crop follows the chart action; keep y<938 wherever x<1228; cam stops ~y1000 so tank-top lettering stays out)"
+    },
+    "moment_notes": "09-28 winner: the 'Bucktooth Benny' bit (face drawn on the chart after a $50k win, deadpan 'strategy' breakdown). Skip his roasts of chat that use ableist/racial slurs (e.g. VOD 55:00-56:45, 70:15-71:46) - reads as TJR in a negative light. Find moments with scripts/kick_chat.py spikes + a whisper scan.",
+    "clips": [
+      "v008 Bucktooth Benny (q-tjr-01) READY 2026-09-28"
+    ]
   }
 ]

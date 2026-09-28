@@ -29,8 +29,9 @@
   },
   "routines": {
     "trig_01KCci58FqBh9D7VjAwXxjrj": "Scout + pool guard + TikTok stats, 8:52am + 5:52pm ET — fires INTO the persistent ops session session_01HmaDwz3oDBm47za31Qb2Zf (created with source_url + outcome_branch, so it can push). Syncs pools/finds/stats to the board, reconciles ledger + configs from the board, pushes. Notifies via PushNotification only when there are alerts.",
-    "trig_019PXV8XZwDdiHTFFxFDGHTa": "clip-queue-watcher, hourly :07 9am-11pm ET, fresh session per run (push notifications on). Produces queued clips (repo via add_repo; its git push may be refused — the ops session reconciles), then starts a draft-prep session (PRODUCE-QUEUE §7).",
-    "trig_01Bx7y32NN6rLdA2oN47GKrk": "DISABLED 2026-09-27: old fresh-session guard (its add_repo clone could run scripts and sync the board, but no commit ever reached the branch)"
+    "trig_019PXV8XZwDdiHTFFxFDGHTa": "DISABLED 2026-09-28: old fresh-session clip watcher. It attached the repo with add_repo(push) before claiming; its 12:07 and 1:08pm ET runs ended in ~40s without claiming the queued TJR item. Replaced by the Clip maker session.",
+    "trig_01Bx7y32NN6rLdA2oN47GKrk": "DISABLED 2026-09-27: old fresh-session guard (its add_repo clone could run scripts and sync the board, but no commit ever reached the branch)",
+    "trig_01HaF2jJ3vWzH1yRzSc35jmJ": "Clip maker queue check, hourly :07 9am-11pm ET - fires INTO the persistent Clip maker session session_01Tc1ykqEmQVQE1d7aiaJA1j (created 09-28 with source_url + outcome_branch: repo attached, can push, has the Higgsfield + Zapier connectors). Triage -> 'idle', or produce per PRODUCE-QUEUE, make the drafts itself (TikTok form OK'd in that session, YouTube private), ledger + push, PushNotification."
   },
   "capabilities": {
     "db": {},
@@ -45,5 +46,6 @@
     "youtube": "Zapier YouTubeV4CLIAPI upload_video, privacy private only; linked channel = Chat Clip That! (UCEpBCiPFGOG4wPxj1JDTiMg)",
     "retired": "board Approve button via the artifact mcp capability (2026-09-27): did not start sessions on the user's phone"
   },
-  "routine_repo_note": "Fresh routine sessions start without the repo and their add_repo clone could not push (09-27 22:00 run: board synced, no commit). Sessions created with create_session(source_url, source_revision, outcome_branch) CAN push (verified: commit bea3ef4). So jobs that must save state fire into a persistent ops session made that way (create_trigger persistent_session_id). Such routines can't use the notifications setting, so they call PushNotification themselves."
+  "routine_repo_note": "Fresh routine sessions start without the repo and their add_repo clone could not push (09-27 22:00 run: board synced, no commit). Sessions created with create_session(source_url, source_revision, outcome_branch) CAN push (verified: commit bea3ef4). So jobs that must save state fire into a persistent ops session made that way (create_trigger persistent_session_id). Such routines can't use the notifications setting, so they call PushNotification themselves.",
+  "clip_maker_session": "https://claude.ai/code/session_01Tc1ykqEmQVQE1d7aiaJA1j"
 }

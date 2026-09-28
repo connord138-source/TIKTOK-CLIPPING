@@ -257,3 +257,25 @@ player + Download (downloads capability).
   returns each VOD's HLS `source` (m3u8). `ffmpeg -ss <start> -i <m3u8> -t <dur> -c copy`
   pulled 1080p60 in seconds. yt-dlp's kick extractor only tries the live channel on
   `kick.com/<slug>/videos` ("not currently live"), so use the API.
+
+## 2026-09-28 · Watcher failure → persistent Clip maker; Kick chat replay
+- The fresh-session watcher (hourly Routine, `create_new_session_on_fire`) left the queued
+  TJR doc untouched at 12:07 and 1:08pm ET: both runs went idle after ~40s, the doc stayed
+  at version 1. The run attaches the repo with `add_repo(access:"push")` BEFORE claiming, so
+  that step is the likely failure (routine sessions also have `mcp_connections: []`, so no
+  Higgsfield/Zapier for drafts anyway). Routine transcripts aren't readable from other
+  sessions (`get_session` shows no summary), so failures before the first board write are
+  invisible. Fix: hourly trigger `trig_01HaF2jJ3vWzH1yRzSc35jmJ` fires into the persistent
+  Clip maker session `session_01Tc1ykqEmQVQE1d7aiaJA1j` (create_session with source_url +
+  outcome_branch → repo + push + the user's connectors). Old trigger disabled, not deleted.
+- The repo is PUBLIC (list_repos), so a plain `git clone` works read-only from any session.
+- **Kick chat replay:** `GET https://kick.com/api/v2/channels/<channel_id>/messages?start_time=<ISO>`
+  (curl_cffi impersonate chrome) returns ~5s of chat per call; stepping through a 77-min
+  VOD took ~925 calls / ~2 min. `scripts/kick_chat.py` wraps vods/fetch/spikes.
+- Kick HLS variants: 1080p60 / 720p60 / 480p30 / 360p30 / 160p30 under the same dir as
+  `master.m3u8`; the 160p30 full VOD (136MB for 77 min) is the cheap scan copy.
+- whisper `base.en` (beam 1, no word timestamps, int8, 4 threads) ran ~18× realtime; the
+  section then gets `small.en` with word timestamps for captions (215s in 84s).
+- Higgsfield media_upload PUT: the presigned URL signs `if-none-match`, so send
+  `-H "If-None-Match: *"` along with Content-Type (200 with it).
+

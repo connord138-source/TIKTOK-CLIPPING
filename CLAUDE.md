@@ -85,6 +85,13 @@ with `add_repo` first (they may not be able to push). The twice-daily guard runs
 persistent ops session created with the repo attached (it can push) and reconciles the
 ledger/configs from the board — see config/dashboard.json `routines`.
 
+**CLIP MAKER SESSION (2026-09-28).** The hourly queue check now fires into a persistent
+**Clip maker** session (repo attached, can push, has the Higgsfield + Zapier connectors). It
+produces queued clips AND makes their drafts itself; the user OKs the TikTok form in that
+session. The old fresh-session watcher is disabled: it died at its `add_repo` step twice on
+09-28 without claiming the TJR item. First TJR clip (v008, "Bucktooth Benny") came from
+a Kick VOD, found with `scripts/kick_chat.py spikes` plus a whisper scan (PRODUCE-QUEUE §3).
+
 Session start ritual: bootstrap installs + `python3 scripts/clipper.py doctor`
 (fresh containers lose ffmpeg/yt-dlp/whisper; ~1 min to restore). Then follow
 OPERATIONS.md. Money model: campaign bounties ~$0.20–$6 per 1k verified views;

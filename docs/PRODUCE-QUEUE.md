@@ -2,10 +2,14 @@
 
 The user picks campaigns on the ops board (artifact) and taps **Queue a clip**. That
 writes a doc into the board's database. This runbook turns a queued doc into a finished
-clip + posting package **back on the board**. A Routine fires a fresh session hourly
-(9am–11pm ET) to run this; the 2x-daily guard sessions keep the pools/board fresh.
-Right after a clip is READY the watcher starts a draft-prep session (§7): a TikTok draft
-form for the user to OK and a PRIVATE YouTube upload. Nothing goes public without the user.
+clip + posting package **back on the board**. An hourly Routine (9am–11pm ET,
+`trig_01HaF2jJ3vWzH1yRzSc35jmJ`) sends "Queue check" into the persistent **Clip maker**
+session (`session_01Tc1ykqEmQVQE1d7aiaJA1j`, repo attached, can push, has the Higgsfield +
+Zapier connectors), which runs this; the 2x-daily ops session keeps the pools/board fresh.
+Right after a clip is READY the Clip maker makes the drafts itself (§7): a TikTok draft
+form for the user to OK in that session and a PRIVATE YouTube upload. Nothing goes public
+without the user. (Until 09-28 a fresh session per hour did this; it attached the repo with
+`add_repo` first and on 09-28 two runs died at that step without claiming the TJR item.)
 
 **Board artifact:** `https://claude.ai/artifact/EtDiVJQckfXQHTAoySKpoj`
 (also in `config/dashboard.json`). DB + assets via the `ArtifactData` / `Artifact`
@@ -104,9 +108,22 @@ Fresh containers have NO `work/` files. Source priority for **coinbase-valorant-
    Dropbox (link in config/campaigns.json; per-file `?rlkey=…&dl=1` works, folder zip
    doesn't — listing needs Higgsfield `sandbox_exec`, see docs/CAPABILITY-NOTES.md).
    Twitch VODs ingest directly via `clipper.py ingest --section` (validated lane).
-   **Kick VODs** (e.g. TJR): `curl https://kick.com/api/v2/channels/<slug>/videos` → pick a
-   VOD → `ffmpeg -ss <start> -i "<source m3u8>" -t <dur> -c copy work/<job>/src.mp4`, then
-   transcribe/cut from that file (validated 09-28, 1080p60).
+   **Kick VODs** (e.g. TJR), the recipe that found the TJR Bucktooth Benny clip (09-28):
+   1. `python3 scripts/kick_chat.py vods <slug>` → pick a VOD (newest first; `source` m3u8).
+   2. Full-length scan copy: `ffmpeg -i "<m3u8 dir>/160p30/playlist.m3u8" -c copy vod160.mp4`
+      (77 min in ~2 min) → 16k mono wav → faster-whisper `base.en`, `beam_size=1`, no word
+      timestamps (~18× realtime on 4 CPUs) → read the whole transcript.
+   3. `kick_chat.py fetch <slug> <index> --out chat.json` (~2 min per hour of stream) →
+      `kick_chat.py spikes chat.json` → laugh runs point at the moments to read closely.
+   4. Section at full quality: `ffmpeg -ss <start> -i "<m3u8 dir>/1080p60/playlist.m3u8"
+      -t <dur> -c copy work/<job>/source.mp4`, write `meta.json` (section_start_s etc.), then
+      `clipper.py transcribe --model small.en` and stitch.
+   Read a gridded full frame (`drawgrid`) before choosing `--cam/--game` crops: stream
+   overlays carry sponsor logos. TJR's layout (1920×1080): facecam x0–662 y708–1080; sponsor
+   banner x693–1228 y938–1080 (rotating logos); "NOT FINANCIAL ADVICE" y40–90; TradingView
+   header y<100 and watchlist x>1630 (company logos). Shipped crops: `--cam 40,710,490,290
+   --cam-h 640 --game 925,190,615,729 --cap-y 620` (the game crop follows the drawing; keep
+   y<938 wherever x<1228). The cam crop stops at y≈1000 so shirt lettering stays out.
 Already-shipped edits (do NOT redo): the 1v1 (`q-val-1v1-v9`), tenz-replay, tenz-clutch.
 
 ## 4 · Produce — v9 template (locked; account.json §style)
@@ -176,7 +193,11 @@ The user wants a phone push whenever a video is READY or a draft needs approval.
 ## 7 · Drafts (automatic, right after READY)
 **Skip this for `submit_first` campaigns.** Nothing may be staged before the campaign
 approves the video. The board walks the user through approve → post instead.
-Otherwise the watcher starts ONE session with the Claude Code Remote `create_session` tool:
+The Clip maker session does steps 2–7 of the prompt below itself (it has the Higgsfield
+and Zapier tools) and sets `drafts.tiktok.session_url` to its own URL, so the user OKs the
+form there. YouTube category: "20" Gaming for game clips, "24" Entertainment otherwise.
+Fallback only (a session WITHOUT those connectors, e.g. a fresh Routine run) starts ONE
+session with the Claude Code Remote `create_session` tool:
 environment `env_01XDJ91xXbQxkUQPcABnpyH3`, model `claude-sonnet-5`, `permission_mode:"auto"`,
 title `Drafts: <clip title>`, tags `clip-board` + `drafts`, and this prompt (fill in the doc id
 and title), then writes `drafts.tiktok.session_url = https://claude.ai/code/<session id>`:
