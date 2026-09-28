@@ -145,5 +145,59 @@
       "Caption: \"Make sure to @Irubyana and use hastags like irubyana, irubyanaclips, twitch, twitchlive\"",
       "Make sure to add twitch banner to background of clips for better engagement"
     ]
+  },
+  {
+    "id": "cr-87327901",
+    "cr_campaign_id": "87327901-f300-46d9-89eb-3418efa9e3a0",
+    "name": "TJR $23,100 Weekly Clipping Campaign",
+    "platform": "whop-content-rewards",
+    "org": "Reach (verified)",
+    "creator": "TJR (trading streamer; Kick kick.com/tjr)",
+    "status": "ACTIVE - onboarded 2026-09-28 on the user's call (off-niche risk noted); pool ~$13.2k of $19.2k",
+    "rate_per_1k": 1.0,
+    "min_payout_usd": 5.0,
+    "max_payout_usd": 750.0,
+    "rates_note": "Whop payouts table (what pays): $1.00/1k on TikTok, IG and YouTube, min $5 (= 5,000 views, the MVR), max $750. Reach's page says $1.50/1k, $15 min, $500 max - Whop's table wins.",
+    "allowed_platforms": [
+      "tiktok",
+      "instagram_reels",
+      "youtube_shorts"
+    ],
+    "post_flow": "post_then_submit",
+    "submit_window_minutes": 30,
+    "submit_url": "https://contentrewards.com/discover/87327901-f300-46d9-89eb-3418efa9e3a0",
+    "whop_name": "TJR $23,100 Weekly Clipping Campaign",
+    "rules_url": "https://reachclipping.com/TJR",
+    "required_caption_tokens": [
+      "#TJR"
+    ],
+    "requirements": [
+      "Submitted videos must feature TJR (any video/stream/clip of TJR may be sourced)",
+      "Post only on Instagram Reels, TikTok, YouTube Shorts",
+      "Audience at least 50% native English-speaking countries (USA, CA, AU, UK, NZ)",
+      "Account's usual audience may not be in a vastly different niche (risk: this is a gaming/streamer page)",
+      "Captions must use the hashtag #TJR",
+      "Payouts start once the video hits the Minimum View Requirement (5,000) and is approved",
+      "Videos cannot portray TJR in a negative light",
+      "No botting, reposts, collab posts or any view/engagement manipulation",
+      "AI-generated videos are not allowed",
+      "Logos of any kind are not allowed",
+      "Submit within 30 minutes of posting",
+      "One strike and you're out (Reach removes you from every campaign)"
+    ],
+    "post_recipe": {
+      "look_for": "funny moments, memorable quotes, reactions from TJR's streams/socials",
+      "caption": "own hook line (English, US-targeted) + #TJR + 1-2 related tags; nothing negative about TJR; no trading/financial advice claims",
+      "on_screen": "our hook + word captions only; NO logos/watermarks (clipper default adds none - never pass --logo); crop out stream-overlay sponsor logos where possible",
+      "ai": "no AI elements at all (no AI VO, no generated b-roll)",
+      "location": "tag a US city when relevant",
+      "disclosure": "none required by the rules page; keep TikTok branded-content toggle on if the in-app prompt applies to paid clipping"
+    },
+    "sources": {
+      "primary": "Kick VODs: GET https://kick.com/api/v2/channels/tjr/videos -> each item's `source` HLS m3u8; section download: ffmpeg -ss <start> -i <m3u8> -t <dur> -c copy (validated 2026-09-28: 1080p60)",
+      "secondary": "TJR TikTok @.tjr.him / Instagram @tjr (yt-dlp --impersonate chrome) - only with real editorial, never raw re-uploads",
+      "blocked_here": "YouTube @TJRTrades / @TRichesTrades (YouTube bot-check in this container)"
+    },
+    "account_note": "Reach strongly recommends a dedicated TJR page if your clipping page has <100 followers (ours: 5). User chose to run it on @chat.clip.that (2026-09-28)."
   }
 ]

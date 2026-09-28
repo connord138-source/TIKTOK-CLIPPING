@@ -292,6 +292,9 @@ function hero(s){
   if (s.kind === "form"){
     return `<div class="hero">${eb}<h3>OK the TikTok draft for “${esc(titleOf(s.q))}”</h3>
       <p>The TikTok form is in your Claude chat, open until <b>${esc(clock(s.d.expires_at))}</b>. After you OK it, the video waits in TikTok → Inbox → System notifications.</p>
+      <div class="tip">TikTok fills the draft's caption with <b>#higgsfield</b>. When you post, delete it and paste this caption instead.</div>
+      ${captionFor(s.q, "tiktok") ? `<div class="cap">${esc(captionFor(s.q, "tiktok"))}</div>
+      <div class="row"><button class="btn alt" data-copy="${esc(s.q.id + ":tiktok")}">Copy caption</button></div>` : ""}
       <div class="row">${s.d.session_url ? `<a class="btn" href="${esc(s.d.session_url)}" target="_blank" rel="noopener">Open the form ↗</a>` : ""}
         <button class="btn alt" data-okd="${esc(s.q.id)}">I OK'd it</button></div></div>`;
   }
@@ -308,7 +311,8 @@ function hero(s){
     const inbox = p === "tiktok" && maybeInbox(s.d);
     return `<div class="hero">${eb}<h3>Post “${esc(titleOf(q))}” on ${esc(PLAT[p])}</h3>
       ${when ? `<p><b>When:</b> ${esc(when)}</p>` : ""}
-      ${inbox ? `<p>It should be waiting in TikTok → Inbox → System notifications. Not there? Use the video below.</p>` : ""}
+      ${inbox ? `<p>It should be waiting in TikTok → Inbox → System notifications. Not there? Use the video below.</p>
+      <div class="tip">The draft's caption says <b>#higgsfield</b>. Delete all of it and paste the caption below.</div>` : ""}
       ${cap ? `<div class="cap">${esc(cap)}</div>` : ""}
       ${p === "youtube" && pk(q).yt_description ? `<div class="cap">${esc(pk(q).yt_description)}</div>` : ""}
       <div class="row">${cap ? `<button class="btn alt" data-copy="${esc(q.id + ":" + p)}">${p === "youtube" ? "Copy title" : "Copy caption"}</button>` : ""}

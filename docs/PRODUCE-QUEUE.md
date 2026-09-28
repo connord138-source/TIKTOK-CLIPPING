@@ -104,6 +104,9 @@ Fresh containers have NO `work/` files. Source priority for **coinbase-valorant-
    Dropbox (link in config/campaigns.json; per-file `?rlkey=…&dl=1` works, folder zip
    doesn't — listing needs Higgsfield `sandbox_exec`, see docs/CAPABILITY-NOTES.md).
    Twitch VODs ingest directly via `clipper.py ingest --section` (validated lane).
+   **Kick VODs** (e.g. TJR): `curl https://kick.com/api/v2/channels/<slug>/videos` → pick a
+   VOD → `ffmpeg -ss <start> -i "<source m3u8>" -t <dur> -c copy work/<job>/src.mp4`, then
+   transcribe/cut from that file (validated 09-28, 1080p60).
 Already-shipped edits (do NOT redo): the 1v1 (`q-val-1v1-v9`), tenz-replay, tenz-clutch.
 
 ## 4 · Produce — v9 template (locked; account.json §style)
@@ -133,7 +136,10 @@ python3 scripts/clipper.py stitch --job <job> --segments "11.7-15.8,2.0-20.3" \
 2. ALSO send the full-quality file with SendUserFile (belt and braces — asset link + file card).
 2b. **Drafts:** after step 4 below, start the §7 draft-prep session (the watcher has no
    Higgsfield/Zapier tools; sessions made with `create_session` get the user's connectors).
-3. Build the package from the campaign's `post_recipe` (config/campaigns.json):
+3. Build the package from the campaign's `post_recipe` (config/campaigns.json). TikTok
+   drafts arrive captioned "#higgsfield" (the draft ignores our title), so the TikTok tip
+   always starts "Delete #higgsfield and paste this caption".
+   Then:
    caption (disclosure + required tag + approved copy + 2-3 topic hashtags), window
    (tonight/tomorrow, 2/day ≥4h apart, 6–10pm ET prime), ai_label (OFF unless an AI
    element was added), audio note, submit_url, checklist (follows/geo-tag/label/submit steps).

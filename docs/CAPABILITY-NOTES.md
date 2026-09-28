@@ -248,3 +248,12 @@ player + Download (downloads capability).
     the hourly watcher's fresh sessions can't push.
   - Persistent-session routines reject the `notifications` setting, so the guard calls
     PushNotification itself, only for alerts.
+- **TikTok inbox drafts arrive captioned "#higgsfield"** (user report, 09-28). In
+  UPLOAD_TO_DRAFT mode the `title` we pass doesn't reach the draft, and TikTok fills in the
+  sending app's hashtag. The user must delete it and paste the board caption. It matters
+  for payout: campaigns cap extra hashtags, need #ad or #TJR first, and so on. The board's
+  TikTok steps now say so and show the caption with a copy button.
+- **Kick media download works (09-28):** `GET https://kick.com/api/v2/channels/<slug>/videos`
+  returns each VOD's HLS `source` (m3u8). `ffmpeg -ss <start> -i <m3u8> -t <dur> -c copy`
+  pulled 1080p60 in seconds. yt-dlp's kick extractor only tries the live channel on
+  `kick.com/<slug>/videos` ("not currently live"), so use the API.
