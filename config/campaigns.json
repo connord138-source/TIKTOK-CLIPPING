@@ -44,7 +44,7 @@
     "participation": "open_submission - no application. SUBMIT via Whop Discover -> Content Rewards (https://whop.com/discover/content-rewards/) -> COINBASE x VALORANT - CLIPPING card -> Submit clip -> post link (+ video file if asked). NOT listed in ClipHaus's Bounties feed (user-verified 2026-09-26).",
     "submit_url": "https://contentrewards.com/discover/3cd86bbc-30ac-4b34-b860-f333784f1db3",
     "rules_url": "https://app.notion.com/p/RIOT-GAMES-VALORANT-CLIPPING-RULES-3e10395e47eb80b4966eefb0fcd3c0e8",
-    "status": "ACTIVE - TERMS CHANGED AGAIN 2026-09-27 ~19:24 UTC: min payout $2 -> $1 per platform (= pays from 1k views); rate $1.00/1k, max $150/post; pool $9,006 left of $10k. Notion rules unchanged (last edited 09-25). #ad MANDATORY for payout.",
+    "status": "ACTIVE - TERMS CHANGED AGAIN 2026-09-27 ~19:24 UTC: min payout $2 -> $1 per platform (= pays from 1k views); rate $1.00/1k, max $150/post; pool $7,556 left of $10k as of 2026-09-28. Notion rules unchanged (last edited 09-25). #ad MANDATORY for payout.",
     "activated_at": "2026-09-23",
     "rate_per_1k": 1.0,
     "allowed_platforms": [
@@ -153,7 +153,7 @@
     "platform": "whop-content-rewards",
     "org": "Reach (verified)",
     "creator": "TJR (trading streamer; Kick kick.com/tjr)",
-    "status": "ACTIVE - onboarded 2026-09-28 on the user's call (off-niche risk noted); pool ~$13.2k of $19.2k",
+    "status": "ACTIVE - onboarded 2026-09-28 on the user's call (off-niche risk noted); pool $9,751 of $19,185 as of 2026-09-28 (~$3.4k burned same day)",
     "rate_per_1k": 1.0,
     "min_payout_usd": 5.0,
     "max_payout_usd": 750.0,
