@@ -157,5 +157,20 @@
       "#irubyanaclips"
     ],
     "stats_at": "2026-09-28T14:28:42Z"
+  },
+  {
+    "id": "v008",
+    "idea_id": null,
+    "title": "TJR: the Bucktooth Benny strategy",
+    "status": "clipped",
+    "credits_spent": 0,
+    "created_at": "2026-09-28T17:35:25Z",
+    "updated_at": "2026-09-28T17:35:35Z",
+    "campaign": "cr-87327901",
+    "rate_per_1k": 1.0,
+    "source_url": "https://kick.com/tjr/videos/d3330025-bfc9-4648-bbb5-adcd90edc4bb",
+    "vod_window": "1:06:24-1:07:56 (6 segs, peak-first)",
+    "clip_file": "work/tjr-benny/tjr-bucktooth-benny.mp4",
+    "notes": "Kick VOD 2026-09-28; stack layout (cam 40,710,490,290 / chart 925,190,615,729, cam-h 640, cap-y 620); sponsor banner + TradingView UI + shirt lettering cropped out; no AI; 0 credits"
   }
 ]

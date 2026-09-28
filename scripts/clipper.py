@@ -393,7 +393,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Caption,DejaVu Sans,78,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,0,2,50,50,430,1
+Style: Caption,DejaVu Sans,78,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,0,2,50,50,%CAP_MV%,1
 Style: Hook,DejaVu Sans,72,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,0,8,60,60,120,1
 
 [Events]
@@ -419,7 +419,8 @@ def ass_escape(text: str) -> str:
 def build_ass(words: list[dict], clip_start: float, clip_end: float,
               hook: str | None, max_card_words: int = 3,
               max_card_span: float = 1.4, hook_as_is: bool = False,
-              hook_full: bool = False, hook_y: int | None = None) -> str:
+              hook_full: bool = False, hook_y: int | None = None,
+              cap_y: int | None = None) -> str:
     """Group words into short caption cards, accent-color the loudest word."""
     events = []
     if hook:
@@ -457,7 +458,9 @@ def build_ass(words: list[dict], clip_start: float, clip_end: float,
             card = []
         card.append(w)
     flush(card)
-    return ASS_HEADER + "\n".join(events) + "\n"
+    # cap_y = caption baseline in the 1920 frame (default 1490 = MarginV 430)
+    header = ASS_HEADER.replace("%CAP_MV%", str(1920 - cap_y if cap_y else 430))
+    return header + "\n".join(events) + "\n"
 
 
 def cmd_cut(args) -> None:
@@ -526,7 +529,7 @@ def cmd_cut(args) -> None:
         hook_y = (args.cam_h // 2 * 2 + 26) if args.layout == "stack" else None
         ass = build_ass(words, args.start, args.end, args.hook,
                         hook_as_is=args.hook_as_is, hook_full=args.hook_full,
-                        hook_y=hook_y)
+                        hook_y=hook_y, cap_y=getattr(args, "cap_y", None))
         (job / f"{out_name}.ass").write_text(ass)
         filters.append(f"[{last}]subtitles={out_name}.ass[v]")
         last = "v"
@@ -594,7 +597,7 @@ def cmd_stitch(args) -> None:
             no_captions=args.no_captions, logo=None, logo_pos="tr",
             logo_width=210, no_loudnorm=True, layout=args.layout,
             cam=args.cam, game=args.game, cam_h=args.cam_h, fg=args.fg,
-            zoom=z, _no_meta=True)
+            cap_y=args.cap_y, zoom=z, _no_meta=True)
         cmd_cut(ns)
         parts.append(job / f"{part}.mp4")
 
@@ -760,6 +763,9 @@ def main() -> None:
     p.add_argument("--zoom", type=float, default=1.0,
                    help="punch-in factor (scale + center-crop)")
     p.add_argument("--fg", help="blur: focus crop X,Y,W,H in source px (wide IRL shots)")
+    p.add_argument("--cap-y", type=int,
+                   help="caption baseline y in the 1920 frame (default 1490); move it off "
+                        "the key visual, e.g. just above a stack seam")
     p.set_defaults(func=cmd_cut)
 
     p = sub.add_parser("stitch", help="multi-segment edit (peak-first + punch-ins)")
@@ -776,6 +782,7 @@ def main() -> None:
     p.add_argument("--game")
     p.add_argument("--cam-h", type=int, default=740)
     p.add_argument("--fg", help="blur: focus crop X,Y,W,H in source px (wide IRL shots)")
+    p.add_argument("--cap-y", type=int, help="caption baseline y (see cut --cap-y)")
     p.add_argument("--out")
     p.add_argument("--no-loudnorm", action="store_true")
     p.set_defaults(func=cmd_stitch)
