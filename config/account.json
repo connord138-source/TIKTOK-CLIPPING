@@ -85,7 +85,8 @@
     }
   },
   "platforms_active": [
-    "tiktok"
+    "tiktok",
+    "instagram"
   ],
-  "platforms_active_note": "2026-09-28: TikTok ONLY for now. The user said they were overwhelmed, so YouTube/Instagram posting steps are paused (no YouTube uploads, no IG steps, allowed = ['tiktok'] on new clips). Re-add a platform only when the user asks. The per-clip job for the user is: post on TikTok, paste the caption, submit the link."
+  "platforms_active_note": "2026-09-29: Instagram re-added at manual/board-package level, same as TikTok (user: '#1 same as tiktok') - no Zapier/API automation, no drafts. New clips get allowed=['tiktok','instagram'] and package.caption_ig + tips.instagram again; the user downloads the clip from the board and posts it from the Instagram phone app (desktop login for @chat.clipp.that loops on Meta's reCAPTCHA - see instagram.login_note). YouTube stays paused until asked for. The per-clip job for the user: post on TikTok (OK the draft) + post on Instagram (download + paste caption), submit both links."
 }

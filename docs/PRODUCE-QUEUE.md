@@ -16,14 +16,19 @@ without the user. (Until 09-28 a fresh session per hour did this; it attached th
 tools (ToolSearch: `select:ArtifactData`).
 
 ## Hard boundaries (CLAUDE.md rules apply in full)
-- **TikTok only for now (user, 2026-09-28).** `config/account.json` `platforms_active` = ["tiktok"]:
-  set `allowed` to the campaign's platforms ∩ platforms_active, skip the YouTube upload in §7,
-  and write no Instagram/YouTube tips. The user was overwhelmed; keep every ask to them to
-  "post on TikTok, paste the caption, submit the link". Re-add platforms only when they ask.
+- **TikTok + Instagram for now (user, 2026-09-29); YouTube still paused.**
+  `config/account.json` `platforms_active` = ["tiktok","instagram"]: set `allowed` to the
+  campaign's platforms ∩ platforms_active, skip the YouTube upload in §7, but DO write
+  `caption_ig` + `tips.instagram` in the package (Instagram is manual/board-package level,
+  same as TikTok's ask-the-user-to-post pattern — no Zapier/API automation, no IG drafts).
+  Keep asks to the user plain: "post on TikTok (OK the draft), post on Instagram (download +
+  paste caption), submit both links." Re-add YouTube only when the user asks.
 - **Never post or publish anywhere.** The deliverable is a video + package ON THE BOARD,
   plus drafts made by the §7 session: a TikTok draft (UPLOAD_TO_DRAFT; the user OKs the
-  form, then posts in the app) and a YouTube upload that is **private** (the user sets it
-  Public). The user submits every post link on Whop.
+  form, then posts in the app) and, once YouTube is re-added, an upload that is **private**
+  (the user sets it Public). Instagram has no draft/API lane — the user downloads the file
+  from the board and posts it themselves from the phone app. The user submits every post
+  link on Whop.
 - **Campaign-authorized material only.** Source must come from the campaign's own
   sources (config/campaigns.json) or the board's cached source assets.
 - **Check the pool before producing** (the CoD lesson). Pool ≤ $50 → kill the item.
