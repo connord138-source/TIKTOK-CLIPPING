@@ -41,6 +41,19 @@ tools (ToolSearch: `select:ArtifactData`).
    session's stale claim → `update` it back to `status:"queued"` (append note) and treat normally.
 3. **Nothing to do → end the session immediately and silently.** No summary, no notification.
 
+## 0.5 · Daily clip (growth phase, since 2026-09-28)
+The user wants one clip a day without queuing it. At the first queue check at or after
+**4pm ET**, if no queue doc has `created` on today's ET date (auto or user-made), `set`
+`queue/q-auto-<YYYYMMDD>` = `{status:"queued", auto:true, lane, campaign_id, campaign_name,
+note:"daily clip (<lane>)", created, updated}`. Lane = the next one in
+`config/account.json` `daily_clip.rotation` after the most recent auto doc's lane, using
+that lane's first OPEN campaign (`lanes.<lane>.open`); skip a lane whose pool is dead or
+drained. Then produce it like any queued item and stage the TikTok form straight away (the
+user approves it from the phone push; the form times out after ~30-50 min — if they say it
+timed out, stage a new one). Posting window 6-9pm ET. Mix goal: TJR/trading, IRL streamers,
+gaming, influencer culture — IRL and influencer lanes are locked by follower gates (see
+`lanes`) until the page grows; add them to the rotation when a campaign opens to us.
+
 ## 1 · Claim
 `update` the doc: `{status:"producing", claimed_by:"agent <date>", updated:<now_ms>}`
 pinned with `if_version` from your read. Pin fails → someone else claimed it; re-read and skip.

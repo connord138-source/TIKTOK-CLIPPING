@@ -88,5 +88,45 @@
     "tiktok",
     "instagram"
   ],
-  "platforms_active_note": "2026-09-29: Instagram re-added at manual/board-package level, same as TikTok (user: '#1 same as tiktok') - no Zapier/API automation, no drafts. New clips get allowed=['tiktok','instagram'] and package.caption_ig + tips.instagram again; the user downloads the clip from the board and posts it from the Instagram phone app (desktop login for @chat.clipp.that loops on Meta's reCAPTCHA - see instagram.login_note). YouTube stays paused until asked for. The per-clip job for the user: post on TikTok (OK the draft) + post on Instagram (download + paste caption), submit both links."
+  "platforms_active_note": "2026-09-29: Instagram re-added at manual/board-package level, same as TikTok (user: '#1 same as tiktok') - no Zapier/API automation, no drafts. New clips get allowed=['tiktok','instagram'] and package.caption_ig + tips.instagram again; the user downloads the clip from the board and posts it from the Instagram phone app (desktop login for @chat.clipp.that loops on Meta's reCAPTCHA - see instagram.login_note). YouTube stays paused until asked for. The per-clip job for the user: post on TikTok (OK the draft) + post on Instagram (download + paste caption), submit both links.",
+  "lanes": {
+    "_note": "User's mix (2026-09-28): TJR/trading, IRL streamers, gaming, pop/social influencer culture - one page identity: streamer & internet-culture clips. Campaign-authorized creators only (hard rule 4), so a lane is open only when a campaign we QUALIFY for exists. Re-check follower gates as the page grows.",
+    "trading": {
+      "open": [
+        "cr-87327901"
+      ],
+      "note": "TJR (Reach), pays from 5k views. PB Blake official needs a dedicated 'PB Blake' page - no."
+    },
+    "gaming": {
+      "open": [
+        "coinbase-valorant-oneshot"
+      ],
+      "note": "Coinbase x Valorant: #ad #coinbasepartner + @coinbase + Branded content toggle; pays from 1k views."
+    },
+    "irl": {
+      "open": [],
+      "locked": {
+        "cr-1634558e": "MegaMcqueen (IRL Twitch): needs 5,000+ followers on a streamer/gaming page, or a dedicated page"
+      },
+      "note": "Irubyana (cr-d8f10d9f) is approval-first, max $60/post; the user passed on it."
+    },
+    "influencer": {
+      "open": [],
+      "locked": {
+        "6fe4c1aa": "It's Personal Podcast: 3,000+ followers and a 60+ day old account",
+        "9e87c2c6": "Charlie Berens (comedy): dedicated or comedy theme page only"
+      },
+      "note": "Fuggler Baddies NYFW = toy product promo for dedicated/theme pages - skip."
+    }
+  },
+  "daily_clip": {
+    "count": 1,
+    "auto_queue_at_et": "16:07 check (clip + TikTok form ready ~4:45pm)",
+    "post_window_et": "6-9pm",
+    "rotation": [
+      "trading",
+      "gaming"
+    ],
+    "note": "Growth phase (user 2026-09-28): views per clip first, money second. The Clip maker auto-queues one clip a day from the next OPEN lane (skip dead/drained pools) unless the user already queued one that day. Add irl/influencer to the rotation when a campaign in that lane opens to us."
+  }
 }
