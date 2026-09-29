@@ -83,5 +83,9 @@
       "voice": "American male AI voice: Kokoro-82M am_michael (free, /opt/tts venv)",
       "twitch_app": "user creates a free Twitch developer app; keys go ONLY in environment variables TWITCH_CLIENT_ID / TWITCH_CLIENT_SECRET (session title bar → environment → Edit), never in chat"
     }
-  }
+  },
+  "platforms_active": [
+    "tiktok"
+  ],
+  "platforms_active_note": "2026-09-28: TikTok ONLY for now. The user said they were overwhelmed, so YouTube/Instagram posting steps are paused (no YouTube uploads, no IG steps, allowed = ['tiktok'] on new clips). Re-add a platform only when the user asks. The per-clip job for the user is: post on TikTok, paste the caption, submit the link."
 }
