@@ -182,5 +182,19 @@
     "posted_at": "2026-09-28",
     "submitted_at": "2026-09-29T00:25Z",
     "tiktok_url": "https://www.tiktok.com/@chat.clip.that/video/7690745878042217742"
+  },
+  {
+    "id": "v009",
+    "idea_id": null,
+    "title": "TJR: chat says he's fat, he claps back",
+    "status": "produced",
+    "credits_spent": 0,
+    "created_at": "2026-09-29T01:23:57Z",
+    "updated_at": "2026-09-29T01:23:57Z",
+    "campaign": "cr-87327901",
+    "rate_per_1k": 1.0,
+    "source_url": "https://kick.com/tjr",
+    "vod_window": "17:32:38-17:59:58",
+    "clip_file": "work/tjr-weight-roast/clip-001.mp4"
   }
 ]
