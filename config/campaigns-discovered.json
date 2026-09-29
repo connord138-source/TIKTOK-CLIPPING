@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5288.4,
-    "remaining_usd": 4711.6,
+    "spent_usd": 5289.12,
+    "remaining_usd": 4710.88,
     "approved_submissions": 17,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 5000.0,
-    "spent_usd": 472.81,
-    "remaining_usd": 4527.19,
+    "spent_usd": 560.48,
+    "remaining_usd": 4439.52,
     "approved_submissions": 44,
     "listed_at": "2026-09-23T09:40:53.000Z"
   },
@@ -54,9 +54,9 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 276.52,
-    "remaining_usd": 2883.48,
-    "approved_submissions": 292,
+    "spent_usd": 320.51,
+    "remaining_usd": 2839.49,
+    "approved_submissions": 322,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
   {
@@ -69,9 +69,9 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 336.69,
-    "remaining_usd": 6663.31,
-    "approved_submissions": 92,
+    "spent_usd": 341.93,
+    "remaining_usd": 6658.07,
+    "approved_submissions": 93,
     "listed_at": "2026-08-14T17:47:31.000Z"
   },
   {
@@ -89,9 +89,9 @@
     "cpm_min_usd_per_1k": 2.6,
     "cpm_max_usd_per_1k": 3.4,
     "budget_usd": 24000.0,
-    "spent_usd": 8318.23,
-    "remaining_usd": 15681.77,
-    "approved_submissions": 1970,
+    "spent_usd": 12254.27,
+    "remaining_usd": 11745.73,
+    "approved_submissions": 2131,
     "listed_at": "2026-09-24T17:31:37.000Z"
   },
   {
@@ -109,10 +109,25 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 10000.0,
-    "spent_usd": 4665.64,
-    "remaining_usd": 5334.36,
-    "approved_submissions": 235,
+    "spent_usd": 4858.02,
+    "remaining_usd": 5141.98,
+    "approved_submissions": 238,
     "listed_at": "2026-09-05T18:02:57.000Z"
+  },
+  {
+    "campaign_id": "ee0d0d23-7e71-41ea-9837-04db6eb961db",
+    "name": "Make It Right - (UGC)  'Alan Fitzpatrick & Calvin Logue' Official Campaign",
+    "org": "The Cross Records",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.5,
+    "cpm_max_usd_per_1k": 2.5,
+    "budget_usd": 2500.0,
+    "spent_usd": 398.35,
+    "remaining_usd": 2101.65,
+    "approved_submissions": 3,
+    "listed_at": "2026-06-17T10:17:24.000Z"
   },
   {
     "campaign_id": "a726ca2a-174f-4974-9829-7f69c19b5dad",
@@ -129,9 +144,9 @@
     "cpm_min_usd_per_1k": 1.8,
     "cpm_max_usd_per_1k": 2.25,
     "budget_usd": 20609.99,
-    "spent_usd": 12785.31,
-    "remaining_usd": 7824.68,
-    "approved_submissions": 730,
+    "spent_usd": 16053.5,
+    "remaining_usd": 4556.49,
+    "approved_submissions": 798,
     "listed_at": "2026-09-08T20:15:14.000Z"
   },
   {
@@ -149,9 +164,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 30845.6,
-    "spent_usd": 16769.31,
-    "remaining_usd": 14076.29,
-    "approved_submissions": 1385,
+    "spent_usd": 17163.99,
+    "remaining_usd": 13681.61,
+    "approved_submissions": 1406,
     "listed_at": "2026-09-08T20:15:49.000Z"
   },
   {
@@ -164,30 +179,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 41698.0,
-    "spent_usd": 33598.12,
-    "remaining_usd": 8099.88,
-    "approved_submissions": 3628,
+    "spent_usd": 33949.31,
+    "remaining_usd": 7748.69,
+    "approved_submissions": 3647,
     "listed_at": "2026-06-23T16:29:05.000Z"
-  },
-  {
-    "campaign_id": "1515b3a8-fec1-43e2-ac52-2bfd4c84d524",
-    "name": "Total War: WARHAMMER III - Lord of the End Times ",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 27200.0,
-    "spent_usd": 20152.26,
-    "remaining_usd": 7047.74,
-    "approved_submissions": 531,
-    "listed_at": "2026-09-24T17:08:11.000Z"
   },
   {
     "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
@@ -204,9 +199,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 50153.25,
-    "spent_usd": 43832.3,
-    "remaining_usd": 6320.95,
-    "approved_submissions": 6092,
+    "spent_usd": 44032.82,
+    "remaining_usd": 6120.43,
+    "approved_submissions": 6139,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
@@ -224,25 +219,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 8166.55,
-    "remaining_usd": 4833.45,
-    "approved_submissions": 391,
+    "spent_usd": 8210.9,
+    "remaining_usd": 4789.1,
+    "approved_submissions": 405,
     "listed_at": "2026-06-11T06:02:18.000Z"
-  },
-  {
-    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
-    "name": "Michael Sartain's Clipping Army",
-    "org": "Michael Sartain's Clipper Army",
-    "org_verified": false,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 10000.0,
-    "spent_usd": 5858.25,
-    "remaining_usd": 4141.75,
-    "approved_submissions": 27,
-    "listed_at": "2026-08-06T13:16:40.000Z"
   },
   {
     "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
@@ -259,10 +239,25 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 867.27,
-    "remaining_usd": 4132.73,
+    "spent_usd": 867.82,
+    "remaining_usd": 4132.18,
     "approved_submissions": 172,
     "listed_at": "2026-06-09T19:42:37.000Z"
+  },
+  {
+    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
+    "name": "Michael Sartain's Clipping Army",
+    "org": "Michael Sartain's Clipper Army",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 6024.22,
+    "remaining_usd": 3975.78,
+    "approved_submissions": 28,
+    "listed_at": "2026-08-06T13:16:40.000Z"
   },
   {
     "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
@@ -274,8 +269,8 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1269.5,
-    "remaining_usd": 3730.5,
+    "spent_usd": 1270.29,
+    "remaining_usd": 3729.71,
     "approved_submissions": 462,
     "listed_at": "2026-07-31T14:51:19.000Z"
   }
