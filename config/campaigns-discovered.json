@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5293.06,
-    "remaining_usd": 4706.94,
+    "spent_usd": 5293.47,
+    "remaining_usd": 4706.53,
     "approved_submissions": 17,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 176.51,
-    "remaining_usd": 2983.49,
+    "spent_usd": 269.55,
+    "remaining_usd": 2890.45,
     "approved_submissions": 357,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -49,30 +49,10 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 567.71,
-    "remaining_usd": 6432.29,
+    "spent_usd": 589.31,
+    "remaining_usd": 6410.69,
     "approved_submissions": 100,
     "listed_at": "2026-08-14T17:47:31.000Z"
-  },
-  {
-    "campaign_id": "c9377932-68fd-41c8-89c4-048f31647f06",
-    "name": "Jack Neel Podcast",
-    "org": "Jack Neel Podcast",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 4.0,
-    "budget_usd": 6000.0,
-    "spent_usd": 3824.86,
-    "remaining_usd": 2175.14,
-    "approved_submissions": 33,
-    "listed_at": "2026-09-29T18:50:19.000Z"
   },
   {
     "campaign_id": "55c78435-91f9-4b99-a225-8c51e37b9c82",
@@ -89,9 +69,9 @@
     "cpm_min_usd_per_1k": 3.5,
     "cpm_max_usd_per_1k": 3.5,
     "budget_usd": 10500.0,
-    "spent_usd": 2059.37,
-    "remaining_usd": 8440.63,
-    "approved_submissions": 78,
+    "spent_usd": 2030.21,
+    "remaining_usd": 8469.79,
+    "approved_submissions": 74,
     "listed_at": "2026-09-14T18:57:18.000Z"
   },
   {
@@ -109,8 +89,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 644.33,
-    "remaining_usd": 8356.44,
+    "spent_usd": 649.32,
+    "remaining_usd": 8351.45,
     "approved_submissions": 128,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
@@ -133,30 +113,10 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 50.78,
-    "remaining_usd": 7449.22,
-    "approved_submissions": 257,
+    "spent_usd": 68.3,
+    "remaining_usd": 7431.7,
+    "approved_submissions": 267,
     "listed_at": "2026-09-03T09:39:21.000Z"
-  },
-  {
-    "campaign_id": "c863e106-135f-42b6-bff1-994d06106809",
-    "name": "The Pathless Lands Clipping",
-    "org": "Clip Farm",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "personal-brand",
-        "name": "Personal Brand"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 8000.0,
-    "spent_usd": 2343.22,
-    "remaining_usd": 5656.78,
-    "approved_submissions": 264,
-    "listed_at": "2026-09-05T18:37:34.000Z"
   },
   {
     "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
@@ -177,30 +137,10 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 503.0,
-    "remaining_usd": 2997.0,
-    "approved_submissions": 96,
+    "spent_usd": 512.78,
+    "remaining_usd": 2987.22,
+    "approved_submissions": 98,
     "listed_at": "2026-09-23T15:32:04.000Z"
-  },
-  {
-    "campaign_id": "b2401ee7-0701-40cc-b201-3f416a005509",
-    "name": "STRANGER THAN HEAVEN - Clip with Ado & Tori Kelly",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 24000.0,
-    "spent_usd": 12021.04,
-    "remaining_usd": 11978.96,
-    "approved_submissions": 335,
-    "listed_at": "2026-09-29T20:57:35.000Z"
   },
   {
     "campaign_id": "13276873-a542-4fb4-bacd-665789e253fb",
@@ -217,30 +157,10 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 12745.65,
-    "remaining_usd": 7254.35,
-    "approved_submissions": 1512,
+    "spent_usd": 12970.78,
+    "remaining_usd": 7029.22,
+    "approved_submissions": 1530,
     "listed_at": "2026-08-08T03:34:58.000Z"
-  },
-  {
-    "campaign_id": "3c5cce96-ebb4-4feb-9181-3fda0bfd29a1",
-    "name": "[UK] Prime Video - Invincible Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 30845.6,
-    "spent_usd": 24405.2,
-    "remaining_usd": 6440.4,
-    "approved_submissions": 1895,
-    "listed_at": "2026-09-08T20:15:49.000Z"
   },
   {
     "campaign_id": "2c65001c-d6a8-4b14-9ba6-52400794b085",
@@ -257,30 +177,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 8375.22,
-    "remaining_usd": 4624.78,
+    "spent_usd": 8375.6,
+    "remaining_usd": 4624.4,
     "approved_submissions": 462,
     "listed_at": "2026-06-11T06:02:18.000Z"
-  },
-  {
-    "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
-    "name": "Backyard Breaks [Clipping Campaign]",
-    "org": "ClipHouse",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "sports",
-        "name": "Sports"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 50153.25,
-    "spent_usd": 45828.43,
-    "remaining_usd": 4324.82,
-    "approved_submissions": 6516,
-    "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
     "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
@@ -301,9 +201,98 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 908.51,
-    "remaining_usd": 4091.49,
-    "approved_submissions": 184,
+    "spent_usd": 914.57,
+    "remaining_usd": 4085.43,
+    "approved_submissions": 186,
     "listed_at": "2026-06-09T19:42:37.000Z"
+  },
+  {
+    "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
+    "name": "Backyard Breaks [Clipping Campaign]",
+    "org": "ClipHouse",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "sports",
+        "name": "Sports"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 50153.25,
+    "spent_usd": 46160.69,
+    "remaining_usd": 3992.56,
+    "approved_submissions": 6583,
+    "listed_at": "2026-06-16T16:04:06.000Z"
+  },
+  {
+    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
+    "name": "Michael Sartain's Clipping Army",
+    "org": "Michael Sartain's Clipper Army",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 6257.9,
+    "remaining_usd": 3742.1,
+    "approved_submissions": 31,
+    "listed_at": "2026-08-06T13:16:40.000Z"
+  },
+  {
+    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+    "name": "Reuben A Geimah | $5k budget - $2 CPM",
+    "org": "Reuben A Geimah",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1367.29,
+    "remaining_usd": 3632.71,
+    "approved_submissions": 490,
+    "listed_at": "2026-07-31T14:51:19.000Z"
+  },
+  {
+    "campaign_id": "55a93335-1218-496f-8f99-60d148a70627",
+    "name": "$5,000 Double Coverage x Sean Sharaf Campaign",
+    "org": "Reach",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "podcast",
+        "name": "Podcasts"
+      },
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1797.78,
+    "remaining_usd": 3202.22,
+    "approved_submissions": 57,
+    "listed_at": "2026-09-30T22:06:25.000Z"
+  },
+  {
+    "campaign_id": "bb7a286d-c388-4550-b2c2-8beca19cd6d0",
+    "name": "Daimon X Syndicate",
+    "org": "Syndicate",
+    "org_verified": true,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 44298.0,
+    "spent_usd": 41139.48,
+    "remaining_usd": 3158.52,
+    "approved_submissions": 4277,
+    "listed_at": "2026-06-23T16:29:05.000Z"
   }
 ]
