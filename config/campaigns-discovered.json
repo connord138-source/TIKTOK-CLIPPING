@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5294.27,
-    "remaining_usd": 4705.73,
+    "spent_usd": 5294.75,
+    "remaining_usd": 4705.25,
     "approved_submissions": 17,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -29,8 +29,8 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 589.37,
-    "remaining_usd": 6410.63,
+    "spent_usd": 589.38,
+    "remaining_usd": 6410.62,
     "approved_submissions": 100,
     "listed_at": "2026-08-14T17:47:31.000Z"
   },
@@ -49,9 +49,9 @@
     "cpm_min_usd_per_1k": 3.5,
     "cpm_max_usd_per_1k": 3.5,
     "budget_usd": 10500.0,
-    "spent_usd": 2294.32,
-    "remaining_usd": 8205.68,
-    "approved_submissions": 75,
+    "spent_usd": 2824.18,
+    "remaining_usd": 7675.82,
+    "approved_submissions": 113,
     "listed_at": "2026-09-14T18:57:18.000Z"
   },
   {
@@ -69,9 +69,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 23500.0,
-    "spent_usd": 4354.74,
-    "remaining_usd": 19145.26,
-    "approved_submissions": 108,
+    "spent_usd": 4673.6,
+    "remaining_usd": 18826.4,
+    "approved_submissions": 117,
     "listed_at": "2026-07-17T15:12:25.000Z"
   },
   {
@@ -89,8 +89,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 920.73,
-    "remaining_usd": 8080.04,
+    "spent_usd": 925.63,
+    "remaining_usd": 8075.14,
     "approved_submissions": 183,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
@@ -113,8 +113,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 72.4,
-    "remaining_usd": 7427.6,
+    "spent_usd": 72.68,
+    "remaining_usd": 7427.32,
     "approved_submissions": 277,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -137,10 +137,30 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1010.34,
-    "remaining_usd": 2489.66,
-    "approved_submissions": 110,
+    "spent_usd": 620.55,
+    "remaining_usd": 2879.45,
+    "approved_submissions": 102,
     "listed_at": "2026-09-23T15:32:04.000Z"
+  },
+  {
+    "campaign_id": "c821e1c6-ba7e-4fd1-b5d2-449c2c1e2df6",
+    "name": "Boxabl x ASG",
+    "org": "Alliance Streaming Group",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "business",
+        "name": "Business"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 17500.0,
+    "spent_usd": 206.29,
+    "remaining_usd": 17293.71,
+    "approved_submissions": 34,
+    "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
     "campaign_id": "13276873-a542-4fb4-bacd-665789e253fb",
@@ -157,9 +177,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 13238.89,
-    "remaining_usd": 6761.11,
-    "approved_submissions": 1561,
+    "spent_usd": 13343.25,
+    "remaining_usd": 6656.75,
+    "approved_submissions": 1573,
     "listed_at": "2026-08-08T03:34:58.000Z"
   },
   {
@@ -177,9 +197,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 8464.94,
-    "remaining_usd": 4535.06,
-    "approved_submissions": 487,
+    "spent_usd": 8590.26,
+    "remaining_usd": 4409.74,
+    "approved_submissions": 527,
     "listed_at": "2026-06-11T06:02:18.000Z"
   },
   {
@@ -201,9 +221,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 917.7,
-    "remaining_usd": 4082.3,
-    "approved_submissions": 187,
+    "spent_usd": 927.98,
+    "remaining_usd": 4072.02,
+    "approved_submissions": 188,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -216,8 +236,8 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 6259.82,
-    "remaining_usd": 3740.18,
+    "spent_usd": 6260.65,
+    "remaining_usd": 3739.35,
     "approved_submissions": 31,
     "listed_at": "2026-08-06T13:16:40.000Z"
   },
@@ -231,9 +251,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1368.62,
-    "remaining_usd": 3631.38,
-    "approved_submissions": 490,
+    "spent_usd": 1383.01,
+    "remaining_usd": 3616.99,
+    "approved_submissions": 495,
     "listed_at": "2026-07-31T14:51:19.000Z"
   },
   {
@@ -251,45 +271,17 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 2036.4,
-    "remaining_usd": 2963.6,
-    "approved_submissions": 49,
+    "spent_usd": 2037.1,
+    "remaining_usd": 2962.9,
+    "approved_submissions": 36,
     "listed_at": "2026-07-30T21:20:25.000Z"
   },
   {
-    "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
-    "name": "Backyard Breaks [Clipping Campaign]",
-    "org": "ClipHouse",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "sports",
-        "name": "Sports"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 50153.25,
-    "spent_usd": 47269.4,
-    "remaining_usd": 2883.85,
-    "approved_submissions": 6717,
-    "listed_at": "2026-06-16T16:04:06.000Z"
-  },
-  {
-    "campaign_id": "70d993b4-0dd0-46ad-9497-53551c4ece0e",
-    "name": "Kelsey Cook: Netflix Special Clipping",
-    "org": "Eclipse",
+    "campaign_id": "fd59ffd2-40a8-4a83-819e-4eb032533076",
+    "name": "Sky: Children of the Light - Dear Van Gogh - YT",
+    "org": "Right Click",
     "org_verified": false,
     "categories": [
-      {
-        "id": "stand-up",
-        "name": "Stand-Up"
-      },
-      {
-        "id": "comedy",
-        "name": "Comedy"
-      },
       {
         "id": "entertainment",
         "name": "Entertainment"
@@ -298,10 +290,10 @@
     "payout_type": "cpm",
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 3655.0,
-    "spent_usd": 835.21,
-    "remaining_usd": 2819.79,
-    "approved_submissions": 26,
-    "listed_at": "2026-09-30T14:20:32.000Z"
+    "budget_usd": 3000.0,
+    "spent_usd": 602.57,
+    "remaining_usd": 2397.43,
+    "approved_submissions": 145,
+    "listed_at": "2026-09-11T19:36:28.000Z"
   }
 ]
