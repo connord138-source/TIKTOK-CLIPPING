@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5293.89,
-    "remaining_usd": 4706.11,
+    "spent_usd": 5294.27,
+    "remaining_usd": 4705.73,
     "approved_submissions": 17,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -29,8 +29,8 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 589.35,
-    "remaining_usd": 6410.65,
+    "spent_usd": 589.37,
+    "remaining_usd": 6410.63,
     "approved_submissions": 100,
     "listed_at": "2026-08-14T17:47:31.000Z"
   },
@@ -49,8 +49,8 @@
     "cpm_min_usd_per_1k": 3.5,
     "cpm_max_usd_per_1k": 3.5,
     "budget_usd": 10500.0,
-    "spent_usd": 2272.26,
-    "remaining_usd": 8227.74,
+    "spent_usd": 2294.32,
+    "remaining_usd": 8205.68,
     "approved_submissions": 75,
     "listed_at": "2026-09-14T18:57:18.000Z"
   },
@@ -69,8 +69,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 23500.0,
-    "spent_usd": 4266.81,
-    "remaining_usd": 19233.19,
+    "spent_usd": 4354.74,
+    "remaining_usd": 19145.26,
     "approved_submissions": 108,
     "listed_at": "2026-07-17T15:12:25.000Z"
   },
@@ -89,9 +89,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 769.04,
-    "remaining_usd": 8231.73,
-    "approved_submissions": 151,
+    "spent_usd": 920.73,
+    "remaining_usd": 8080.04,
+    "approved_submissions": 183,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
   {
@@ -113,9 +113,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 68.48,
-    "remaining_usd": 7431.52,
-    "approved_submissions": 264,
+    "spent_usd": 72.4,
+    "remaining_usd": 7427.6,
+    "approved_submissions": 277,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -137,54 +137,10 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1002.8,
-    "remaining_usd": 2497.2,
+    "spent_usd": 1010.34,
+    "remaining_usd": 2489.66,
     "approved_submissions": 110,
     "listed_at": "2026-09-23T15:32:04.000Z"
-  },
-  {
-    "campaign_id": "5a8bbc11-9a95-4870-96ba-2d7f5c65fa5f",
-    "name": "Gamebred Bareknuckle MMA Event Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.5,
-    "budget_usd": 20340.0,
-    "spent_usd": 11631.85,
-    "remaining_usd": 8708.15,
-    "approved_submissions": 341,
-    "listed_at": "2026-10-03T00:42:45.000Z"
-  },
-  {
-    "campaign_id": "e8a74607-0fb9-4e73-9e95-90a5818233b7",
-    "name": "FFB [Fortnite Map] UGC | $4.83K Budget | $2.50 CPM",
-    "org": "Clipix",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "fortnite",
-        "name": "Fortnite"
-      },
-      {
-        "id": "gaming",
-        "name": "Gaming"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.5,
-    "cpm_max_usd_per_1k": 2.5,
-    "budget_usd": 4830.0,
-    "spent_usd": 410.3,
-    "remaining_usd": 4419.7,
-    "approved_submissions": 99,
-    "listed_at": "2026-09-26T17:33:08.000Z"
   },
   {
     "campaign_id": "13276873-a542-4fb4-bacd-665789e253fb",
@@ -201,9 +157,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 13112.34,
-    "remaining_usd": 6887.66,
-    "approved_submissions": 1545,
+    "spent_usd": 13238.89,
+    "remaining_usd": 6761.11,
+    "approved_submissions": 1561,
     "listed_at": "2026-08-08T03:34:58.000Z"
   },
   {
@@ -221,8 +177,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 8464.11,
-    "remaining_usd": 4535.89,
+    "spent_usd": 8464.94,
+    "remaining_usd": 4535.06,
     "approved_submissions": 487,
     "listed_at": "2026-06-11T06:02:18.000Z"
   },
@@ -245,9 +201,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 914.85,
-    "remaining_usd": 4085.15,
-    "approved_submissions": 186,
+    "spent_usd": 917.7,
+    "remaining_usd": 4082.3,
+    "approved_submissions": 187,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -260,10 +216,45 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 6258.74,
-    "remaining_usd": 3741.26,
+    "spent_usd": 6259.82,
+    "remaining_usd": 3740.18,
     "approved_submissions": 31,
     "listed_at": "2026-08-06T13:16:40.000Z"
+  },
+  {
+    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+    "name": "Reuben A Geimah | $5k budget - $2 CPM",
+    "org": "Reuben A Geimah",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1368.62,
+    "remaining_usd": 3631.38,
+    "approved_submissions": 490,
+    "listed_at": "2026-07-31T14:51:19.000Z"
+  },
+  {
+    "campaign_id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
+    "name": "It's Personal Podcast Clipping Campaign",
+    "org": "Tykoonclips",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "news-politics",
+        "name": "News & Politics"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 2036.4,
+    "remaining_usd": 2963.6,
+    "approved_submissions": 49,
+    "listed_at": "2026-07-30T21:20:25.000Z"
   },
   {
     "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
@@ -280,24 +271,37 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 50153.25,
-    "spent_usd": 46428.56,
-    "remaining_usd": 3724.69,
-    "approved_submissions": 6622,
+    "spent_usd": 47269.4,
+    "remaining_usd": 2883.85,
+    "approved_submissions": 6717,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
-    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
-    "name": "Reuben A Geimah | $5k budget - $2 CPM",
-    "org": "Reuben A Geimah",
+    "campaign_id": "70d993b4-0dd0-46ad-9497-53551c4ece0e",
+    "name": "Kelsey Cook: Netflix Special Clipping",
+    "org": "Eclipse",
     "org_verified": false,
-    "categories": [],
+    "categories": [
+      {
+        "id": "stand-up",
+        "name": "Stand-Up"
+      },
+      {
+        "id": "comedy",
+        "name": "Comedy"
+      },
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
+    "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 1367.92,
-    "remaining_usd": 3632.08,
-    "approved_submissions": 490,
-    "listed_at": "2026-07-31T14:51:19.000Z"
+    "budget_usd": 3655.0,
+    "spent_usd": 835.21,
+    "remaining_usd": 2819.79,
+    "approved_submissions": 26,
+    "listed_at": "2026-09-30T14:20:32.000Z"
   }
 ]
