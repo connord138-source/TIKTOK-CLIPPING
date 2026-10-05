@@ -29,15 +29,15 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 589.38,
-    "remaining_usd": 6410.62,
+    "spent_usd": 589.39,
+    "remaining_usd": 6410.61,
     "approved_submissions": 100,
     "listed_at": "2026-08-14T17:47:31.000Z"
   },
   {
-    "campaign_id": "55c78435-91f9-4b99-a225-8c51e37b9c82",
-    "name": "[FRANCE] Double Date Island - Dating Show Clips",
-    "org": "Clipping Culture",
+    "campaign_id": "f883c9d9-4bf6-4a51-9809-3cbe7d409524",
+    "name": "Swiss [Clipping Campaign]",
+    "org": "ClipHouse",
     "org_verified": true,
     "categories": [
       {
@@ -46,33 +46,13 @@
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.5,
-    "cpm_max_usd_per_1k": 3.5,
-    "budget_usd": 10500.0,
-    "spent_usd": 3395.16,
-    "remaining_usd": 7104.84,
-    "approved_submissions": 113,
-    "listed_at": "2026-09-14T18:57:18.000Z"
-  },
-  {
-    "campaign_id": "4a86a0ec-1430-4f81-b59e-9fbc441d7c9d",
-    "name": "SPROUT",
-    "org": "ClipHaus",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "consumer-brand",
-        "name": "Consumer Brand"
-      }
-    ],
-    "payout_type": "cpm",
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 23500.0,
-    "spent_usd": 4902.94,
-    "remaining_usd": 18597.06,
-    "approved_submissions": 124,
-    "listed_at": "2026-07-17T15:12:25.000Z"
+    "budget_usd": 9000.77,
+    "spent_usd": 1410.54,
+    "remaining_usd": 7590.23,
+    "approved_submissions": 260,
+    "listed_at": "2026-09-26T18:24:38.000Z"
   },
   {
     "campaign_id": "ed675223-69e7-4c20-aada-e3b6ebe50d1e",
@@ -93,36 +73,16 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 72.76,
-    "remaining_usd": 7427.24,
-    "approved_submissions": 282,
+    "spent_usd": 72.85,
+    "remaining_usd": 7427.15,
+    "approved_submissions": 286,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
-    "campaign_id": "f883c9d9-4bf6-4a51-9809-3cbe7d409524",
-    "name": "Swiss [Clipping Campaign]",
-    "org": "ClipHouse",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 9000.77,
-    "spent_usd": 1632.67,
-    "remaining_usd": 7368.1,
-    "approved_submissions": 263,
-    "listed_at": "2026-09-26T18:24:38.000Z"
-  },
-  {
-    "campaign_id": "a9578edf-9a01-4b94-89d6-a11516ff8404",
-    "name": "[US} Double Date Island - Dating Show Clips",
-    "org": "Clipping Culture",
-    "org_verified": true,
+    "campaign_id": "fd59ffd2-40a8-4a83-819e-4eb032533076",
+    "name": "Sky: Children of the Light - Dear Van Gogh - YT",
+    "org": "Right Click",
+    "org_verified": false,
     "categories": [
       {
         "id": "entertainment",
@@ -132,11 +92,35 @@
     "payout_type": "cpm",
     "cpm_min_usd_per_1k": 2.8,
     "cpm_max_usd_per_1k": 2.8,
-    "budget_usd": 10500.0,
-    "spent_usd": 523.54,
-    "remaining_usd": 9976.46,
-    "approved_submissions": 41,
-    "listed_at": "2026-09-14T18:56:47.000Z"
+    "budget_usd": 3000.0,
+    "spent_usd": 603.74,
+    "remaining_usd": 2396.26,
+    "approved_submissions": 145,
+    "listed_at": "2026-09-11T19:36:28.000Z"
+  },
+  {
+    "campaign_id": "7c247780-9eb8-4cea-b9b5-a9d1b7661745",
+    "name": "CleanCam X Syndicate",
+    "org": "Syndicate",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "app",
+        "name": "Apps"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.5,
+    "cpm_max_usd_per_1k": 2.5,
+    "budget_usd": 7049.0,
+    "spent_usd": 332.58,
+    "remaining_usd": 6716.42,
+    "approved_submissions": 82,
+    "listed_at": "2026-07-29T15:47:39.000Z"
   },
   {
     "campaign_id": "e8a74607-0fb9-4e73-9e95-90a5818233b7",
@@ -157,8 +141,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 4830.0,
-    "spent_usd": 642.03,
-    "remaining_usd": 4187.97,
+    "spent_usd": 653.93,
+    "remaining_usd": 4176.07,
     "approved_submissions": 140,
     "listed_at": "2026-09-26T17:33:08.000Z"
   },
@@ -177,10 +161,30 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17500.0,
-    "spent_usd": 210.59,
-    "remaining_usd": 17289.41,
-    "approved_submissions": 34,
+    "spent_usd": 351.99,
+    "remaining_usd": 17148.01,
+    "approved_submissions": 48,
     "listed_at": "2026-09-26T17:39:17.000Z"
+  },
+  {
+    "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
+    "name": "Backyard Breaks [Clipping Campaign]",
+    "org": "ClipHouse",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "sports",
+        "name": "Sports"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 60153.25,
+    "spent_usd": 48741.2,
+    "remaining_usd": 11412.05,
+    "approved_submissions": 6959,
+    "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
     "campaign_id": "13276873-a542-4fb4-bacd-665789e253fb",
@@ -197,9 +201,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 13671.95,
-    "remaining_usd": 6328.05,
-    "approved_submissions": 1628,
+    "spent_usd": 13896.29,
+    "remaining_usd": 6103.71,
+    "approved_submissions": 1674,
     "listed_at": "2026-08-08T03:34:58.000Z"
   },
   {
@@ -217,9 +221,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 8591.03,
-    "remaining_usd": 4408.97,
-    "approved_submissions": 527,
+    "spent_usd": 8843.27,
+    "remaining_usd": 4156.73,
+    "approved_submissions": 602,
     "listed_at": "2026-06-11T06:02:18.000Z"
   },
   {
@@ -241,25 +245,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 929.29,
-    "remaining_usd": 4070.71,
-    "approved_submissions": 188,
+    "spent_usd": 934.04,
+    "remaining_usd": 4065.96,
+    "approved_submissions": 190,
     "listed_at": "2026-06-09T19:42:37.000Z"
-  },
-  {
-    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
-    "name": "Michael Sartain's Clipping Army",
-    "org": "Michael Sartain's Clipper Army",
-    "org_verified": false,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 10000.0,
-    "spent_usd": 6262.17,
-    "remaining_usd": 3737.83,
-    "approved_submissions": 31,
-    "listed_at": "2026-08-06T13:16:40.000Z"
   },
   {
     "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
@@ -271,10 +260,25 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1389.79,
-    "remaining_usd": 3610.21,
+    "spent_usd": 1389.89,
+    "remaining_usd": 3610.11,
     "approved_submissions": 497,
     "listed_at": "2026-07-31T14:51:19.000Z"
+  },
+  {
+    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
+    "name": "Michael Sartain's Clipping Army",
+    "org": "Michael Sartain's Clipper Army",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 6523.05,
+    "remaining_usd": 3476.95,
+    "approved_submissions": 37,
+    "listed_at": "2026-08-06T13:16:40.000Z"
   },
   {
     "campaign_id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
@@ -291,9 +295,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 2037.71,
-    "remaining_usd": 2962.29,
-    "approved_submissions": 36,
+    "spent_usd": 2421.9,
+    "remaining_usd": 2578.1,
+    "approved_submissions": 38,
     "listed_at": "2026-07-30T21:20:25.000Z"
   }
 ]
