@@ -20,6 +20,26 @@
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
   {
+    "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
+    "name": "Post Clips for Sinparty",
+    "org": "Clipr Agency",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 5.0,
+    "cpm_max_usd_per_1k": 5.0,
+    "budget_usd": 3160.0,
+    "spent_usd": 833.16,
+    "remaining_usd": 2326.84,
+    "approved_submissions": 442,
+    "listed_at": "2026-08-04T13:02:32.000Z"
+  },
+  {
     "campaign_id": "a86079c8-1693-4c19-ad89-c0647cc67814",
     "name": "GERMANY | Meta-Klage Clipping | $4 CPM | $10,000 Budget",
     "org": "Begeads",
@@ -49,8 +69,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 1410.54,
-    "remaining_usd": 7590.23,
+    "spent_usd": 1462.01,
+    "remaining_usd": 7538.76,
     "approved_submissions": 260,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
@@ -73,10 +93,34 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 72.85,
-    "remaining_usd": 7427.15,
+    "spent_usd": 72.98,
+    "remaining_usd": 7427.02,
     "approved_submissions": 286,
     "listed_at": "2026-09-03T09:39:21.000Z"
+  },
+  {
+    "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
+    "name": "Rick Roth Clipping ",
+    "org": "ClipLaunch",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "politics",
+        "name": "Politics"
+      },
+      {
+        "id": "news-politics",
+        "name": "News & Politics"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 3500.0,
+    "spent_usd": 765.23,
+    "remaining_usd": 2734.77,
+    "approved_submissions": 109,
+    "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
     "campaign_id": "fd59ffd2-40a8-4a83-819e-4eb032533076",
@@ -93,10 +137,30 @@
     "cpm_min_usd_per_1k": 2.8,
     "cpm_max_usd_per_1k": 2.8,
     "budget_usd": 3000.0,
-    "spent_usd": 603.74,
-    "remaining_usd": 2396.26,
-    "approved_submissions": 145,
+    "spent_usd": 681.39,
+    "remaining_usd": 2318.61,
+    "approved_submissions": 153,
     "listed_at": "2026-09-11T19:36:28.000Z"
+  },
+  {
+    "campaign_id": "31f90db6-4cce-4632-a4b0-bf572e90b199",
+    "name": "[35%+FRANCE] STRANGER THAN HEAVEN-Business Mode ",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.7,
+    "budget_usd": 6000.0,
+    "spent_usd": 416.26,
+    "remaining_usd": 5583.74,
+    "approved_submissions": 37,
+    "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
     "campaign_id": "7c247780-9eb8-4cea-b9b5-a9d1b7661745",
@@ -117,9 +181,9 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 7049.0,
-    "spent_usd": 332.58,
-    "remaining_usd": 6716.42,
-    "approved_submissions": 82,
+    "spent_usd": 414.8,
+    "remaining_usd": 6634.2,
+    "approved_submissions": 83,
     "listed_at": "2026-07-29T15:47:39.000Z"
   },
   {
@@ -141,9 +205,9 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 4830.0,
-    "spent_usd": 653.93,
-    "remaining_usd": 4176.07,
-    "approved_submissions": 140,
+    "spent_usd": 807.15,
+    "remaining_usd": 4022.85,
+    "approved_submissions": 175,
     "listed_at": "2026-09-26T17:33:08.000Z"
   },
   {
@@ -161,9 +225,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17500.0,
-    "spent_usd": 351.99,
-    "remaining_usd": 17148.01,
-    "approved_submissions": 48,
+    "spent_usd": 379.93,
+    "remaining_usd": 17120.07,
+    "approved_submissions": 51,
     "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
@@ -181,10 +245,30 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 60153.25,
-    "spent_usd": 48741.2,
-    "remaining_usd": 11412.05,
-    "approved_submissions": 6959,
+    "spent_usd": 49221.37,
+    "remaining_usd": 10931.88,
+    "approved_submissions": 7016,
     "listed_at": "2026-06-16T16:04:06.000Z"
+  },
+  {
+    "campaign_id": "cda12321-1209-4079-a854-e1c8b91977e2",
+    "name": "Mini Brand Vinyl Cafe Event Clipping Campaign",
+    "org": "Clip Influence",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "consumer-brand",
+        "name": "Consumer Brand"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 1368.16,
+    "remaining_usd": 8631.84,
+    "approved_submissions": 177,
+    "listed_at": "2026-09-22T04:24:23.000Z"
   },
   {
     "campaign_id": "13276873-a542-4fb4-bacd-665789e253fb",
@@ -201,9 +285,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 13896.29,
-    "remaining_usd": 6103.71,
-    "approved_submissions": 1674,
+    "spent_usd": 14033.06,
+    "remaining_usd": 5966.94,
+    "approved_submissions": 1713,
     "listed_at": "2026-08-08T03:34:58.000Z"
   },
   {
@@ -221,83 +305,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 8843.27,
-    "remaining_usd": 4156.73,
+    "spent_usd": 8845.28,
+    "remaining_usd": 4154.72,
     "approved_submissions": 602,
     "listed_at": "2026-06-11T06:02:18.000Z"
-  },
-  {
-    "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
-    "name": "Pepty SLIDESHOWS [HEALTH]",
-    "org": "Reachify",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "fitness",
-        "name": "Fitness"
-      },
-      {
-        "id": "health-wellness",
-        "name": "Health & Wellness"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 934.04,
-    "remaining_usd": 4065.96,
-    "approved_submissions": 190,
-    "listed_at": "2026-06-09T19:42:37.000Z"
-  },
-  {
-    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
-    "name": "Reuben A Geimah | $5k budget - $2 CPM",
-    "org": "Reuben A Geimah",
-    "org_verified": false,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 1389.89,
-    "remaining_usd": 3610.11,
-    "approved_submissions": 497,
-    "listed_at": "2026-07-31T14:51:19.000Z"
-  },
-  {
-    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
-    "name": "Michael Sartain's Clipping Army",
-    "org": "Michael Sartain's Clipper Army",
-    "org_verified": false,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 10000.0,
-    "spent_usd": 6523.05,
-    "remaining_usd": 3476.95,
-    "approved_submissions": 37,
-    "listed_at": "2026-08-06T13:16:40.000Z"
-  },
-  {
-    "campaign_id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
-    "name": "It's Personal Podcast Clipping Campaign",
-    "org": "Tykoonclips",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "news-politics",
-        "name": "News & Politics"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 2421.9,
-    "remaining_usd": 2578.1,
-    "approved_submissions": 38,
-    "listed_at": "2026-07-30T21:20:25.000Z"
   }
 ]
