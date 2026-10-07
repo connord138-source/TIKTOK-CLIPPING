@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 931.69,
-    "remaining_usd": 2228.31,
+    "spent_usd": 982.68,
+    "remaining_usd": 2177.32,
     "approved_submissions": 442,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -49,8 +49,8 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 589.39,
-    "remaining_usd": 6410.61,
+    "spent_usd": 589.46,
+    "remaining_usd": 6410.54,
     "approved_submissions": 100,
     "listed_at": "2026-08-14T17:47:31.000Z"
   },
@@ -69,8 +69,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 1511.96,
-    "remaining_usd": 7488.81,
+    "spent_usd": 1564.06,
+    "remaining_usd": 7436.71,
     "approved_submissions": 260,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
@@ -93,8 +93,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 73.04,
-    "remaining_usd": 7426.96,
+    "spent_usd": 73.08,
+    "remaining_usd": 7426.92,
     "approved_submissions": 289,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -117,50 +117,10 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 766.02,
-    "remaining_usd": 2733.98,
-    "approved_submissions": 109,
+    "spent_usd": 1009.8,
+    "remaining_usd": 2490.2,
+    "approved_submissions": 119,
     "listed_at": "2026-09-23T15:32:04.000Z"
-  },
-  {
-    "campaign_id": "fd59ffd2-40a8-4a83-819e-4eb032533076",
-    "name": "Sky: Children of the Light - Dear Van Gogh - YT",
-    "org": "Right Click",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.8,
-    "cpm_max_usd_per_1k": 2.8,
-    "budget_usd": 3000.0,
-    "spent_usd": 681.98,
-    "remaining_usd": 2318.02,
-    "approved_submissions": 153,
-    "listed_at": "2026-09-11T19:36:28.000Z"
-  },
-  {
-    "campaign_id": "31f90db6-4cce-4632-a4b0-bf572e90b199",
-    "name": "[35%+FRANCE] STRANGER THAN HEAVEN-Business Mode ",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.7,
-    "budget_usd": 6000.0,
-    "spent_usd": 817.26,
-    "remaining_usd": 5182.74,
-    "approved_submissions": 33,
-    "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
     "campaign_id": "7c247780-9eb8-4cea-b9b5-a9d1b7661745",
@@ -181,10 +141,54 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 7049.0,
-    "spent_usd": 1012.92,
-    "remaining_usd": 6036.08,
+    "spent_usd": 1402.11,
+    "remaining_usd": 5646.89,
     "approved_submissions": 147,
     "listed_at": "2026-07-29T15:47:39.000Z"
+  },
+  {
+    "campaign_id": "e8a74607-0fb9-4e73-9e95-90a5818233b7",
+    "name": "FFB [Fortnite Map] UGC | $4.83K Budget | $2.50 CPM",
+    "org": "Clipix",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "fortnite",
+        "name": "Fortnite"
+      },
+      {
+        "id": "gaming",
+        "name": "Gaming"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.5,
+    "cpm_max_usd_per_1k": 2.5,
+    "budget_usd": 4830.0,
+    "spent_usd": 1016.21,
+    "remaining_usd": 3813.79,
+    "approved_submissions": 221,
+    "listed_at": "2026-09-26T17:33:08.000Z"
+  },
+  {
+    "campaign_id": "d1746cf4-9fdb-40a5-b972-2ce5e4bd5e12",
+    "name": "Call of Duty Modern Warfare 4 - DMZ From The Ward ",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 40000.0,
+    "spent_usd": 997.99,
+    "remaining_usd": 39002.01,
+    "approved_submissions": 63,
+    "listed_at": "2026-10-06T21:45:36.000Z"
   },
   {
     "campaign_id": "c821e1c6-ba7e-4fd1-b5d2-449c2c1e2df6",
@@ -201,9 +205,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17500.0,
-    "spent_usd": 395.13,
-    "remaining_usd": 17104.87,
-    "approved_submissions": 56,
+    "spent_usd": 401.86,
+    "remaining_usd": 17098.14,
+    "approved_submissions": 58,
     "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
@@ -221,9 +225,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 60153.25,
-    "spent_usd": 49264.72,
-    "remaining_usd": 10888.53,
-    "approved_submissions": 7017,
+    "spent_usd": 49673.51,
+    "remaining_usd": 10479.74,
+    "approved_submissions": 7094,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
@@ -241,9 +245,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1382.11,
-    "remaining_usd": 8617.89,
-    "approved_submissions": 179,
+    "spent_usd": 1389.85,
+    "remaining_usd": 8610.15,
+    "approved_submissions": 180,
     "listed_at": "2026-09-22T04:24:23.000Z"
   },
   {
@@ -261,9 +265,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 14146.99,
-    "remaining_usd": 5853.01,
-    "approved_submissions": 1728,
+    "spent_usd": 14227.61,
+    "remaining_usd": 5772.39,
+    "approved_submissions": 1743,
     "listed_at": "2026-08-08T03:34:58.000Z"
   },
   {
@@ -285,8 +289,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 937.45,
-    "remaining_usd": 4062.55,
+    "spent_usd": 937.89,
+    "remaining_usd": 4062.11,
     "approved_submissions": 191,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
@@ -305,8 +309,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 9050.84,
-    "remaining_usd": 3949.16,
+    "spent_usd": 9054.32,
+    "remaining_usd": 3945.68,
     "approved_submissions": 657,
     "listed_at": "2026-06-11T06:02:18.000Z"
   }
