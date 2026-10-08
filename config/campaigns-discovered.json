@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 982.68,
-    "remaining_usd": 2177.32,
+    "spent_usd": 1036.54,
+    "remaining_usd": 2123.46,
     "approved_submissions": 442,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -49,30 +49,10 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 7000.0,
-    "spent_usd": 589.46,
-    "remaining_usd": 6410.54,
+    "spent_usd": 589.49,
+    "remaining_usd": 6410.51,
     "approved_submissions": 100,
     "listed_at": "2026-08-14T17:47:31.000Z"
-  },
-  {
-    "campaign_id": "f883c9d9-4bf6-4a51-9809-3cbe7d409524",
-    "name": "Swiss [Clipping Campaign]",
-    "org": "ClipHouse",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 9000.77,
-    "spent_usd": 1564.06,
-    "remaining_usd": 7436.71,
-    "approved_submissions": 260,
-    "listed_at": "2026-09-26T18:24:38.000Z"
   },
   {
     "campaign_id": "ed675223-69e7-4c20-aada-e3b6ebe50d1e",
@@ -93,10 +73,30 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 73.08,
-    "remaining_usd": 7426.92,
-    "approved_submissions": 289,
+    "spent_usd": 79.77,
+    "remaining_usd": 7420.23,
+    "approved_submissions": 297,
     "listed_at": "2026-09-03T09:39:21.000Z"
+  },
+  {
+    "campaign_id": "f883c9d9-4bf6-4a51-9809-3cbe7d409524",
+    "name": "Swiss [Clipping Campaign]",
+    "org": "ClipHouse",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 9000.77,
+    "spent_usd": 2162.92,
+    "remaining_usd": 6837.85,
+    "approved_submissions": 379,
+    "listed_at": "2026-09-26T18:24:38.000Z"
   },
   {
     "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
@@ -117,58 +117,30 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1009.8,
-    "remaining_usd": 2490.2,
-    "approved_submissions": 119,
+    "spent_usd": 948.78,
+    "remaining_usd": 2551.22,
+    "approved_submissions": 121,
     "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
-    "campaign_id": "7c247780-9eb8-4cea-b9b5-a9d1b7661745",
-    "name": "CleanCam X Syndicate",
-    "org": "Syndicate",
+    "campaign_id": "31f90db6-4cce-4632-a4b0-bf572e90b199",
+    "name": "[35%+FRANCE] STRANGER THAN HEAVEN-Business Mode ",
+    "org": "Clipping Culture",
     "org_verified": true,
     "categories": [
       {
-        "id": "app",
-        "name": "Apps"
-      },
-      {
-        "id": "technology",
-        "name": "Technology"
+        "id": "entertainment",
+        "name": "Entertainment"
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.5,
-    "cpm_max_usd_per_1k": 2.5,
-    "budget_usd": 7049.0,
-    "spent_usd": 1402.11,
-    "remaining_usd": 5646.89,
-    "approved_submissions": 147,
-    "listed_at": "2026-07-29T15:47:39.000Z"
-  },
-  {
-    "campaign_id": "e8a74607-0fb9-4e73-9e95-90a5818233b7",
-    "name": "FFB [Fortnite Map] UGC | $4.83K Budget | $2.50 CPM",
-    "org": "Clipix",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "fortnite",
-        "name": "Fortnite"
-      },
-      {
-        "id": "gaming",
-        "name": "Gaming"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.5,
-    "cpm_max_usd_per_1k": 2.5,
-    "budget_usd": 4830.0,
-    "spent_usd": 1016.21,
-    "remaining_usd": 3813.79,
-    "approved_submissions": 221,
-    "listed_at": "2026-09-26T17:33:08.000Z"
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.7,
+    "budget_usd": 6000.0,
+    "spent_usd": 831.64,
+    "remaining_usd": 5168.36,
+    "approved_submissions": 41,
+    "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
     "campaign_id": "d1746cf4-9fdb-40a5-b972-2ce5e4bd5e12",
@@ -185,9 +157,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 40000.0,
-    "spent_usd": 997.99,
-    "remaining_usd": 39002.01,
-    "approved_submissions": 63,
+    "spent_usd": 18243.36,
+    "remaining_usd": 21756.64,
+    "approved_submissions": 402,
     "listed_at": "2026-10-06T21:45:36.000Z"
   },
   {
@@ -205,9 +177,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17500.0,
-    "spent_usd": 401.86,
-    "remaining_usd": 17098.14,
-    "approved_submissions": 58,
+    "spent_usd": 504.87,
+    "remaining_usd": 16995.13,
+    "approved_submissions": 74,
     "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
@@ -225,9 +197,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 60153.25,
-    "spent_usd": 49673.51,
-    "remaining_usd": 10479.74,
-    "approved_submissions": 7094,
+    "spent_usd": 50062.5,
+    "remaining_usd": 10090.75,
+    "approved_submissions": 7155,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
@@ -245,9 +217,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1389.85,
-    "remaining_usd": 8610.15,
-    "approved_submissions": 180,
+    "spent_usd": 1501.17,
+    "remaining_usd": 8498.83,
+    "approved_submissions": 186,
     "listed_at": "2026-09-22T04:24:23.000Z"
   },
   {
@@ -265,10 +237,34 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 14227.61,
-    "remaining_usd": 5772.39,
-    "approved_submissions": 1743,
+    "spent_usd": 14458.6,
+    "remaining_usd": 5541.4,
+    "approved_submissions": 1786,
     "listed_at": "2026-08-08T03:34:58.000Z"
+  },
+  {
+    "campaign_id": "7c247780-9eb8-4cea-b9b5-a9d1b7661745",
+    "name": "CleanCam X Syndicate",
+    "org": "Syndicate",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "app",
+        "name": "Apps"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 7049.0,
+    "spent_usd": 2867.23,
+    "remaining_usd": 4181.77,
+    "approved_submissions": 260,
+    "listed_at": "2026-07-29T15:47:39.000Z"
   },
   {
     "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
@@ -289,9 +285,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 937.89,
-    "remaining_usd": 4062.11,
-    "approved_submissions": 191,
+    "spent_usd": 954.6,
+    "remaining_usd": 4045.4,
+    "approved_submissions": 193,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -309,9 +305,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 9054.32,
-    "remaining_usd": 3945.68,
-    "approved_submissions": 657,
+    "spent_usd": 9209.6,
+    "remaining_usd": 3790.4,
+    "approved_submissions": 702,
     "listed_at": "2026-06-11T06:02:18.000Z"
   }
 ]
