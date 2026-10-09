@@ -6,7 +6,7 @@
     "org": "Clipping Culture (verified)",
     "platform": "whop-content-rewards",
     "participation": "open_submission - no join step; post per rules then user clicks 'Submit clip' with the TikTok post URL",
-    "status": "ENDED 2026-09-26 - pool drained to $0 (was $14.9k on 09-23; ~$5k/day burn). Lesson: check pool before EVERY post. Small top-ups since: $15 (09-27), $73 (10-02), $79 (10-08) - still far below any post minimum, not worth chasing. HOT NEW CAMPAIGN 2026-10-07: same org (Clipping Culture) launched 'CoD MW4 - DMZ From The Ward' (cr-d1746cf4) - started at $39,002 of $40,000. UPDATE 2026-10-08: burning MUCH faster than the original - down to $21,712 in ~24h (~$11k/day), only ~2 days of runway left. We already have CoD MW4 assets/pipeline from this campaign - queue/post now if pursuing, it may be gone before the next cycle.",
+    "status": "ENDED 2026-09-26 - pool drained to $0 (was $14.9k on 09-23; ~$5k/day burn). Lesson: check pool before EVERY post. Small top-ups since: $15 (09-27), $73 (10-02), $79 (10-08/09) - still far below any post minimum, not worth chasing. HOT NEW CAMPAIGN 2026-10-07: same org (Clipping Culture) launched 'CoD MW4 - DMZ From The Ward' (cr-d1746cf4) - started at $39,002 of $40,000, burned faster than the original (~$11k/day), and was fully DRAINED to $0 by 2026-10-09 (status paused, 1,037 approved submissions). We missed the window. Lesson for next hot fresh-pool find: queue same-day, not next cycle.",
     "activated_at": "2026-09-23",
     "rate_per_1k": 2.0,
     "allowed_platforms": [
@@ -44,7 +44,7 @@
     "participation": "open_submission - no application. SUBMIT via Whop Discover -> Content Rewards (https://whop.com/discover/content-rewards/) -> COINBASE x VALORANT - CLIPPING card -> Submit clip -> post link (+ video file if asked). NOT listed in ClipHaus's Bounties feed (user-verified 2026-09-26).",
     "submit_url": "https://contentrewards.com/discover/3cd86bbc-30ac-4b34-b860-f333784f1db3",
     "rules_url": "https://app.notion.com/p/RIOT-GAMES-VALORANT-CLIPPING-RULES-3e10395e47eb80b4966eefb0fcd3c0e8",
-    "status": "ACTIVE - TERMS CHANGED AGAIN 2026-09-27 ~19:24 UTC: min payout $2 -> $1 per platform (= pays from 1k views); rate $1.00/1k, max $150/post; pool $4,631 left of $10k as of 2026-10-08. Notion rules unchanged (last edited 09-25). #ad MANDATORY for payout. v003 crossed its payout minimum 10-03 (1,012 views, $1.01 accruing, flat since).",
+    "status": "ACTIVE - TERMS CHANGED AGAIN 2026-09-27 ~19:24 UTC: min payout $2 -> $1 per platform (= pays from 1k views); rate $1.00/1k, max $150/post; pool dropping faster: $4,640 (10-07) -> $4,631 (10-08) -> $2,198 (10-09), approaching LOW <$2k. Notion rules unchanged (last edited 09-25). #ad MANDATORY for payout. v003 crossed its payout minimum 10-03 (1,012 views, $1.01 accruing, flat since).",
     "activated_at": "2026-09-23",
     "rate_per_1k": 1.0,
     "allowed_platforms": [
