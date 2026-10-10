@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 17000.0,
-    "spent_usd": 2606.3,
-    "remaining_usd": 14393.7,
+    "spent_usd": 2632.6,
+    "remaining_usd": 14367.4,
     "approved_submissions": 7,
     "listed_at": "2026-10-05T19:01:51.000Z"
   },
@@ -58,8 +58,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 86.47,
-    "remaining_usd": 7413.53,
+    "spent_usd": 86.54,
+    "remaining_usd": 7413.46,
     "approved_submissions": 303,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -78,8 +78,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 3616.45,
-    "remaining_usd": 5384.32,
+    "spent_usd": 3670.31,
+    "remaining_usd": 5330.46,
     "approved_submissions": 649,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
@@ -93,9 +93,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 12805.17,
-    "remaining_usd": 5194.83,
-    "approved_submissions": 519,
+    "spent_usd": 12818.04,
+    "remaining_usd": 5181.96,
+    "approved_submissions": 520,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
@@ -117,9 +117,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1027.82,
-    "remaining_usd": 2472.18,
-    "approved_submissions": 129,
+    "spent_usd": 949.39,
+    "remaining_usd": 2550.61,
+    "approved_submissions": 128,
     "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
@@ -137,8 +137,8 @@
     "cpm_min_usd_per_1k": 1.8,
     "cpm_max_usd_per_1k": 2.25,
     "budget_usd": 26109.99,
-    "spent_usd": 22447.12,
-    "remaining_usd": 3662.87,
+    "spent_usd": 22722.88,
+    "remaining_usd": 3387.11,
     "approved_submissions": 1333,
     "listed_at": "2026-09-08T20:15:03.000Z"
   },
@@ -157,9 +157,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17500.0,
-    "spent_usd": 714.65,
-    "remaining_usd": 16785.35,
-    "approved_submissions": 93,
+    "spent_usd": 849.86,
+    "remaining_usd": 16650.14,
+    "approved_submissions": 104,
     "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
@@ -177,8 +177,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 60153.25,
-    "spent_usd": 51608.64,
-    "remaining_usd": 8544.61,
+    "spent_usd": 51662.81,
+    "remaining_usd": 8490.44,
     "approved_submissions": 7448,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
@@ -197,9 +197,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1877.75,
-    "remaining_usd": 8122.25,
-    "approved_submissions": 232,
+    "spent_usd": 1982.33,
+    "remaining_usd": 8017.67,
+    "approved_submissions": 243,
     "listed_at": "2026-09-22T04:24:23.000Z"
   },
   {
@@ -217,9 +217,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20500.0,
-    "spent_usd": 13759.43,
-    "remaining_usd": 6740.57,
-    "approved_submissions": 1162,
+    "spent_usd": 14123.99,
+    "remaining_usd": 6376.01,
+    "approved_submissions": 1260,
     "listed_at": "2026-09-08T20:15:35.000Z"
   },
   {
@@ -237,9 +237,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 20000.0,
-    "spent_usd": 15326.61,
-    "remaining_usd": 4673.39,
-    "approved_submissions": 1910,
+    "spent_usd": 15344.56,
+    "remaining_usd": 4655.44,
+    "approved_submissions": 1914,
     "listed_at": "2026-08-08T03:34:58.000Z"
   },
   {
@@ -261,9 +261,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1016.25,
-    "remaining_usd": 3983.75,
-    "approved_submissions": 222,
+    "spent_usd": 1025.93,
+    "remaining_usd": 3974.07,
+    "approved_submissions": 226,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -276,9 +276,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1496.42,
-    "remaining_usd": 3503.58,
-    "approved_submissions": 535,
+    "spent_usd": 1503.13,
+    "remaining_usd": 3496.87,
+    "approved_submissions": 537,
     "listed_at": "2026-07-31T14:51:19.000Z"
   },
   {
@@ -296,9 +296,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 9529.92,
-    "remaining_usd": 3470.08,
-    "approved_submissions": 805,
+    "spent_usd": 9801.6,
+    "remaining_usd": 3198.4,
+    "approved_submissions": 888,
     "listed_at": "2026-06-11T06:02:18.000Z"
   }
 ]
