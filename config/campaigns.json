@@ -44,7 +44,7 @@
     "participation": "open_submission - no application. SUBMIT via Whop Discover -> Content Rewards (https://whop.com/discover/content-rewards/) -> COINBASE x VALORANT - CLIPPING card -> Submit clip -> post link (+ video file if asked). NOT listed in ClipHaus's Bounties feed (user-verified 2026-09-26).",
     "submit_url": "https://contentrewards.com/discover/3cd86bbc-30ac-4b34-b860-f333784f1db3",
     "rules_url": "https://app.notion.com/p/RIOT-GAMES-VALORANT-CLIPPING-RULES-3e10395e47eb80b4966eefb0fcd3c0e8",
-    "status": "ACTIVE - TERMS CHANGED AGAIN 2026-09-27 ~19:24 UTC: min payout $2 -> $1 per platform (= pays from 1k views); rate $1.00/1k, max $150/post; pool crossed LOW 2026-10-12: $2,049 (10-11) -> $1,519 (10-12). Notion rules unchanged (last edited 09-25). #ad MANDATORY for payout. v003 crossed its payout minimum 10-03 (1,012 views, $1.01 accruing, flat since).",
+    "status": "DEAD 2026-10-12 (6pm) - pool drained to $1 of $10,000 (was $1,519 at 9am). v003 already crossed its payout minimum (1,012 views, $1.01 accruing, submitted 09-26) - unclear whether that locked in payment before the pool emptied, check the Whop dashboard. v006's missing #ad caption fix is now moot either way - no more payout available from this campaign.",
     "activated_at": "2026-09-23",
     "rate_per_1k": 1.0,
     "allowed_platforms": [
