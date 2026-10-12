@@ -20,9 +20,9 @@
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
   {
-    "campaign_id": "a7e8d84e-4d8b-47c4-8943-f9f3740b1c4a",
-    "name": "DraftKings v Kalshi",
-    "org": "Creator Casino",
+    "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
+    "name": "Post Clips for Sinparty",
+    "org": "Clipr Agency",
     "org_verified": false,
     "categories": [
       {
@@ -31,13 +31,37 @@
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 4.0,
-    "cpm_max_usd_per_1k": 4.0,
-    "budget_usd": 17000.0,
-    "spent_usd": 2670.11,
-    "remaining_usd": 14329.89,
-    "approved_submissions": 7,
-    "listed_at": "2026-10-05T19:01:51.000Z"
+    "cpm_min_usd_per_1k": 5.0,
+    "cpm_max_usd_per_1k": 5.0,
+    "budget_usd": 3160.0,
+    "spent_usd": 881.94,
+    "remaining_usd": 2278.06,
+    "approved_submissions": 638,
+    "listed_at": "2026-08-04T13:02:32.000Z"
+  },
+  {
+    "campaign_id": "ed675223-69e7-4c20-aada-e3b6ebe50d1e",
+    "name": "BOTW X Syndicate",
+    "org": "Syndicate",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "app",
+        "name": "Apps"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 7500.0,
+    "spent_usd": 86.74,
+    "remaining_usd": 7413.26,
+    "approved_submissions": 311,
+    "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
     "campaign_id": "f883c9d9-4bf6-4a51-9809-3cbe7d409524",
@@ -54,9 +78,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 9000.77,
-    "spent_usd": 3727.06,
-    "remaining_usd": 5273.71,
-    "approved_submissions": 651,
+    "spent_usd": 3790.4,
+    "remaining_usd": 5210.37,
+    "approved_submissions": 664,
     "listed_at": "2026-09-26T18:24:38.000Z"
   },
   {
@@ -69,9 +93,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 12877.25,
-    "remaining_usd": 5122.75,
-    "approved_submissions": 523,
+    "spent_usd": 12901.28,
+    "remaining_usd": 5098.72,
+    "approved_submissions": 524,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
@@ -93,8 +117,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 954.27,
-    "remaining_usd": 2545.73,
+    "spent_usd": 955.99,
+    "remaining_usd": 2544.01,
     "approved_submissions": 128,
     "listed_at": "2026-09-23T15:32:04.000Z"
   },
@@ -113,30 +137,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 2447.58,
-    "remaining_usd": 3552.42,
-    "approved_submissions": 68,
+    "spent_usd": 3134.44,
+    "remaining_usd": 2865.56,
+    "approved_submissions": 97,
     "listed_at": "2026-09-29T21:26:21.000Z"
-  },
-  {
-    "campaign_id": "fd7cbf9b-b86b-46da-9cf7-690fd0c9145c",
-    "name": "[Mexico] Prime Video - Hazbin Hotel Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.8,
-    "cpm_max_usd_per_1k": 2.25,
-    "budget_usd": 26109.99,
-    "spent_usd": 23635.43,
-    "remaining_usd": 2474.56,
-    "approved_submissions": 1504,
-    "listed_at": "2026-09-08T20:15:03.000Z"
   },
   {
     "campaign_id": "c821e1c6-ba7e-4fd1-b5d2-449c2c1e2df6",
@@ -153,9 +157,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17500.0,
-    "spent_usd": 892.31,
-    "remaining_usd": 16607.69,
-    "approved_submissions": 103,
+    "spent_usd": 1002.28,
+    "remaining_usd": 16497.72,
+    "approved_submissions": 111,
     "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
@@ -173,9 +177,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 60153.25,
-    "spent_usd": 52091.04,
-    "remaining_usd": 8062.21,
-    "approved_submissions": 7509,
+    "spent_usd": 52358.82,
+    "remaining_usd": 7794.43,
+    "approved_submissions": 7572,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
@@ -197,9 +201,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1041.14,
-    "remaining_usd": 3958.86,
-    "approved_submissions": 231,
+    "spent_usd": 1060.72,
+    "remaining_usd": 3939.28,
+    "approved_submissions": 237,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -212,8 +216,8 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1534.18,
-    "remaining_usd": 3465.82,
+    "spent_usd": 1535.1,
+    "remaining_usd": 3464.9,
     "approved_submissions": 545,
     "listed_at": "2026-07-31T14:51:19.000Z"
   },
@@ -232,9 +236,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 13000.0,
-    "spent_usd": 9989.57,
-    "remaining_usd": 3010.43,
-    "approved_submissions": 946,
+    "spent_usd": 10199.71,
+    "remaining_usd": 2800.29,
+    "approved_submissions": 1005,
     "listed_at": "2026-06-11T06:02:18.000Z"
   },
   {
@@ -252,34 +256,10 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 7688.91,
-    "remaining_usd": 2311.09,
+    "spent_usd": 7722.85,
+    "remaining_usd": 2277.15,
     "approved_submissions": 48,
     "listed_at": "2026-08-06T13:16:40.000Z"
-  },
-  {
-    "campaign_id": "147ba7f1-212f-46b4-8499-e09cc95cbdfe",
-    "name": "Warhammer 40,000: Dark Heresy - Steam Wishlist",
-    "org": "Owlcat Games",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "pc-gaming",
-        "name": "PC Gaming"
-      },
-      {
-        "id": "gaming",
-        "name": "Gaming"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 3000.0,
-    "spent_usd": 973.44,
-    "remaining_usd": 2026.56,
-    "approved_submissions": 213,
-    "listed_at": "2026-10-05T14:59:59.000Z"
   },
   {
     "campaign_id": "cda12321-1209-4079-a854-e1c8b91977e2",
@@ -296,9 +276,29 @@
     "cpm_min_usd_per_1k": 1.75,
     "cpm_max_usd_per_1k": 1.75,
     "budget_usd": 10000.0,
-    "spent_usd": 2165.75,
-    "remaining_usd": 7834.25,
-    "approved_submissions": 270,
+    "spent_usd": 2304.85,
+    "remaining_usd": 7695.15,
+    "approved_submissions": 273,
     "listed_at": "2026-09-22T04:24:23.000Z"
+  },
+  {
+    "campaign_id": "d300fea8-aee3-4b99-b60b-73c898d05040",
+    "name": "Bucket Golf [Clipping Campaign]",
+    "org": "ClipHouse",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.75,
+    "cpm_max_usd_per_1k": 1.75,
+    "budget_usd": 3000.0,
+    "spent_usd": 443.3,
+    "remaining_usd": 2556.7,
+    "approved_submissions": 113,
+    "listed_at": "2026-10-02T18:43:29.000Z"
   }
 ]
