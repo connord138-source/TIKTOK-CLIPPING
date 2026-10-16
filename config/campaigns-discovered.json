@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5834.41,
-    "remaining_usd": 4165.59,
+    "spent_usd": 5834.62,
+    "remaining_usd": 4165.38,
     "approved_submissions": 19,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 4.0,
     "cpm_max_usd_per_1k": 4.0,
     "budget_usd": 17000.0,
-    "spent_usd": 2737.1,
-    "remaining_usd": 14262.9,
+    "spent_usd": 2742.56,
+    "remaining_usd": 14257.44,
     "approved_submissions": 7,
     "listed_at": "2026-10-05T19:01:51.000Z"
   },
@@ -58,9 +58,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 109.21,
-    "remaining_usd": 7390.79,
-    "approved_submissions": 323,
+    "spent_usd": 115.57,
+    "remaining_usd": 7384.43,
+    "approved_submissions": 333,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -73,9 +73,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13224.42,
-    "remaining_usd": 4775.58,
-    "approved_submissions": 546,
+    "spent_usd": 13250.59,
+    "remaining_usd": 4749.41,
+    "approved_submissions": 547,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
@@ -97,9 +97,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1099.35,
-    "remaining_usd": 2400.65,
-    "approved_submissions": 141,
+    "spent_usd": 1134.93,
+    "remaining_usd": 2365.07,
+    "approved_submissions": 146,
     "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
@@ -117,15 +117,15 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3105.01,
-    "remaining_usd": 2894.99,
-    "approved_submissions": 98,
+    "spent_usd": 3199.67,
+    "remaining_usd": 2800.33,
+    "approved_submissions": 109,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
-    "campaign_id": "13276873-a542-4fb4-bacd-665789e253fb",
-    "name": "Arena Club x ClipFarm",
-    "org": "Clip Farm",
+    "campaign_id": "66e21e72-3e71-43e6-bee3-1eed2d8eb122",
+    "name": "Colin Kaepernick Podcast Campaign",
+    "org": "Evangelist",
     "org_verified": true,
     "categories": [
       {
@@ -134,13 +134,33 @@
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.25,
+    "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
-    "budget_usd": 20000.0,
-    "spent_usd": 17147.45,
-    "remaining_usd": 2852.55,
-    "approved_submissions": 2210,
-    "listed_at": "2026-08-08T03:34:58.000Z"
+    "budget_usd": 3300.0,
+    "spent_usd": 873.49,
+    "remaining_usd": 2426.51,
+    "approved_submissions": 28,
+    "listed_at": "2026-10-07T17:39:39.000Z"
+  },
+  {
+    "campaign_id": "ac498f72-60d3-4753-a703-44895b8b9678",
+    "name": "SEGA - Metaphor: ReFantazio Switch 2 Demo Clipping",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 17870.41,
+    "spent_usd": 446.25,
+    "remaining_usd": 17424.16,
+    "approved_submissions": 123,
+    "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
     "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
@@ -157,30 +177,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 60153.25,
-    "spent_usd": 55102.58,
-    "remaining_usd": 5050.67,
-    "approved_submissions": 8045,
+    "spent_usd": 55192.41,
+    "remaining_usd": 4960.84,
+    "approved_submissions": 8046,
     "listed_at": "2026-06-16T16:04:06.000Z"
-  },
-  {
-    "campaign_id": "c821e1c6-ba7e-4fd1-b5d2-449c2c1e2df6",
-    "name": "Boxabl x ASG",
-    "org": "Alliance Streaming Group",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "business",
-        "name": "Business"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 17500.0,
-    "spent_usd": 13183.95,
-    "remaining_usd": 4316.05,
-    "approved_submissions": 383,
-    "listed_at": "2026-09-26T17:39:17.000Z"
   },
   {
     "campaign_id": "ca27bbd3-9485-4a83-9285-0123238f3615",
@@ -201,8 +201,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 819.88,
-    "remaining_usd": 4180.12,
+    "spent_usd": 943.32,
+    "remaining_usd": 4056.68,
     "approved_submissions": 6,
     "listed_at": "2026-10-12T07:10:03.000Z"
   },
@@ -225,9 +225,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1139.31,
-    "remaining_usd": 3860.69,
-    "approved_submissions": 268,
+    "spent_usd": 1154.42,
+    "remaining_usd": 3845.58,
+    "approved_submissions": 273,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -240,30 +240,54 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1693.25,
-    "remaining_usd": 3306.75,
-    "approved_submissions": 600,
+    "spent_usd": 1707.65,
+    "remaining_usd": 3292.35,
+    "approved_submissions": 607,
     "listed_at": "2026-07-31T14:51:19.000Z"
   },
   {
-    "campaign_id": "2c65001c-d6a8-4b14-9ba6-52400794b085",
-    "name": "Alpha Futures Clipping Campaign",
-    "org": "Click Culture",
+    "campaign_id": "c821e1c6-ba7e-4fd1-b5d2-449c2c1e2df6",
+    "name": "Boxabl x ASG",
+    "org": "Alliance Streaming Group",
     "org_verified": false,
     "categories": [
       {
-        "id": "finance",
-        "name": "Finance"
+        "id": "business",
+        "name": "Business"
       }
     ],
     "payout_type": "cpm",
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 13000.0,
-    "spent_usd": 10967.03,
-    "remaining_usd": 2032.97,
-    "approved_submissions": 1260,
-    "listed_at": "2026-06-11T06:02:18.000Z"
+    "budget_usd": 17500.0,
+    "spent_usd": 14349.28,
+    "remaining_usd": 3150.72,
+    "approved_submissions": 426,
+    "listed_at": "2026-09-26T17:39:17.000Z"
+  },
+  {
+    "campaign_id": "35056178-a7a3-441d-a070-2a1b5bb7378b",
+    "name": "GALAXY ",
+    "org": "Clouted",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "gadgets",
+        "name": "Gadgets"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 2500.0,
+    "spent_usd": 361.11,
+    "remaining_usd": 2138.89,
+    "approved_submissions": 27,
+    "listed_at": "2026-10-12T13:53:54.000Z"
   },
   {
     "campaign_id": "e6caab2c-5852-4370-97c3-00d992efaa8b",
@@ -280,29 +304,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 1.75,
     "budget_usd": 40000.0,
-    "spent_usd": 12783.11,
-    "remaining_usd": 27216.89,
-    "approved_submissions": 378,
+    "spent_usd": 27083.49,
+    "remaining_usd": 12916.51,
+    "approved_submissions": 640,
     "listed_at": "2026-10-14T11:52:45.000Z"
-  },
-  {
-    "campaign_id": "cda12321-1209-4079-a854-e1c8b91977e2",
-    "name": "Mini Brand Vinyl Cafe Event Clipping Campaign",
-    "org": "Clip Influence",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "consumer-brand",
-        "name": "Consumer Brand"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.75,
-    "cpm_max_usd_per_1k": 1.75,
-    "budget_usd": 10000.0,
-    "spent_usd": 2475.81,
-    "remaining_usd": 7524.19,
-    "approved_submissions": 330,
-    "listed_at": "2026-09-22T04:24:23.000Z"
   }
 ]
