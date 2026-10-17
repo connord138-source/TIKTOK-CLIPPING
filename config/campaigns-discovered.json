@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5664.1,
-    "remaining_usd": 4335.9,
+    "spent_usd": 5664.46,
+    "remaining_usd": 4335.54,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 890.37,
-    "remaining_usd": 2269.63,
+    "spent_usd": 899.14,
+    "remaining_usd": 2260.86,
     "approved_submissions": 760,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -58,9 +58,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 116.3,
-    "remaining_usd": 7383.7,
-    "approved_submissions": 333,
+    "spent_usd": 123.85,
+    "remaining_usd": 7376.15,
+    "approved_submissions": 337,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -73,10 +73,50 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13317.62,
-    "remaining_usd": 4682.38,
-    "approved_submissions": 553,
+    "spent_usd": 13356.54,
+    "remaining_usd": 4643.46,
+    "approved_submissions": 554,
     "listed_at": "2026-05-19T20:25:22.000Z"
+  },
+  {
+    "campaign_id": "5f6b6ac5-9878-4ad6-b90f-c2f2a3392e91",
+    "name": "Stream House LA Clipping| $4k Budget",
+    "org": "Motion Clipping",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 4000.0,
+    "spent_usd": 197.35,
+    "remaining_usd": 3802.65,
+    "approved_submissions": 117,
+    "listed_at": "2026-10-06T00:03:34.000Z"
+  },
+  {
+    "campaign_id": "fff9753d-70cd-495c-b76f-678f2d4a58ec",
+    "name": "[35%+UK] STRANGER THAN HEAVEN-Business Mode",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.7,
+    "budget_usd": 6000.0,
+    "spent_usd": 727.48,
+    "remaining_usd": 5272.52,
+    "approved_submissions": 123,
+    "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
     "campaign_id": "31f90db6-4cce-4632-a4b0-bf572e90b199",
@@ -93,9 +133,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3200.79,
-    "remaining_usd": 2799.21,
-    "approved_submissions": 109,
+    "spent_usd": 3174.93,
+    "remaining_usd": 2825.07,
+    "approved_submissions": 105,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
@@ -113,8 +153,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 937.78,
-    "remaining_usd": 2362.22,
+    "spent_usd": 945.34,
+    "remaining_usd": 2354.66,
     "approved_submissions": 31,
     "listed_at": "2026-10-07T17:39:39.000Z"
   },
@@ -133,9 +173,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17870.41,
-    "spent_usd": 492.02,
-    "remaining_usd": 17378.39,
-    "approved_submissions": 125,
+    "spent_usd": 526.95,
+    "remaining_usd": 17343.46,
+    "approved_submissions": 122,
     "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
@@ -153,10 +193,38 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 57002.39,
-    "remaining_usd": 13150.86,
-    "approved_submissions": 8461,
+    "spent_usd": 57180.18,
+    "remaining_usd": 12973.07,
+    "approved_submissions": 8479,
     "listed_at": "2026-06-16T16:04:06.000Z"
+  },
+  {
+    "campaign_id": "5040e0ef-de95-412c-9324-e50378cb6a1e",
+    "name": "SAI Clipping & UGC",
+    "org": "Clip Brand",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "ai-tools",
+        "name": "AI Tools"
+      },
+      {
+        "id": "artificial-intelligence",
+        "name": "Artificial Intelligence"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 435.75,
+    "remaining_usd": 4564.25,
+    "approved_submissions": 27,
+    "listed_at": "2026-10-10T07:02:54.000Z"
   },
   {
     "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
@@ -177,9 +245,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1162.25,
-    "remaining_usd": 3837.75,
-    "approved_submissions": 275,
+    "spent_usd": 1182.6,
+    "remaining_usd": 3817.4,
+    "approved_submissions": 288,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -201,8 +269,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1172.49,
-    "remaining_usd": 3827.51,
+    "spent_usd": 1215.21,
+    "remaining_usd": 3784.79,
     "approved_submissions": 6,
     "listed_at": "2026-10-12T07:10:03.000Z"
   },
@@ -216,54 +284,10 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1710.41,
-    "remaining_usd": 3289.59,
-    "approved_submissions": 608,
+    "spent_usd": 1719.56,
+    "remaining_usd": 3280.44,
+    "approved_submissions": 613,
     "listed_at": "2026-07-31T14:51:19.000Z"
-  },
-  {
-    "campaign_id": "c821e1c6-ba7e-4fd1-b5d2-449c2c1e2df6",
-    "name": "Boxabl x ASG",
-    "org": "Alliance Streaming Group",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "business",
-        "name": "Business"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 17500.0,
-    "spent_usd": 15096.2,
-    "remaining_usd": 2403.8,
-    "approved_submissions": 446,
-    "listed_at": "2026-09-26T17:39:17.000Z"
-  },
-  {
-    "campaign_id": "35056178-a7a3-441d-a070-2a1b5bb7378b",
-    "name": "GALAXY ",
-    "org": "Clouted",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "gadgets",
-        "name": "Gadgets"
-      },
-      {
-        "id": "technology",
-        "name": "Technology"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 2500.0,
-    "spent_usd": 420.53,
-    "remaining_usd": 2079.47,
-    "approved_submissions": 27,
-    "listed_at": "2026-10-12T13:53:54.000Z"
   },
   {
     "campaign_id": "cda12321-1209-4079-a854-e1c8b91977e2",
@@ -280,29 +304,9 @@
     "cpm_min_usd_per_1k": 1.75,
     "cpm_max_usd_per_1k": 1.75,
     "budget_usd": 10000.0,
-    "spent_usd": 2560.93,
-    "remaining_usd": 7439.07,
+    "spent_usd": 2620.27,
+    "remaining_usd": 7379.73,
     "approved_submissions": 343,
     "listed_at": "2026-09-22T04:24:23.000Z"
-  },
-  {
-    "campaign_id": "e6caab2c-5852-4370-97c3-00d992efaa8b",
-    "name": "Modern Warfare 4 - DMZ Early Access Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 1.75,
-    "budget_usd": 40000.0,
-    "spent_usd": 33904.22,
-    "remaining_usd": 6095.78,
-    "approved_submissions": 743,
-    "listed_at": "2026-10-14T11:52:45.000Z"
   }
 ]
