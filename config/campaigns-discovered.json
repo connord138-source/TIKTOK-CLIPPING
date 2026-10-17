@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5664.46,
-    "remaining_usd": 4335.54,
+    "spent_usd": 5664.72,
+    "remaining_usd": 4335.28,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 899.14,
-    "remaining_usd": 2260.86,
+    "spent_usd": 906.61,
+    "remaining_usd": 2253.39,
     "approved_submissions": 760,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -58,9 +58,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 123.85,
-    "remaining_usd": 7376.15,
-    "approved_submissions": 337,
+    "spent_usd": 117.85,
+    "remaining_usd": 7382.15,
+    "approved_submissions": 332,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -73,9 +73,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13356.54,
-    "remaining_usd": 4643.46,
-    "approved_submissions": 554,
+    "spent_usd": 13490.78,
+    "remaining_usd": 4509.22,
+    "approved_submissions": 560,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
@@ -93,10 +93,34 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4000.0,
-    "spent_usd": 197.35,
-    "remaining_usd": 3802.65,
-    "approved_submissions": 117,
+    "spent_usd": 218.43,
+    "remaining_usd": 3781.57,
+    "approved_submissions": 124,
     "listed_at": "2026-10-06T00:03:34.000Z"
+  },
+  {
+    "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
+    "name": "Rick Roth Clipping ",
+    "org": "ClipLaunch",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "politics",
+        "name": "Politics"
+      },
+      {
+        "id": "news-politics",
+        "name": "News & Politics"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 3500.0,
+    "spent_usd": 1145.07,
+    "remaining_usd": 2354.93,
+    "approved_submissions": 146,
+    "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
     "campaign_id": "fff9753d-70cd-495c-b76f-678f2d4a58ec",
@@ -113,8 +137,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 727.48,
-    "remaining_usd": 5272.52,
+    "spent_usd": 729.39,
+    "remaining_usd": 5270.61,
     "approved_submissions": 123,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
@@ -133,8 +157,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3174.93,
-    "remaining_usd": 2825.07,
+    "spent_usd": 3175.8,
+    "remaining_usd": 2824.2,
     "approved_submissions": 105,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
@@ -153,8 +177,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 945.34,
-    "remaining_usd": 2354.66,
+    "spent_usd": 949.16,
+    "remaining_usd": 2350.84,
     "approved_submissions": 31,
     "listed_at": "2026-10-07T17:39:39.000Z"
   },
@@ -173,9 +197,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17870.41,
-    "spent_usd": 526.95,
-    "remaining_usd": 17343.46,
-    "approved_submissions": 122,
+    "spent_usd": 2921.2,
+    "remaining_usd": 14949.21,
+    "approved_submissions": 459,
     "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
@@ -193,38 +217,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 57180.18,
-    "remaining_usd": 12973.07,
-    "approved_submissions": 8479,
+    "spent_usd": 58259.05,
+    "remaining_usd": 11894.2,
+    "approved_submissions": 8761,
     "listed_at": "2026-06-16T16:04:06.000Z"
-  },
-  {
-    "campaign_id": "5040e0ef-de95-412c-9324-e50378cb6a1e",
-    "name": "SAI Clipping & UGC",
-    "org": "Clip Brand",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "ai-tools",
-        "name": "AI Tools"
-      },
-      {
-        "id": "artificial-intelligence",
-        "name": "Artificial Intelligence"
-      },
-      {
-        "id": "technology",
-        "name": "Technology"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 435.75,
-    "remaining_usd": 4564.25,
-    "approved_submissions": 27,
-    "listed_at": "2026-10-10T07:02:54.000Z"
   },
   {
     "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
@@ -245,8 +241,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1182.6,
-    "remaining_usd": 3817.4,
+    "spent_usd": 1184.59,
+    "remaining_usd": 3815.41,
     "approved_submissions": 288,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
@@ -269,8 +265,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1215.21,
-    "remaining_usd": 3784.79,
+    "spent_usd": 1294.24,
+    "remaining_usd": 3705.76,
     "approved_submissions": 6,
     "listed_at": "2026-10-12T07:10:03.000Z"
   },
@@ -284,29 +280,33 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1719.56,
-    "remaining_usd": 3280.44,
-    "approved_submissions": 613,
+    "spent_usd": 1743.93,
+    "remaining_usd": 3256.07,
+    "approved_submissions": 622,
     "listed_at": "2026-07-31T14:51:19.000Z"
   },
   {
-    "campaign_id": "cda12321-1209-4079-a854-e1c8b91977e2",
-    "name": "Mini Brand Vinyl Cafe Event Clipping Campaign",
-    "org": "Clip Influence",
-    "org_verified": true,
+    "campaign_id": "a2fb37f8-bdb4-4569-80a5-6db64613c8e6",
+    "name": "Douxds x Man\u00eb Clipping| $3.2k Budget ",
+    "org": "Motion Clipping",
+    "org_verified": false,
     "categories": [
       {
-        "id": "consumer-brand",
-        "name": "Consumer Brand"
+        "id": "beauty",
+        "name": "Beauty"
+      },
+      {
+        "id": "lifestyle",
+        "name": "Lifestyle"
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.75,
-    "cpm_max_usd_per_1k": 1.75,
-    "budget_usd": 10000.0,
-    "spent_usd": 2620.27,
-    "remaining_usd": 7379.73,
-    "approved_submissions": 343,
-    "listed_at": "2026-09-22T04:24:23.000Z"
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 3100.0,
+    "spent_usd": 385.03,
+    "remaining_usd": 2714.97,
+    "approved_submissions": 44,
+    "listed_at": "2026-10-08T12:36:15.000Z"
   }
 ]
