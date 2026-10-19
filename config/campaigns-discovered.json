@@ -14,10 +14,30 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5664.72,
-    "remaining_usd": 4335.28,
+    "spent_usd": 5665.41,
+    "remaining_usd": 4334.59,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
+  },
+  {
+    "campaign_id": "aaa5be10-a215-4738-8e7d-1be5a5e99858",
+    "name": "Phantom Content Clipping",
+    "org": "Growthcurve",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 5.0,
+    "cpm_max_usd_per_1k": 5.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 3601.78,
+    "remaining_usd": 6398.22,
+    "approved_submissions": 54,
+    "listed_at": "2026-10-16T11:14:40.000Z"
   },
   {
     "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
@@ -34,9 +54,9 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 906.61,
-    "remaining_usd": 2253.39,
-    "approved_submissions": 760,
+    "spent_usd": 857.77,
+    "remaining_usd": 2302.23,
+    "approved_submissions": 759,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
   {
@@ -58,9 +78,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 117.85,
-    "remaining_usd": 7382.15,
-    "approved_submissions": 332,
+    "spent_usd": 124.57,
+    "remaining_usd": 7375.43,
+    "approved_submissions": 336,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -73,30 +93,10 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13490.78,
-    "remaining_usd": 4509.22,
-    "approved_submissions": 560,
+    "spent_usd": 13668.02,
+    "remaining_usd": 4331.98,
+    "approved_submissions": 567,
     "listed_at": "2026-05-19T20:25:22.000Z"
-  },
-  {
-    "campaign_id": "5f6b6ac5-9878-4ad6-b90f-c2f2a3392e91",
-    "name": "Stream House LA Clipping| $4k Budget",
-    "org": "Motion Clipping",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 4000.0,
-    "spent_usd": 218.43,
-    "remaining_usd": 3781.57,
-    "approved_submissions": 124,
-    "listed_at": "2026-10-06T00:03:34.000Z"
   },
   {
     "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
@@ -117,9 +117,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1145.07,
-    "remaining_usd": 2354.93,
-    "approved_submissions": 146,
+    "spent_usd": 1262.21,
+    "remaining_usd": 2237.79,
+    "approved_submissions": 168,
     "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
@@ -137,9 +137,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 729.39,
-    "remaining_usd": 5270.61,
-    "approved_submissions": 123,
+    "spent_usd": 876.97,
+    "remaining_usd": 5123.03,
+    "approved_submissions": 156,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -157,9 +157,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3175.8,
-    "remaining_usd": 2824.2,
-    "approved_submissions": 105,
+    "spent_usd": 3199.71,
+    "remaining_usd": 2800.29,
+    "approved_submissions": 107,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
@@ -177,10 +177,30 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 949.16,
-    "remaining_usd": 2350.84,
-    "approved_submissions": 31,
+    "spent_usd": 1066.7,
+    "remaining_usd": 2233.3,
+    "approved_submissions": 38,
     "listed_at": "2026-10-07T17:39:39.000Z"
+  },
+  {
+    "campaign_id": "18496202-6029-4a29-a44c-9fc33678fcb9",
+    "name": "Call of Duty MW4 (en Fran\u00e7ais)",
+    "org": "French Clipping",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 23000.0,
+    "spent_usd": 7069.32,
+    "remaining_usd": 15930.68,
+    "approved_submissions": 356,
+    "listed_at": "2026-08-07T11:05:17.000Z"
   },
   {
     "campaign_id": "ac498f72-60d3-4753-a703-44895b8b9678",
@@ -197,9 +217,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17870.41,
-    "spent_usd": 2921.2,
-    "remaining_usd": 14949.21,
-    "approved_submissions": 459,
+    "spent_usd": 4715.8,
+    "remaining_usd": 13154.61,
+    "approved_submissions": 516,
     "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
@@ -217,9 +237,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 58259.05,
-    "remaining_usd": 11894.2,
-    "approved_submissions": 8761,
+    "spent_usd": 58696.25,
+    "remaining_usd": 11457.0,
+    "approved_submissions": 8788,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
@@ -241,10 +261,30 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1184.59,
-    "remaining_usd": 3815.41,
-    "approved_submissions": 288,
+    "spent_usd": 1229.57,
+    "remaining_usd": 3770.43,
+    "approved_submissions": 309,
     "listed_at": "2026-06-09T19:42:37.000Z"
+  },
+  {
+    "campaign_id": "088c2279-ab1d-4434-9ba0-6637ab9311fa",
+    "name": "BILF Podcast | Clip the Show",
+    "org": "Runback.TV",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1258.09,
+    "remaining_usd": 3741.91,
+    "approved_submissions": 39,
+    "listed_at": "2026-10-15T23:54:59.000Z"
   },
   {
     "campaign_id": "ca27bbd3-9485-4a83-9285-0123238f3615",
@@ -265,48 +305,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1294.24,
-    "remaining_usd": 3705.76,
+    "spent_usd": 1560.6,
+    "remaining_usd": 3439.4,
     "approved_submissions": 6,
     "listed_at": "2026-10-12T07:10:03.000Z"
-  },
-  {
-    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
-    "name": "Reuben A Geimah | $5k budget - $2 CPM",
-    "org": "Reuben A Geimah",
-    "org_verified": false,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 1743.93,
-    "remaining_usd": 3256.07,
-    "approved_submissions": 622,
-    "listed_at": "2026-07-31T14:51:19.000Z"
-  },
-  {
-    "campaign_id": "a2fb37f8-bdb4-4569-80a5-6db64613c8e6",
-    "name": "Douxds x Man\u00eb Clipping| $3.2k Budget ",
-    "org": "Motion Clipping",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "beauty",
-        "name": "Beauty"
-      },
-      {
-        "id": "lifestyle",
-        "name": "Lifestyle"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 3100.0,
-    "spent_usd": 385.03,
-    "remaining_usd": 2714.97,
-    "approved_submissions": 44,
-    "listed_at": "2026-10-08T12:36:15.000Z"
   }
 ]
