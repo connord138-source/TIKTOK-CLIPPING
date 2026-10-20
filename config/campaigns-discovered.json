@@ -20,26 +20,6 @@
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
   {
-    "campaign_id": "aaa5be10-a215-4738-8e7d-1be5a5e99858",
-    "name": "Phantom Content Clipping",
-    "org": "Growthcurve",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 5.0,
-    "cpm_max_usd_per_1k": 5.0,
-    "budget_usd": 10000.0,
-    "spent_usd": 6004.84,
-    "remaining_usd": 3995.16,
-    "approved_submissions": 94,
-    "listed_at": "2026-10-16T11:14:40.000Z"
-  },
-  {
     "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
     "name": "Post Clips for Sinparty",
     "org": "Clipr Agency",
@@ -54,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 1088.66,
-    "remaining_usd": 2071.34,
+    "spent_usd": 1101.17,
+    "remaining_usd": 2058.83,
     "approved_submissions": 759,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -78,8 +58,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 128.94,
-    "remaining_usd": 7371.06,
+    "spent_usd": 129.02,
+    "remaining_usd": 7370.98,
     "approved_submissions": 344,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -93,30 +73,10 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13707.26,
-    "remaining_usd": 4292.74,
-    "approved_submissions": 571,
+    "spent_usd": 13790.16,
+    "remaining_usd": 4209.84,
+    "approved_submissions": 574,
     "listed_at": "2026-05-19T20:25:22.000Z"
-  },
-  {
-    "campaign_id": "1b00ba8c-26bb-44a4-a7d2-deb42906c902",
-    "name": "Villa: VR without the headset",
-    "org": "Villa",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "gaming",
-        "name": "Gaming"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 4500.0,
-    "spent_usd": 844.4,
-    "remaining_usd": 3655.6,
-    "approved_submissions": 33,
-    "listed_at": "2026-10-19T07:03:40.000Z"
   },
   {
     "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
@@ -137,8 +97,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 3500.0,
-    "spent_usd": 1269.29,
-    "remaining_usd": 2230.71,
+    "spent_usd": 1270.56,
+    "remaining_usd": 2229.44,
     "approved_submissions": 168,
     "listed_at": "2026-09-23T15:32:04.000Z"
   },
@@ -157,9 +117,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 1089.69,
-    "remaining_usd": 4910.31,
-    "approved_submissions": 190,
+    "spent_usd": 1161.27,
+    "remaining_usd": 4838.73,
+    "approved_submissions": 203,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -177,10 +137,30 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3293.84,
-    "remaining_usd": 2706.16,
-    "approved_submissions": 116,
+    "spent_usd": 3345.61,
+    "remaining_usd": 2654.39,
+    "approved_submissions": 123,
     "listed_at": "2026-09-29T21:26:21.000Z"
+  },
+  {
+    "campaign_id": "127a28fc-a45f-44a7-b68f-f16fe15ef962",
+    "name": " LIV LAS VEGAS - OCTOBER NIGHTS",
+    "org": "ClipHaus",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "music",
+        "name": "Music"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.5,
+    "cpm_max_usd_per_1k": 2.5,
+    "budget_usd": 19421.38,
+    "spent_usd": 1456.36,
+    "remaining_usd": 17965.02,
+    "approved_submissions": 38,
+    "listed_at": "2026-10-11T03:30:05.000Z"
   },
   {
     "campaign_id": "66e21e72-3e71-43e6-bee3-1eed2d8eb122",
@@ -197,30 +177,10 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 1143.71,
-    "remaining_usd": 2156.29,
-    "approved_submissions": 42,
+    "spent_usd": 1132.13,
+    "remaining_usd": 2167.87,
+    "approved_submissions": 41,
     "listed_at": "2026-10-07T17:39:39.000Z"
-  },
-  {
-    "campaign_id": "a917d855-61f3-4c17-a75d-927dca325134",
-    "name": "Demi Lovato Podcast Clipping Campaign",
-    "org": "Evangelist",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.5,
-    "cpm_max_usd_per_1k": 2.5,
-    "budget_usd": 3200.0,
-    "spent_usd": 1124.54,
-    "remaining_usd": 2075.46,
-    "approved_submissions": 16,
-    "listed_at": "2026-10-16T16:51:26.000Z"
   },
   {
     "campaign_id": "18496202-6029-4a29-a44c-9fc33678fcb9",
@@ -237,8 +197,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 7104.88,
-    "remaining_usd": 15895.12,
+    "spent_usd": 7107.57,
+    "remaining_usd": 15892.43,
     "approved_submissions": 356,
     "listed_at": "2026-08-07T11:05:17.000Z"
   },
@@ -257,9 +217,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 17870.41,
-    "spent_usd": 5785.73,
-    "remaining_usd": 12084.68,
-    "approved_submissions": 733,
+    "spent_usd": 6813.49,
+    "remaining_usd": 11056.92,
+    "approved_submissions": 889,
     "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
@@ -277,10 +237,58 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 60083.35,
-    "remaining_usd": 10069.9,
-    "approved_submissions": 9243,
+    "spent_usd": 60135.97,
+    "remaining_usd": 10017.28,
+    "approved_submissions": 9247,
     "listed_at": "2026-06-16T16:04:06.000Z"
+  },
+  {
+    "campaign_id": "5040e0ef-de95-412c-9324-e50378cb6a1e",
+    "name": "SAI Clipping & UGC",
+    "org": "Clip Brand",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "ai-tools",
+        "name": "AI Tools"
+      },
+      {
+        "id": "artificial-intelligence",
+        "name": "Artificial Intelligence"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 294.38,
+    "remaining_usd": 4705.62,
+    "approved_submissions": 25,
+    "listed_at": "2026-10-10T07:02:54.000Z"
+  },
+  {
+    "campaign_id": "088c2279-ab1d-4434-9ba0-6637ab9311fa",
+    "name": "BILF Podcast | Clip the Show",
+    "org": "Runback.TV",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 911.91,
+    "remaining_usd": 4088.09,
+    "approved_submissions": 50,
+    "listed_at": "2026-10-15T23:54:59.000Z"
   },
   {
     "campaign_id": "b87512e6-ba5e-4d12-8d4c-879347d2d855",
@@ -301,9 +309,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1273.29,
-    "remaining_usd": 3726.71,
-    "approved_submissions": 326,
+    "spent_usd": 1295.55,
+    "remaining_usd": 3704.45,
+    "approved_submissions": 330,
     "listed_at": "2026-06-09T19:42:37.000Z"
   }
 ]
