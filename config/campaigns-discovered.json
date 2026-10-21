@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 1101.17,
-    "remaining_usd": 2058.83,
+    "spent_usd": 1123.87,
+    "remaining_usd": 2036.13,
     "approved_submissions": 759,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -58,9 +58,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 129.02,
-    "remaining_usd": 7370.98,
-    "approved_submissions": 344,
+    "spent_usd": 142.54,
+    "remaining_usd": 7357.46,
+    "approved_submissions": 354,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -73,34 +73,10 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13790.16,
-    "remaining_usd": 4209.84,
-    "approved_submissions": 574,
+    "spent_usd": 13819.75,
+    "remaining_usd": 4180.25,
+    "approved_submissions": 575,
     "listed_at": "2026-05-19T20:25:22.000Z"
-  },
-  {
-    "campaign_id": "d91daf36-7c01-4dbd-b7c7-c820ed255fad",
-    "name": "Rick Roth Clipping ",
-    "org": "ClipLaunch",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "politics",
-        "name": "Politics"
-      },
-      {
-        "id": "news-politics",
-        "name": "News & Politics"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 3500.0,
-    "spent_usd": 1270.56,
-    "remaining_usd": 2229.44,
-    "approved_submissions": 168,
-    "listed_at": "2026-09-23T15:32:04.000Z"
   },
   {
     "campaign_id": "fff9753d-70cd-495c-b76f-678f2d4a58ec",
@@ -117,9 +93,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 1161.27,
-    "remaining_usd": 4838.73,
-    "approved_submissions": 203,
+    "spent_usd": 1412.85,
+    "remaining_usd": 4587.15,
+    "approved_submissions": 236,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -137,9 +113,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3345.61,
-    "remaining_usd": 2654.39,
-    "approved_submissions": 123,
+    "spent_usd": 3418.95,
+    "remaining_usd": 2581.05,
+    "approved_submissions": 129,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
@@ -157,8 +133,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 19421.38,
-    "spent_usd": 1456.36,
-    "remaining_usd": 17965.02,
+    "spent_usd": 1737.23,
+    "remaining_usd": 17684.15,
     "approved_submissions": 38,
     "listed_at": "2026-10-11T03:30:05.000Z"
   },
@@ -177,8 +153,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 1132.13,
-    "remaining_usd": 2167.87,
+    "spent_usd": 1137.43,
+    "remaining_usd": 2162.57,
     "approved_submissions": 41,
     "listed_at": "2026-10-07T17:39:39.000Z"
   },
@@ -197,30 +173,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 7107.57,
-    "remaining_usd": 15892.43,
-    "approved_submissions": 356,
+    "spent_usd": 7260.74,
+    "remaining_usd": 15739.26,
+    "approved_submissions": 375,
     "listed_at": "2026-08-07T11:05:17.000Z"
-  },
-  {
-    "campaign_id": "ac498f72-60d3-4753-a703-44895b8b9678",
-    "name": "SEGA - Metaphor: ReFantazio Switch 2 Demo Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 17870.41,
-    "spent_usd": 6813.49,
-    "remaining_usd": 11056.92,
-    "approved_submissions": 889,
-    "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
     "campaign_id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
@@ -237,38 +193,30 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 60135.97,
-    "remaining_usd": 10017.28,
-    "approved_submissions": 9247,
+    "spent_usd": 60517.75,
+    "remaining_usd": 9635.5,
+    "approved_submissions": 9334,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
-    "campaign_id": "5040e0ef-de95-412c-9324-e50378cb6a1e",
-    "name": "SAI Clipping & UGC",
-    "org": "Clip Brand",
-    "org_verified": false,
+    "campaign_id": "ac498f72-60d3-4753-a703-44895b8b9678",
+    "name": "SEGA - Metaphor: ReFantazio Switch 2 Demo Clipping",
+    "org": "Clipping Culture",
+    "org_verified": true,
     "categories": [
       {
-        "id": "ai-tools",
-        "name": "AI Tools"
-      },
-      {
-        "id": "artificial-intelligence",
-        "name": "Artificial Intelligence"
-      },
-      {
-        "id": "technology",
-        "name": "Technology"
+        "id": "entertainment",
+        "name": "Entertainment"
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
+    "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 294.38,
-    "remaining_usd": 4705.62,
-    "approved_submissions": 25,
-    "listed_at": "2026-10-10T07:02:54.000Z"
+    "budget_usd": 17870.41,
+    "spent_usd": 11142.55,
+    "remaining_usd": 6727.86,
+    "approved_submissions": 943,
+    "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
     "campaign_id": "088c2279-ab1d-4434-9ba0-6637ab9311fa",
@@ -285,8 +233,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 911.91,
-    "remaining_usd": 4088.09,
+    "spent_usd": 1054.01,
+    "remaining_usd": 3945.99,
     "approved_submissions": 50,
     "listed_at": "2026-10-15T23:54:59.000Z"
   },
@@ -309,9 +257,44 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1295.55,
-    "remaining_usd": 3704.45,
+    "spent_usd": 1301.01,
+    "remaining_usd": 3698.99,
     "approved_submissions": 330,
     "listed_at": "2026-06-09T19:42:37.000Z"
+  },
+  {
+    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+    "name": "Reuben A Geimah | $5k budget - $2 CPM",
+    "org": "Reuben A Geimah",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1846.57,
+    "remaining_usd": 3153.43,
+    "approved_submissions": 652,
+    "listed_at": "2026-07-31T14:51:19.000Z"
+  },
+  {
+    "campaign_id": "cda12321-1209-4079-a854-e1c8b91977e2",
+    "name": "Mini Brand Vinyl Cafe Event Clipping Campaign",
+    "org": "Clip Influence",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "consumer-brand",
+        "name": "Consumer Brand"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.75,
+    "cpm_max_usd_per_1k": 1.75,
+    "budget_usd": 10000.0,
+    "spent_usd": 3050.23,
+    "remaining_usd": 6949.77,
+    "approved_submissions": 412,
+    "listed_at": "2026-09-22T04:24:23.000Z"
   }
 ]
