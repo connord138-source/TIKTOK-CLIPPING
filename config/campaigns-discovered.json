@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 869.56,
-    "remaining_usd": 2290.44,
+    "spent_usd": 1020.48,
+    "remaining_usd": 2139.52,
     "approved_submissions": 1112,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -58,8 +58,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 135.89,
-    "remaining_usd": 7364.11,
+    "spent_usd": 136.15,
+    "remaining_usd": 7363.85,
     "approved_submissions": 338,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -82,9 +82,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4949.89,
-    "spent_usd": 102.89,
-    "remaining_usd": 4847.0,
-    "approved_submissions": 27,
+    "spent_usd": 128.14,
+    "remaining_usd": 4821.75,
+    "approved_submissions": 34,
     "listed_at": "2026-10-20T15:25:13.000Z"
   },
   {
@@ -97,9 +97,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13897.98,
-    "remaining_usd": 4102.02,
-    "approved_submissions": 584,
+    "spent_usd": 13924.42,
+    "remaining_usd": 4075.58,
+    "approved_submissions": 586,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
@@ -117,8 +117,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 1587.1,
-    "remaining_usd": 4412.9,
+    "spent_usd": 1658.14,
+    "remaining_usd": 4341.86,
     "approved_submissions": 269,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
@@ -137,8 +137,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3530.35,
-    "remaining_usd": 2469.65,
+    "spent_usd": 3551.16,
+    "remaining_usd": 2448.84,
     "approved_submissions": 139,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
@@ -157,8 +157,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 19421.38,
-    "spent_usd": 3241.6,
-    "remaining_usd": 16179.78,
+    "spent_usd": 3394.55,
+    "remaining_usd": 16026.83,
     "approved_submissions": 55,
     "listed_at": "2026-10-11T03:30:05.000Z"
   },
@@ -177,8 +177,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 1143.17,
-    "remaining_usd": 2156.83,
+    "spent_usd": 1143.83,
+    "remaining_usd": 2156.17,
     "approved_submissions": 41,
     "listed_at": "2026-10-07T17:39:39.000Z"
   },
@@ -197,8 +197,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 7400.52,
-    "remaining_usd": 15599.48,
+    "spent_usd": 7429.8,
+    "remaining_usd": 15570.2,
     "approved_submissions": 390,
     "listed_at": "2026-08-07T11:05:17.000Z"
   },
@@ -217,9 +217,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 62433.96,
-    "remaining_usd": 7719.29,
-    "approved_submissions": 9749,
+    "spent_usd": 63958.45,
+    "remaining_usd": 6194.8,
+    "approved_submissions": 10138,
     "listed_at": "2026-06-16T16:04:06.000Z"
   },
   {
@@ -237,9 +237,9 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 15000.0,
-    "spent_usd": 10037.11,
-    "remaining_usd": 4962.89,
-    "approved_submissions": 60,
+    "spent_usd": 10607.09,
+    "remaining_usd": 4392.91,
+    "approved_submissions": 65,
     "listed_at": "2026-08-06T13:16:40.000Z"
   },
   {
@@ -261,10 +261,25 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1351.17,
-    "remaining_usd": 3648.83,
+    "spent_usd": 1359.99,
+    "remaining_usd": 3640.01,
     "approved_submissions": 353,
     "listed_at": "2026-06-09T19:42:37.000Z"
+  },
+  {
+    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+    "name": "Reuben A Geimah | $5k budget - $2 CPM",
+    "org": "Reuben A Geimah",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1849.21,
+    "remaining_usd": 3150.79,
+    "approved_submissions": 653,
+    "listed_at": "2026-07-31T14:51:19.000Z"
   },
   {
     "campaign_id": "088c2279-ab1d-4434-9ba0-6637ab9311fa",
@@ -281,24 +296,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1779.16,
-    "remaining_usd": 3220.84,
-    "approved_submissions": 80,
+    "spent_usd": 1851.06,
+    "remaining_usd": 3148.94,
+    "approved_submissions": 82,
     "listed_at": "2026-10-15T23:54:59.000Z"
-  },
-  {
-    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
-    "name": "Reuben A Geimah | $5k budget - $2 CPM",
-    "org": "Reuben A Geimah",
-    "org_verified": false,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 1849.02,
-    "remaining_usd": 3150.98,
-    "approved_submissions": 653,
-    "listed_at": "2026-07-31T14:51:19.000Z"
   }
 ]
