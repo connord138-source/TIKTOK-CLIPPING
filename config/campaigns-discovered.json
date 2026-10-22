@@ -34,9 +34,9 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 861.15,
-    "remaining_usd": 2298.85,
-    "approved_submissions": 755,
+    "spent_usd": 869.56,
+    "remaining_usd": 2290.44,
+    "approved_submissions": 1112,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
   {
@@ -58,25 +58,10 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 145.64,
-    "remaining_usd": 7354.36,
-    "approved_submissions": 361,
+    "spent_usd": 135.89,
+    "remaining_usd": 7364.11,
+    "approved_submissions": 338,
     "listed_at": "2026-09-03T09:39:21.000Z"
-  },
-  {
-    "campaign_id": "6e8cb2c6-7724-44a4-83da-66697acb20af",
-    "name": "Split-Screen UGC [English]",
-    "org": "Content Rewards",
-    "org_verified": true,
-    "categories": [],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 18000.0,
-    "spent_usd": 13870.88,
-    "remaining_usd": 4129.12,
-    "approved_submissions": 584,
-    "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
     "campaign_id": "27373fdf-e0f4-436e-a420-1102914639f4",
@@ -97,10 +82,25 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4949.89,
-    "spent_usd": 1498.3,
-    "remaining_usd": 3451.59,
-    "approved_submissions": 38,
+    "spent_usd": 102.89,
+    "remaining_usd": 4847.0,
+    "approved_submissions": 27,
     "listed_at": "2026-10-20T15:25:13.000Z"
+  },
+  {
+    "campaign_id": "6e8cb2c6-7724-44a4-83da-66697acb20af",
+    "name": "Split-Screen UGC [English]",
+    "org": "Content Rewards",
+    "org_verified": true,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 18000.0,
+    "spent_usd": 13897.98,
+    "remaining_usd": 4102.02,
+    "approved_submissions": 584,
+    "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
     "campaign_id": "fff9753d-70cd-495c-b76f-678f2d4a58ec",
@@ -117,9 +117,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 1512.5,
-    "remaining_usd": 4487.5,
-    "approved_submissions": 236,
+    "spent_usd": 1587.1,
+    "remaining_usd": 4412.9,
+    "approved_submissions": 269,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -137,9 +137,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 3455.75,
-    "remaining_usd": 2544.25,
-    "approved_submissions": 129,
+    "spent_usd": 3530.35,
+    "remaining_usd": 2469.65,
+    "approved_submissions": 139,
     "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
@@ -157,8 +157,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 19421.38,
-    "spent_usd": 2819.21,
-    "remaining_usd": 16602.17,
+    "spent_usd": 3241.6,
+    "remaining_usd": 16179.78,
     "approved_submissions": 55,
     "listed_at": "2026-10-11T03:30:05.000Z"
   },
@@ -177,8 +177,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 3300.0,
-    "spent_usd": 1140.31,
-    "remaining_usd": 2159.69,
+    "spent_usd": 1143.17,
+    "remaining_usd": 2156.83,
     "approved_submissions": 41,
     "listed_at": "2026-10-07T17:39:39.000Z"
   },
@@ -197,9 +197,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 7273.05,
-    "remaining_usd": 15726.95,
-    "approved_submissions": 375,
+    "spent_usd": 7400.52,
+    "remaining_usd": 15599.48,
+    "approved_submissions": 390,
     "listed_at": "2026-08-07T11:05:17.000Z"
   },
   {
@@ -217,30 +217,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 70153.25,
-    "spent_usd": 61641.35,
-    "remaining_usd": 8511.9,
-    "approved_submissions": 9558,
+    "spent_usd": 62433.96,
+    "remaining_usd": 7719.29,
+    "approved_submissions": 9749,
     "listed_at": "2026-06-16T16:04:06.000Z"
-  },
-  {
-    "campaign_id": "ac498f72-60d3-4753-a703-44895b8b9678",
-    "name": "SEGA - Metaphor: ReFantazio Switch 2 Demo Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 17870.41,
-    "spent_usd": 12011.26,
-    "remaining_usd": 5859.15,
-    "approved_submissions": 1015,
-    "listed_at": "2026-10-14T21:08:13.000Z"
   },
   {
     "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
@@ -257,8 +237,8 @@
     "cpm_min_usd_per_1k": 1.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 15000.0,
-    "spent_usd": 10008.97,
-    "remaining_usd": 4991.03,
+    "spent_usd": 10037.11,
+    "remaining_usd": 4962.89,
     "approved_submissions": 60,
     "listed_at": "2026-08-06T13:16:40.000Z"
   },
@@ -281,9 +261,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1304.96,
-    "remaining_usd": 3695.04,
-    "approved_submissions": 330,
+    "spent_usd": 1351.17,
+    "remaining_usd": 3648.83,
+    "approved_submissions": 353,
     "listed_at": "2026-06-09T19:42:37.000Z"
   },
   {
@@ -301,9 +281,24 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 1390.47,
-    "remaining_usd": 3609.53,
-    "approved_submissions": 71,
+    "spent_usd": 1779.16,
+    "remaining_usd": 3220.84,
+    "approved_submissions": 80,
     "listed_at": "2026-10-15T23:54:59.000Z"
+  },
+  {
+    "campaign_id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+    "name": "Reuben A Geimah | $5k budget - $2 CPM",
+    "org": "Reuben A Geimah",
+    "org_verified": false,
+    "categories": [],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 1849.02,
+    "remaining_usd": 3150.98,
+    "approved_submissions": 653,
+    "listed_at": "2026-07-31T14:51:19.000Z"
   }
 ]
