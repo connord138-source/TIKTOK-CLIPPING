@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5673.7,
-    "remaining_usd": 4326.3,
+    "spent_usd": 5686.39,
+    "remaining_usd": 4313.61,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,8 +34,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 945.62,
-    "remaining_usd": 2214.38,
+    "spent_usd": 987.05,
+    "remaining_usd": 2172.95,
     "approved_submissions": 1173,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -54,9 +54,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 20000.0,
-    "spent_usd": 4663.45,
-    "remaining_usd": 15336.55,
-    "approved_submissions": 13,
+    "spent_usd": 5888.05,
+    "remaining_usd": 14111.95,
+    "approved_submissions": 15,
     "listed_at": "2026-10-20T20:09:35.000Z"
   },
   {
@@ -78,8 +78,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 225.69,
-    "remaining_usd": 7274.31,
+    "spent_usd": 240.41,
+    "remaining_usd": 7259.59,
     "approved_submissions": 357,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -102,8 +102,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4949.89,
-    "spent_usd": 244.93,
-    "remaining_usd": 4704.96,
+    "spent_usd": 260.81,
+    "remaining_usd": 4689.08,
     "approved_submissions": 37,
     "listed_at": "2026-10-20T15:25:13.000Z"
   },
@@ -117,34 +117,10 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 13952.92,
-    "remaining_usd": 4047.08,
-    "approved_submissions": 587,
+    "spent_usd": 13987.01,
+    "remaining_usd": 4012.99,
+    "approved_submissions": 592,
     "listed_at": "2026-05-19T20:25:22.000Z"
-  },
-  {
-    "campaign_id": "368755c4-c529-4d4a-97ae-2fcb242cdcfc",
-    "name": "Jacob & Co x Kylie Jenner Fantasy Bra",
-    "org": "Clip Farm",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "celebrity",
-        "name": "Celebrity"
-      },
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 3.0,
-    "cpm_max_usd_per_1k": 3.0,
-    "budget_usd": 10000.0,
-    "spent_usd": 7873.81,
-    "remaining_usd": 2126.19,
-    "approved_submissions": 139,
-    "listed_at": "2026-10-20T13:36:42.000Z"
   },
   {
     "campaign_id": "fff9753d-70cd-495c-b76f-678f2d4a58ec",
@@ -161,30 +137,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 1957.31,
-    "remaining_usd": 4042.69,
+    "spent_usd": 1975.13,
+    "remaining_usd": 4024.87,
     "approved_submissions": 335,
     "listed_at": "2026-09-29T21:26:22.000Z"
-  },
-  {
-    "campaign_id": "31f90db6-4cce-4632-a4b0-bf572e90b199",
-    "name": "[35%+FRANCE] STRANGER THAN HEAVEN-Business Mode ",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.7,
-    "budget_usd": 6000.0,
-    "spent_usd": 3960.99,
-    "remaining_usd": 2039.01,
-    "approved_submissions": 142,
-    "listed_at": "2026-09-29T21:26:21.000Z"
   },
   {
     "campaign_id": "127a28fc-a45f-44a7-b68f-f16fe15ef962",
@@ -201,8 +157,8 @@
     "cpm_min_usd_per_1k": 2.5,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 19421.38,
-    "spent_usd": 5260.63,
-    "remaining_usd": 14160.75,
+    "spent_usd": 5357.11,
+    "remaining_usd": 14064.27,
     "approved_submissions": 74,
     "listed_at": "2026-10-11T03:30:05.000Z"
   },
@@ -221,30 +177,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.5,
     "budget_usd": 10500.0,
-    "spent_usd": 401.88,
-    "remaining_usd": 10098.12,
-    "approved_submissions": 137,
+    "spent_usd": 859.76,
+    "remaining_usd": 9640.24,
+    "approved_submissions": 258,
     "listed_at": "2026-10-22T16:59:34.000Z"
-  },
-  {
-    "campaign_id": "9b220b37-2593-4dd7-a336-f5142dba7982",
-    "name": "STRANGER THAN HEAVEN Previews Clipping",
-    "org": "Clipping Culture",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.5,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 24000.0,
-    "spent_usd": 6237.93,
-    "remaining_usd": 17762.07,
-    "approved_submissions": 107,
-    "listed_at": "2026-10-22T17:52:00.000Z"
   },
   {
     "campaign_id": "18496202-6029-4a29-a44c-9fc33678fcb9",
@@ -261,10 +197,50 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 7548.67,
-    "remaining_usd": 15451.33,
+    "spent_usd": 7554.62,
+    "remaining_usd": 15445.38,
     "approved_submissions": 406,
     "listed_at": "2026-08-07T11:05:17.000Z"
+  },
+  {
+    "campaign_id": "9b220b37-2593-4dd7-a336-f5142dba7982",
+    "name": "STRANGER THAN HEAVEN Previews Clipping",
+    "org": "Clipping Culture",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 24000.0,
+    "spent_usd": 8786.73,
+    "remaining_usd": 15213.27,
+    "approved_submissions": 242,
+    "listed_at": "2026-10-22T17:52:00.000Z"
+  },
+  {
+    "campaign_id": "6d11ea9e-b814-494a-a135-30dcbcc39645",
+    "name": "Mini Brands \u2014 Ulta Beauty Clipping",
+    "org": "Clip Influence",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 455.41,
+    "remaining_usd": 9544.59,
+    "approved_submissions": 35,
+    "listed_at": "2026-10-20T20:12:54.000Z"
   },
   {
     "campaign_id": "2f9a69e0-c338-440c-90d2-f1ba95e775b0",
@@ -281,9 +257,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10500.0,
-    "spent_usd": 673.82,
-    "remaining_usd": 9826.18,
-    "approved_submissions": 50,
+    "spent_usd": 1407.78,
+    "remaining_usd": 9092.22,
+    "approved_submissions": 175,
     "listed_at": "2026-10-20T22:50:27.000Z"
   },
   {
@@ -301,9 +277,33 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 963.14,
-    "remaining_usd": 9036.86,
-    "approved_submissions": 105,
+    "spent_usd": 1002.55,
+    "remaining_usd": 8997.45,
+    "approved_submissions": 113,
     "listed_at": "2026-10-15T21:46:44.000Z"
+  },
+  {
+    "campaign_id": "c18192ea-dbc2-4ba0-8138-cd3667ea18d5",
+    "name": "Daimon X Syndicate [TESTING]",
+    "org": "Distributed",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "app",
+        "name": "Apps"
+      },
+      {
+        "id": "technology",
+        "name": "Technology"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 6433.0,
+    "spent_usd": 127.0,
+    "remaining_usd": 6306.0,
+    "approved_submissions": 145,
+    "listed_at": "2026-10-06T19:23:04.000Z"
   }
 ]
