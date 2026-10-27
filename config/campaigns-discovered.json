@@ -14,10 +14,30 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5781.18,
-    "remaining_usd": 4218.82,
+    "spent_usd": 5798.56,
+    "remaining_usd": 4201.44,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
+  },
+  {
+    "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
+    "name": "Post Clips for Sinparty",
+    "org": "Clipr Agency",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 5.0,
+    "cpm_max_usd_per_1k": 5.0,
+    "budget_usd": 3160.0,
+    "spent_usd": 847.74,
+    "remaining_usd": 2312.26,
+    "approved_submissions": 1282,
+    "listed_at": "2026-08-04T13:02:32.000Z"
   },
   {
     "campaign_id": "1c491f8f-9c95-43e4-9cac-0a90ca1efea3",
@@ -34,9 +54,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 20000.0,
-    "spent_usd": 8072.45,
-    "remaining_usd": 11927.55,
-    "approved_submissions": 21,
+    "spent_usd": 8425.87,
+    "remaining_usd": 11574.13,
+    "approved_submissions": 23,
     "listed_at": "2026-10-20T20:09:35.000Z"
   },
   {
@@ -58,9 +78,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 391.74,
-    "remaining_usd": 7108.26,
-    "approved_submissions": 392,
+    "spent_usd": 462.94,
+    "remaining_usd": 7037.06,
+    "approved_submissions": 411,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
   {
@@ -82,8 +102,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4949.89,
-    "spent_usd": 306.26,
-    "remaining_usd": 4643.63,
+    "spent_usd": 358.21,
+    "remaining_usd": 4591.68,
     "approved_submissions": 37,
     "listed_at": "2026-10-20T15:25:13.000Z"
   },
@@ -97,9 +117,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 14115.53,
-    "remaining_usd": 3884.47,
-    "approved_submissions": 604,
+    "spent_usd": 14204.36,
+    "remaining_usd": 3795.64,
+    "approved_submissions": 610,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
   {
@@ -117,9 +137,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 2424.26,
-    "remaining_usd": 3575.74,
-    "approved_submissions": 404,
+    "spent_usd": 2459.29,
+    "remaining_usd": 3540.71,
+    "approved_submissions": 402,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -137,9 +157,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 8620.81,
-    "remaining_usd": 14379.19,
-    "approved_submissions": 487,
+    "spent_usd": 8835.81,
+    "remaining_usd": 14164.19,
+    "approved_submissions": 529,
     "listed_at": "2026-08-07T11:05:17.000Z"
   },
   {
@@ -157,9 +177,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 994.88,
-    "remaining_usd": 9005.12,
-    "approved_submissions": 89,
+    "spent_usd": 1146.64,
+    "remaining_usd": 8853.36,
+    "approved_submissions": 111,
     "listed_at": "2026-10-20T20:12:54.000Z"
   },
   {
@@ -177,9 +197,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1123.01,
-    "remaining_usd": 8876.99,
-    "approved_submissions": 129,
+    "spent_usd": 1177.02,
+    "remaining_usd": 8822.98,
+    "approved_submissions": 141,
     "listed_at": "2026-10-15T21:46:44.000Z"
   },
   {
@@ -201,9 +221,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 6433.0,
-    "spent_usd": 636.95,
-    "remaining_usd": 5796.05,
-    "approved_submissions": 148,
+    "spent_usd": 679.25,
+    "remaining_usd": 5753.75,
+    "approved_submissions": 151,
     "listed_at": "2026-10-06T19:23:04.000Z"
   },
   {
@@ -225,9 +245,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 125.04,
-    "remaining_usd": 4874.96,
-    "approved_submissions": 81,
+    "spent_usd": 173.98,
+    "remaining_usd": 4826.02,
+    "approved_submissions": 86,
     "listed_at": "2026-10-09T15:04:16.000Z"
   },
   {
@@ -249,8 +269,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 359.34,
-    "remaining_usd": 4640.66,
+    "spent_usd": 359.46,
+    "remaining_usd": 4640.54,
     "approved_submissions": 126,
     "listed_at": "2026-09-17T18:27:24.000Z"
   },
@@ -277,8 +297,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 5000.0,
-    "spent_usd": 392.64,
-    "remaining_usd": 4607.36,
+    "spent_usd": 393.65,
+    "remaining_usd": 4606.35,
     "approved_submissions": 29,
     "listed_at": "2026-10-10T07:02:54.000Z"
   },
@@ -297,29 +317,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 4000.0,
-    "spent_usd": 280.01,
-    "remaining_usd": 3719.99,
-    "approved_submissions": 245,
+    "spent_usd": 299.64,
+    "remaining_usd": 3700.36,
+    "approved_submissions": 266,
     "listed_at": "2026-10-06T00:03:34.000Z"
-  },
-  {
-    "campaign_id": "86842687-ba2b-4638-a024-995dcf3d25a3",
-    "name": "Michael Sartain's Clipping Army",
-    "org": "Michael Sartain's Clipper Army",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "personal-brand",
-        "name": "Personal Brand"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 1.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 15000.0,
-    "spent_usd": 11343.2,
-    "remaining_usd": 3656.8,
-    "approved_submissions": 74,
-    "listed_at": "2026-08-06T13:16:40.000Z"
   }
 ]
