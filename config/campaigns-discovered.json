@@ -14,10 +14,30 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5798.56,
-    "remaining_usd": 4201.44,
+    "spent_usd": 5845.81,
+    "remaining_usd": 4154.19,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
+  },
+  {
+    "campaign_id": "2478f835-202a-4df4-9c34-8fd9fa47088c",
+    "name": "SKULLPANDA at Doja Cat\u2019s 31st Birthday Party",
+    "org": "Pop Mart Americas Inc.",
+    "org_verified": false,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 10.0,
+    "cpm_max_usd_per_1k": 10.0,
+    "budget_usd": 3000.0,
+    "spent_usd": 536.74,
+    "remaining_usd": 2463.26,
+    "approved_submissions": 15,
+    "listed_at": "2026-10-25T01:02:13.000Z"
   },
   {
     "campaign_id": "2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
@@ -34,8 +54,8 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 847.74,
-    "remaining_usd": 2312.26,
+    "spent_usd": 890.2,
+    "remaining_usd": 2269.8,
     "approved_submissions": 1282,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
@@ -54,8 +74,28 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 20000.0,
-    "spent_usd": 8425.87,
-    "remaining_usd": 11574.13,
+    "spent_usd": 8608.78,
+    "remaining_usd": 11391.22,
+    "approved_submissions": 23,
+    "listed_at": "2026-10-20T20:09:35.000Z"
+  },
+  {
+    "campaign_id": "1c491f8f-9c95-43e4-9cac-0a90ca1efea3",
+    "name": "UGC X FUGGLER [INFINITE BUDGET]",
+    "org": "Clip Influence",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "consumer-brand",
+        "name": "Consumer Brand"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 20000.0,
+    "spent_usd": 8608.78,
+    "remaining_usd": 11391.22,
     "approved_submissions": 23,
     "listed_at": "2026-10-20T20:09:35.000Z"
   },
@@ -78,8 +118,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 462.94,
-    "remaining_usd": 7037.06,
+    "spent_usd": 469.35,
+    "remaining_usd": 7030.65,
     "approved_submissions": 411,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -102,10 +142,34 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4949.89,
-    "spent_usd": 358.21,
-    "remaining_usd": 4591.68,
+    "spent_usd": 468.61,
+    "remaining_usd": 4481.28,
     "approved_submissions": 37,
     "listed_at": "2026-10-20T15:25:13.000Z"
+  },
+  {
+    "campaign_id": "61d2c454-a193-44b7-8ab8-9529db4d6f23",
+    "name": "Talking-Head UGC [English]",
+    "org": "Content Rewards",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "product",
+        "name": "Product"
+      },
+      {
+        "id": "consumer-brand",
+        "name": "Consumer Brand"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 3.0,
+    "cpm_max_usd_per_1k": 3.0,
+    "budget_usd": 5000.0,
+    "spent_usd": 854.86,
+    "remaining_usd": 4145.14,
+    "approved_submissions": 36,
+    "listed_at": "2026-10-16T13:24:35.000Z"
   },
   {
     "campaign_id": "6e8cb2c6-7724-44a4-83da-66697acb20af",
@@ -117,8 +181,8 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 14204.36,
-    "remaining_usd": 3795.64,
+    "spent_usd": 14205.35,
+    "remaining_usd": 3794.65,
     "approved_submissions": 610,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
@@ -137,9 +201,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 2459.29,
-    "remaining_usd": 3540.71,
-    "approved_submissions": 402,
+    "spent_usd": 2722.37,
+    "remaining_usd": 3277.63,
+    "approved_submissions": 468,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -157,9 +221,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 8835.81,
-    "remaining_usd": 14164.19,
-    "approved_submissions": 529,
+    "spent_usd": 8910.6,
+    "remaining_usd": 14089.4,
+    "approved_submissions": 539,
     "listed_at": "2026-08-07T11:05:17.000Z"
   },
   {
@@ -177,8 +241,8 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1146.64,
-    "remaining_usd": 8853.36,
+    "spent_usd": 1166.33,
+    "remaining_usd": 8833.67,
     "approved_submissions": 111,
     "listed_at": "2026-10-20T20:12:54.000Z"
   },
@@ -197,116 +261,16 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1177.02,
-    "remaining_usd": 8822.98,
+    "spent_usd": 1185.27,
+    "remaining_usd": 8814.73,
     "approved_submissions": 141,
     "listed_at": "2026-10-15T21:46:44.000Z"
   },
   {
-    "campaign_id": "c18192ea-dbc2-4ba0-8138-cd3667ea18d5",
-    "name": "Daimon X Syndicate [TESTING]",
-    "org": "Distributed",
+    "campaign_id": "6f0d4fb3-4ed1-42be-8644-e2e569681a42",
+    "name": "Flip.gg Clipping",
+    "org": "ClipLaunch",
     "org_verified": true,
-    "categories": [
-      {
-        "id": "app",
-        "name": "Apps"
-      },
-      {
-        "id": "technology",
-        "name": "Technology"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 6433.0,
-    "spent_usd": 679.25,
-    "remaining_usd": 5753.75,
-    "approved_submissions": 151,
-    "listed_at": "2026-10-06T19:23:04.000Z"
-  },
-  {
-    "campaign_id": "7b094e71-4021-4c56-95ad-e1c0c3cd7f1a",
-    "name": "META-KLAGE | $5,000 Budget | $2 CPM",
-    "org": "Clipping Outlaws",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "politics",
-        "name": "Politics"
-      },
-      {
-        "id": "news-politics",
-        "name": "News & Politics"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 173.98,
-    "remaining_usd": 4826.02,
-    "approved_submissions": 86,
-    "listed_at": "2026-10-09T15:04:16.000Z"
-  },
-  {
-    "campaign_id": "e76ea869-2adf-46df-9610-25df66287e38",
-    "name": "Alpha Capital Group Clipping Campaign",
-    "org": "Click Culture",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "youtuber",
-        "name": "YouTuber"
-      },
-      {
-        "id": "personal-brand",
-        "name": "Personal Brand"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 359.46,
-    "remaining_usd": 4640.54,
-    "approved_submissions": 126,
-    "listed_at": "2026-09-17T18:27:24.000Z"
-  },
-  {
-    "campaign_id": "5040e0ef-de95-412c-9324-e50378cb6a1e",
-    "name": "SAI Clipping & UGC",
-    "org": "Clip Brand",
-    "org_verified": false,
-    "categories": [
-      {
-        "id": "ai-tools",
-        "name": "AI Tools"
-      },
-      {
-        "id": "artificial-intelligence",
-        "name": "Artificial Intelligence"
-      },
-      {
-        "id": "technology",
-        "name": "Technology"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 5000.0,
-    "spent_usd": 393.65,
-    "remaining_usd": 4606.35,
-    "approved_submissions": 29,
-    "listed_at": "2026-10-10T07:02:54.000Z"
-  },
-  {
-    "campaign_id": "5f6b6ac5-9878-4ad6-b90f-c2f2a3392e91",
-    "name": "Stream House LA Clipping| $4k Budget",
-    "org": "Motion Clipping",
-    "org_verified": false,
     "categories": [
       {
         "id": "entertainment",
@@ -314,12 +278,32 @@
       }
     ],
     "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
+    "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 4000.0,
-    "spent_usd": 299.64,
-    "remaining_usd": 3700.36,
-    "approved_submissions": 266,
-    "listed_at": "2026-10-06T00:03:34.000Z"
+    "budget_usd": 10000.0,
+    "spent_usd": 2146.3,
+    "remaining_usd": 7853.7,
+    "approved_submissions": 434,
+    "listed_at": "2026-09-25T17:57:16.000Z"
+  },
+  {
+    "campaign_id": "6f0d4fb3-4ed1-42be-8644-e2e569681a42",
+    "name": "Flip.gg Clipping",
+    "org": "ClipLaunch",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 1.5,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 2146.3,
+    "remaining_usd": 7853.7,
+    "approved_submissions": 434,
+    "listed_at": "2026-09-25T17:57:16.000Z"
   }
 ]
