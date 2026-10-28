@@ -47,5 +47,14 @@
     "retired": "board Approve button via the artifact mcp capability (2026-09-27): did not start sessions on the user's phone"
   },
   "routine_repo_note": "Fresh routine sessions start without the repo and their add_repo clone could not push (09-27 22:00 run: board synced, no commit). Sessions created with create_session(source_url, source_revision, outcome_branch) CAN push (verified: commit bea3ef4). So jobs that must save state fire into a persistent ops session made that way (create_trigger persistent_session_id). Such routines can't use the notifications setting, so they call PushNotification themselves.",
-  "clip_maker_session": "https://claude.ai/code/session_01Tc1ykqEmQVQE1d7aiaJA1j"
+  "clip_maker_session": "https://claude.ai/code/session_01Tc1ykqEmQVQE1d7aiaJA1j",
+  "pipeline_paused": {
+    "at": "2026-10-28",
+    "by": "user ('pause pipeline')",
+    "disabled_triggers": [
+      "trig_016RodDy7cHjScJU7cJ2zYQq (Clip maker hourly + daily clip)",
+      "trig_01KCci58FqBh9D7VjAwXxjrj (ops scout/stats 2x daily)"
+    ],
+    "resume": "update_trigger enabled=true on both"
+  }
 }
