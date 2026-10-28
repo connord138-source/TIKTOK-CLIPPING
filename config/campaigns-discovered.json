@@ -14,8 +14,8 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 10000.0,
-    "spent_usd": 5845.81,
-    "remaining_usd": 4154.19,
+    "spent_usd": 5862.95,
+    "remaining_usd": 4137.05,
     "approved_submissions": 18,
     "listed_at": "2026-07-28T14:08:37.000Z"
   },
@@ -34,9 +34,9 @@
     "cpm_min_usd_per_1k": 10.0,
     "cpm_max_usd_per_1k": 10.0,
     "budget_usd": 3000.0,
-    "spent_usd": 536.74,
-    "remaining_usd": 2463.26,
-    "approved_submissions": 15,
+    "spent_usd": 746.69,
+    "remaining_usd": 2253.31,
+    "approved_submissions": 22,
     "listed_at": "2026-10-25T01:02:13.000Z"
   },
   {
@@ -54,9 +54,9 @@
     "cpm_min_usd_per_1k": 5.0,
     "cpm_max_usd_per_1k": 5.0,
     "budget_usd": 3160.0,
-    "spent_usd": 890.2,
-    "remaining_usd": 2269.8,
-    "approved_submissions": 1282,
+    "spent_usd": 814.22,
+    "remaining_usd": 2345.78,
+    "approved_submissions": 1342,
     "listed_at": "2026-08-04T13:02:32.000Z"
   },
   {
@@ -74,9 +74,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 20000.0,
-    "spent_usd": 8608.78,
-    "remaining_usd": 11391.22,
-    "approved_submissions": 23,
+    "spent_usd": 9119.31,
+    "remaining_usd": 10880.69,
+    "approved_submissions": 28,
     "listed_at": "2026-10-20T20:09:35.000Z"
   },
   {
@@ -94,9 +94,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 20000.0,
-    "spent_usd": 8608.78,
-    "remaining_usd": 11391.22,
-    "approved_submissions": 23,
+    "spent_usd": 9119.31,
+    "remaining_usd": 10880.69,
+    "approved_submissions": 28,
     "listed_at": "2026-10-20T20:09:35.000Z"
   },
   {
@@ -118,8 +118,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 7500.0,
-    "spent_usd": 469.35,
-    "remaining_usd": 7030.65,
+    "spent_usd": 479.27,
+    "remaining_usd": 7020.73,
     "approved_submissions": 411,
     "listed_at": "2026-09-03T09:39:21.000Z"
   },
@@ -142,8 +142,8 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 4949.89,
-    "spent_usd": 468.61,
-    "remaining_usd": 4481.28,
+    "spent_usd": 566.89,
+    "remaining_usd": 4383.0,
     "approved_submissions": 37,
     "listed_at": "2026-10-20T15:25:13.000Z"
   },
@@ -166,9 +166,9 @@
     "cpm_min_usd_per_1k": 3.0,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 5000.0,
-    "spent_usd": 854.86,
-    "remaining_usd": 4145.14,
-    "approved_submissions": 36,
+    "spent_usd": 884.51,
+    "remaining_usd": 4115.49,
+    "approved_submissions": 39,
     "listed_at": "2026-10-16T13:24:35.000Z"
   },
   {
@@ -181,8 +181,8 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 3.0,
     "budget_usd": 18000.0,
-    "spent_usd": 14205.35,
-    "remaining_usd": 3794.65,
+    "spent_usd": 14209.64,
+    "remaining_usd": 3790.36,
     "approved_submissions": 610,
     "listed_at": "2026-05-19T20:25:22.000Z"
   },
@@ -201,9 +201,9 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.7,
     "budget_usd": 6000.0,
-    "spent_usd": 2722.37,
-    "remaining_usd": 3277.63,
-    "approved_submissions": 468,
+    "spent_usd": 2617.74,
+    "remaining_usd": 3382.26,
+    "approved_submissions": 452,
     "listed_at": "2026-09-29T21:26:22.000Z"
   },
   {
@@ -221,30 +221,10 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 23000.0,
-    "spent_usd": 8910.6,
-    "remaining_usd": 14089.4,
-    "approved_submissions": 539,
+    "spent_usd": 9402.75,
+    "remaining_usd": 13597.25,
+    "approved_submissions": 626,
     "listed_at": "2026-08-07T11:05:17.000Z"
-  },
-  {
-    "campaign_id": "6d11ea9e-b814-494a-a135-30dcbcc39645",
-    "name": "Mini Brands \u2014 Ulta Beauty Clipping",
-    "org": "Clip Influence",
-    "org_verified": true,
-    "categories": [
-      {
-        "id": "entertainment",
-        "name": "Entertainment"
-      }
-    ],
-    "payout_type": "cpm",
-    "cpm_min_usd_per_1k": 2.0,
-    "cpm_max_usd_per_1k": 2.0,
-    "budget_usd": 10000.0,
-    "spent_usd": 1166.33,
-    "remaining_usd": 8833.67,
-    "approved_submissions": 111,
-    "listed_at": "2026-10-20T20:12:54.000Z"
   },
   {
     "campaign_id": "2e7ca35e-4cff-4755-bae8-8f9f5d727c0b",
@@ -261,10 +241,30 @@
     "cpm_min_usd_per_1k": 2.0,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 1185.27,
-    "remaining_usd": 8814.73,
-    "approved_submissions": 141,
+    "spent_usd": 1234.65,
+    "remaining_usd": 8765.35,
+    "approved_submissions": 153,
     "listed_at": "2026-10-15T21:46:44.000Z"
+  },
+  {
+    "campaign_id": "6d11ea9e-b814-494a-a135-30dcbcc39645",
+    "name": "Mini Brands \u2014 Ulta Beauty Clipping",
+    "org": "Clip Influence",
+    "org_verified": true,
+    "categories": [
+      {
+        "id": "entertainment",
+        "name": "Entertainment"
+      }
+    ],
+    "payout_type": "cpm",
+    "cpm_min_usd_per_1k": 2.0,
+    "cpm_max_usd_per_1k": 2.0,
+    "budget_usd": 10000.0,
+    "spent_usd": 1316.51,
+    "remaining_usd": 8683.49,
+    "approved_submissions": 133,
+    "listed_at": "2026-10-20T20:12:54.000Z"
   },
   {
     "campaign_id": "6f0d4fb3-4ed1-42be-8644-e2e569681a42",
@@ -281,9 +281,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 2146.3,
-    "remaining_usd": 7853.7,
-    "approved_submissions": 434,
+    "spent_usd": 2567.41,
+    "remaining_usd": 7432.59,
+    "approved_submissions": 491,
     "listed_at": "2026-09-25T17:57:16.000Z"
   },
   {
@@ -301,9 +301,9 @@
     "cpm_min_usd_per_1k": 1.5,
     "cpm_max_usd_per_1k": 2.0,
     "budget_usd": 10000.0,
-    "spent_usd": 2146.3,
-    "remaining_usd": 7853.7,
-    "approved_submissions": 434,
+    "spent_usd": 2567.41,
+    "remaining_usd": 7432.59,
+    "approved_submissions": 491,
     "listed_at": "2026-09-25T17:57:16.000Z"
   }
 ]
