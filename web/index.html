@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clipfarm GTA 6</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">VI</div>
+      <div><span id="handle">clipfarm</span><small>GTA 6 clip farm · draft-only posting</small></div>
+    </div>
+    <span class="pill" id="phase-pill" title="Cadence phase">—</span>
+    <div class="spacer"></div>
+    <span class="pill" id="brain-pill" title="Claude brain status"><span class="dot"></span>brain</span>
+    <span class="pill" id="jobs-pill" title="Running workflows"><span class="dot"></span>idle</span>
+    <label class="switch pill" title="Autopilot: scout, produce and pull metrics on schedule (never posts)">
+      <input type="checkbox" id="autopilot-toggle"> Autopilot
+    </label>
+    <button class="btn primary" id="cycle-btn" title="scout → produce → metrics">Run cycle</button>
+    <button class="btn" id="theme-btn" title="Toggle light/dark">Theme</button>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist">
+    <button data-tab="today" class="active">Today</button>
+    <button data-tab="review">Review<span class="count" id="review-count" hidden></span></button>
+    <button data-tab="library">Library</button>
+    <button data-tab="scout">Scout<span class="count" id="scout-count" hidden></span></button>
+    <button data-tab="analytics">Analytics</button>
+    <button data-tab="sources">Sources</button>
+    <button data-tab="activity">Autopilot &amp; activity</button>
+  </nav>
+  <main id="view"></main>
+  <div id="toast" class="toast" hidden></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

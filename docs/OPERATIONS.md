@@ -1,69 +1,56 @@
-# Operations Runbook
+# Operations runbook — GTA 6 clip farm
 
-How a Claude session runs this business. Two session types. Every session ends with
-ledger updated, committed, pushed.
+Two ways the farm runs. Both use the same code (`clipfarm/`) and state (`data/`, `config/`).
 
-## A. Production session (default)
+## A. On your machine (primary)
+```bash
+python -m clipfarm serve        # http://127.0.0.1:8787
+```
+- **Today** tab: today's slot board. Each assigned slot has Download / Copy caption / Posted.
+  Post from your phone or TikTok Studio, then hit Posted (paste the TikTok URL if handy; the
+  metrics pull auto-links it by caption otherwise).
+- **Review** tab: approve or reject rendered clips, edit the hook, and Re-render to burn it in.
+- **Scout** tab: the "Needs your call" list holds high-score sources from creators without a
+  known program. Use **Trust channel** once you've joined their program or have permission,
+  and every future upload from them auto-clips. "Clip a specific URL" covers campaign source
+  links and your own captures.
+- **Autopilot** toggle: scouts every 2h, produces when the queue is short, pulls metrics
+  every 6h, and cleans work files daily. It never posts.
 
-1. **Load state:** `config/account.json`, `content/backlog.json`,
-   `python3 scripts/ledger.py report`.
-2. **Budget check:** `mcp__HIGGSFIELD__balance`. Abort generation if a batch would take
-   balance below `budget.balance_floor_credits` (150). Session spend cap: 250 credits
-   unless the user raises it in-session.
-3. **Pick 2–3 ideas** from backlog by `priority` (highest first). Mark `status: "scripting"`.
-4. **Script each video** (goes into the ledger entry, not a separate file):
-   - VO script: ~150–170 words for 60–75s, written for the ear, hook line first.
-   - Shot plan: 2–3 segments × 20–25s (Seedance 2.5 supports 4–30s per gen with audio).
-   - Text overlays: hook question + captions.
-5. **Generate:** prefer one of:
-   - `generate_video` model `seedance_2_5`, `aspect_ratio: "9:16"`, `resolution: "720p"`,
-     `generate_audio: true`, duration 20–25s per segment; batch segments via
-     `generate_video_batch` → `jobs_wait` → one `show_generation_by_ids`.
-   - `shorts_studio_create` when the concept fits a full automated short (check
-     `get_workflow_instructions` first per MCP guidance for multi-step videos).
-   - VO layer: `generate_audio` if model-native audio isn't good enough; pick a
-     consistent narrator voice once and reuse (`list_voices`).
-6. **Quality gate, every video:**
-   - Manual review of every output (watch it via `job_display`).
-   - `virality_predictor` — record its score in the ledger. Weak concept → one retry
-     max (`budget.max_retries_per_idea`), else mark `status: "killed"` and move on.
-7. **Prepare draft (never direct-post):** once TikTok is connected,
-   `tiktok_prepare_publish` in draft/inbox mode with caption from
-   `config.style.caption_template`, AI-generated label ON. Record the publish id.
-8. **Ledger + push:** for each video `scripts/ledger.py add/set` with: script, shot plan,
-   model + params, **actual credits_spent per job**, virality score, status
-   (`draft_ready` / `killed`), publish id. Update the cost table below when real numbers
-   land. Commit and push.
+Daily rhythm (~15 min): morning review (approve 5–7) → post at the slot times →
+evening glance at Analytics. Weekly: join the 1–2 campaigns or programs for creators the
+scout surfaces most.
 
-## B. Metrics session (run ~24–48h after posts go live, and weekly)
+## B. Claude Code session (`/farm`)
+`/farm` runs: doctor/status → **gta-scout** (CLI scout + web trend research + campaign hunt)
+→ **clip-editor** (produce + frame-grid QC + hook fixes) → **growth-analyst** (metrics →
+`docs/INSIGHTS.md`) → commit + push. Agents live in `.claude/agents/`.
 
-1. `tiktok_publish_status` / account analytics for each posted video → `scripts/ledger.py set
-   <id> views=… likes=… comments=… shares=… saves=…`.
-2. `python3 scripts/ledger.py report` → cost per 1k views per format.
-3. **Iterate:** top ~20% formats get 2× representation in the next backlog refill;
-   bottom formats die. Mine comments for Part 2 requests → new backlog entries with
-   `source: "comments"`.
-4. Refill backlog to ≥10 ideas. Commit and push.
+Cloud-session caveat: YouTube's media CDN (`*.googlevideo.com`) is blocked by this environment's
+network policy and YouTube bot-checks datacenter IPs, so **cloud sessions can scout, plan and
+analyse, but rendering YouTube sources needs your machine** (Twitch is the same: clip CDN
+untested). See `docs/CAPABILITY-NOTES.md`.
 
-## Cost table (calibrate with real receipts — TBD until batch 1)
+## Pipeline (what each workflow does)
+| Workflow | Steps |
+|---|---|
+| scout | YouTube date-filtered search over `scout.queries` + Claude trend queries → top-K full metadata (upload time, channel, captions, "most replayed" heatmap) · Twitch: Helix top GTA VI clips (if keys) + watchlist channel clips · score = view velocity + recency + relevance + rights − unsafe |
+| produce | planner says how many → pick best rights-cleared candidates (2/creator/day) → captions (YouTube json3 word timings, or faster-whisper) → windows (heatmap + speech energy + excitement/GTA keywords, capped) → **Claude picks 1–2 moments, refines bounds, writes hook/caption/hashtags** → render 1080×1920 (blur-pad / zoom / facecam split) → QC (probe, loudness, black frames, 6-frame grid) → `rendered` |
+| metrics | TikTok public profile (yt-dlp) or Display API (OAuth) or CSV → snapshots → link posts to clips → campaign earnings |
 
-| Item | Config | Credits (actual) |
-|---|---|---|
-| Seedance 2.5 segment | 9:16, 720p, ~22s, audio on | TBD |
-| FLUX 3 Video segment | 9:16, 720p, ~15s, audio on | TBD |
-| Shorts Studio short | preset TBD | TBD |
-| generate_audio VO | ~70s | TBD |
-| Full finished video (all-in) | 60–75s | TBD |
+Statuses: candidate `new → queued → processing → processed | skipped | failed | needs_rights`;
+clip `rendering → rendered → approved → posted | rejected | failed`.
 
-Balance snapshot 2026-09-22: **461 credits** (Plus plan). Until the table is calibrated,
-assume a finished video costs 60–120 credits → first batch = 2–3 videos max.
+## Hard rules (also in CLAUDE.md)
+- Draft/file delivery only. The user posts. Never auto-post.
+- Rights gate: only `campaign | permission | own` auto-render. Never upgrade a channel's rights
+  without the user confirming they joined the program.
+- Brand safety filter stays on. No sexual content.
+- Every session ends with commit + push of `data/`, `config/`, `docs/`.
 
-## Standing decisions
-- Draft-only publishing until the user flips `publish_mode` — the human taps post.
-- One niche, one account (see STRATEGY.md).
-- Scheduled/recurring production (a Routine that wakes Claude daily) is built-ready but
-  OFF until the user opts in — it spends credits unattended.
-- Stitching note: if multi-segment assembly is needed and Shorts Studio doesn't cover it,
-  TikTok's own editor can sequence draft clips at post time; keep segments self-contained
-  so hard cuts read as intentional. Revisit a proper assembly step (ffmpeg or
-  `sandbox_exec`) only if this shows in retention data.
+## Costs
+- Claude brain: ~1 call per source (moment pick) + 1 trend-query call per 6h. Opus 5.5 at
+  medium effort, roughly $0.01–0.03 per source at ~5k input tokens. Switch `brain.enabled`
+  off to run on heuristics only.
+- Higgsfield credits: now optional (AI intros/upscales only). Budget caps in
+  `config/account.json → budget` still apply.

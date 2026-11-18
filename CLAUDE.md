@@ -1,53 +1,42 @@
 # CLAUDE.md — Operator Brief
 
-This repo is the brain and state store for a TikTok short-form content business
-operated by Claude sessions using the Higgsfield MCP tools. The repo holds
-strategy, config, the idea backlog, and the content ledger; Claude sessions do
-the production work (generate → review → prepare draft → log → push).
+This repo runs a **GTA 6 TikTok clip page** (@chat.clip.that). Code in `clipfarm/` does the
+production (scout → moments → render → QC → analytics), a localhost dashboard (`web/`) is the
+user's control room, and Claude sessions operate it via the CLI and the agents in
+`.claude/agents/` (`/farm` runs a full session).
 
 ## Source of truth
-- `config/account.json` — operating config (niche, cadence, budget caps, publish mode)
-- `content/backlog.json` — scored idea backlog
-- `ledger/videos.json` — every video's lifecycle + real credit costs + metrics (via `scripts/ledger.py`)
-- `docs/OPERATIONS.md` — the session runbook. Follow it for any production/metrics session.
+- `config/account.json`: niche, cadence phases, scout queries, render/brain/autopilot settings
+- `config/sources.json`: creators with **rights levels** + paid clipping campaigns
+- `data/clips.json`, `data/candidates.json`, `data/metrics.json`, `data/trends.json`: state
+- `docs/STRATEGY.md` (why), `docs/OPERATIONS.md` (runbook), `docs/SETUP.md`, `docs/CAPABILITY-NOTES.md`
+- CLI: `python -m clipfarm --help` · tests: `python -m pytest -q tests`
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
-1. **Never direct-publish to TikTok.** Prepare drafts only (`tiktok_prepare_publish`); the
-   user taps post from the TikTok app. `publish_mode` in config governs this.
-2. **Budget guardrails before generating:** check `mcp__HIGGSFIELD__balance`. Stop
-   generating if balance would drop below `budget.balance_floor_credits`; never spend more
-   than `budget.session_cap_credits` in one session; max 1 regeneration per weak concept.
-3. **Log every credit.** Each generation's actual cost goes into the ledger entry
-   (`credits_spent`). Update the cost table in `docs/OPERATIONS.md` when real numbers land.
-4. **Content safety for account survival:** no real-person likenesses, no copyrighted
-   characters, original scripts only, AI-generated label ON for every post. See
-   STRATEGY.md → Risks.
-5. **End every session with commit + push** to the working branch so state survives the
-   ephemeral container. Ledger/backlog updates are part of the work, not optional.
-6. Niche changes, account identity changes, and enabling scheduled/auto-posting are user
-   decisions — propose, don't do.
-
-## Tool crib (Higgsfield MCP)
-- Video: `generate_video` (models: `seedance_2_5` 4–30s + audio, `flux_3_video` 5–20s + synced audio, `gemini_omni_flash_1_1` 3–10s, `minimax_h3_max` fast/cheap) · batch via `generate_video_batch` → `jobs_wait` → `show_generation_by_ids`
-- Full shorts pipeline: `shorts_studio_create` (+ `shorts_studio_list_presets`, `shorts_studio_status`)
-- Quality gate: `virality_predictor` · Audio/VO: `generate_audio` · Upscale: `upscale_video`
-- TikTok: `tiktok_accounts` → `tiktok_connect` (OAuth, user clicks) → `tiktok_prepare_publish` (drafts) → `tiktok_publish_status` · trends: `tiktok_music_trending`
-- Account: `balance`, `show_plans_and_credits` (only when user wants to buy)
+1. **Never post to TikTok.** Clips are delivered as files/drafts; the user posts. `publish_mode`
+   governs this. Autopilot never posts.
+2. **Rights gate.** Only `campaign | permission | own` sources auto-render. Never set a channel to
+   campaign/permission unless the user confirms they joined that program or have permission.
+3. **Brand safety.** Keep the NSFW filter on; no sexual content, no leaks, no real-person
+   impersonation, no implied Rockstar affiliation.
+4. **AI label.** Real gameplay clips are NOT AI-generated, so the label stays off. Turn it ON for any clip
+   that includes AI-generated visuals or voice (e.g. Higgsfield intros).
+5. **Budgets.** Higgsfield: check `balance`, respect `budget.*` caps. Claude brain: keep
+   `brain.effort` at medium unless the user asks.
+6. **End every session with commit + push** to the working branch (data/, config/, docs/).
+7. Niche changes, account identity (handle) changes, cadence targets, enabling
+   `cadence.auto_adjust.apply` or `produce.auto_approve` are user decisions: propose, don't do.
 
 ## Current phase
-**PIVOTED to streamer-clipping (2026-09-22).** Handle: **@chat.clip.that** (see
-`config/account.json`). Editing pipeline validated in-container; ingest blocked until
-the user flips the environment network policy — steps and validated ffmpeg recipes in
-`docs/CAPABILITY-NOTES.md`. STRATEGY/OPERATIONS/SETUP docs still describe the legacy
-POV-history plan; restructure them for the clipping model during the next work session.
+**GTA 6 launch surge (2026-11-19 → 12-03), 5 posts/day.** Engine + dashboard + agents built and
+tested 2026-11-18. Cloud sessions can scout/plan/analyse; rendering YouTube sources needs the
+user's machine (googlevideo blocked + datacenter bot-checks; see CAPABILITY-NOTES).
+User-gated next steps: run locally (`docs/SETUP.md`), add ANTHROPIC_API_KEY, join GTA 6
+clipping programs for the creators the scout surfaces most, then "Trust channel" them.
 
-First session after the network flip:
-1. Re-run the connectivity matrix from CAPABILITY-NOTES (curl loop) and record results.
-2. Build `scripts/clipper.py` around the validated recipe: ingest (campaign source /
-   yt-dlp) → transcript (platform subs, else faster-whisper) → moment selection → cut →
-   9:16 blur-pad → ASS captions → loudnorm → frame-grid QC → deliver via file send.
-3. Restructure docs for clipping; retool ledger fields for per-campaign earnings.
-4. Still user-gated: Whop signup + campaign selection, TikTok account creation +
-   `tiktok_connect`, posting (drafts/files only — user posts).
-Money model: Whop-style campaign bounties (~$0.20–$6 per 1k verified views). Clip ONLY
-campaign-authorized material — never freelance-clip a creator without a program.
+## Tool crib (Higgsfield MCP: optional now)
+- TikTok: `tiktok_accounts` → `tiktok_connect` (user OAuth) → `tiktok_prepare_publish` (drafts only) →
+  `tiktok_publish_status` · `tiktok_music_trending` for trending sounds
+- Media in: `media_import_url` (needs a public URL) · Upscale: `upscale_video` · Quality gate: `virality_predictor`
+- AI intros (label ON): `generate_video` (`seedance_2_5`, `flux_3_video`, …) · `generate_audio`
+- Account: `balance`, `show_plans_and_credits` (only when the user wants to buy)

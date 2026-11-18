@@ -1,0 +1,6 @@
+# core
+yt-dlp[default]>=2026.10.26      # ingest + TikTok public stats; [default] pulls the YouTube JS-challenge solver
+anthropic>=2.10                  # Claude brain (moment picks, hooks, trend queries); optional at runtime
+tzdata                           # timezone db on Windows
+# optional
+# faster-whisper                 # word captions for Twitch clips / own footage (no platform subs)

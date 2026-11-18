@@ -1,37 +1,52 @@
-# Setup — one-time checklist
+# Setup — run the GTA 6 clip farm on your machine
 
-## Account status snapshot (2026-09-22)
-- Higgsfield: **Plus plan, 461 credits**, one private workspace (selected)
-- TikTok: **no account connected** (`tiktok_accounts` → empty)
-- Shorts Studio: available, 8+ style presets browsed (Bold Urban, Claymation, …), custom presets possible
-- Key models confirmed: `seedance_2_5` (4–30s, native audio, 9:16), `flux_3_video`
-  (5–20s, synced audio), `gemini_omni_flash_1_1` (3–10s, up to 4K), `minimax_h3_max` (fast)
+## 1. Install (once)
+Needs Python 3.10+, ffmpeg, and a JS runtime for YouTube extraction (deno recommended, node works).
 
-## Your part (the 1%)
+macOS:
+```bash
+brew install python ffmpeg deno
+```
+Windows (PowerShell):
+```bash
+winget install Python.Python.3.12 Gyan.FFmpeg DenoLand.Deno
+```
+Then in the repo:
+```bash
+python -m venv .venv
+```
+```bash
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+```
+```bash
+pip install -r requirements.txt
+```
+```bash
+python -m clipfarm doctor
+```
 
-1. **Confirm the niche** — recommended: POV History (see STRATEGY.md §2). Say "go" to
-   accept, or name a different direction and Claude reseeds the backlog for it.
-2. **Create the TikTok account** (fresh account, business-of-one hygiene):
-   - Handle ideas: `@youwerethere.pov`, `@firstperson.history`, `@wakeupin1347`,
-     `@povtimemachine`, `@thedaybefore.pov`
-   - Bio pattern: "Daily first-person history. You're there. 🕰️ Part 2 every day."
-   - Optional but recommended: 2–3 days of scrolling history/POV content on the new
-     account before first post, so the FYP graph seeds toward the right audience.
-3. **Connect TikTok to Higgsfield:** ask Claude to run `tiktok_connect` — it returns an
-   OAuth link only you can click. After connecting, Claude records the `connector_id`
-   in `config/account.json`.
-4. **Credits runway:** 461 credits ≈ one launch batch (2–3 videos) + a follow-up. For
-   2/day cadence expect to top up — decide budget after batch 1 calibrates real costs
-   (cost table in OPERATIONS.md). Claude will show plans/checkout links only when you ask.
-5. **Say "go".** Claude runs Production Session #1: scripts + generates the top 2–3
-   backlog ideas within budget caps, quality-gates them, and stages TikTok drafts (or
-   hands you finished videos if TikTok isn't connected yet).
+## 2. Keys (all optional — the farm runs without them)
+| What | Env var(s) | Unlocks |
+|---|---|---|
+| Claude brain | `ANTHROPIC_API_KEY` (or `ant auth login`) | Claude picks moments, writes hooks/captions, generates trend queries. Without it, heuristics |
+| Twitch Helix | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` (free app at dev.twitch.tv) | Top GTA VI clips across **all** of Twitch, not just the watchlist |
+| TikTok Display API | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` (developers.tiktok.com app with Login Kit, scopes `user.info.basic,user.info.stats,video.list`) | Follower count + official stats. Without it, public-profile stats (views/likes/comments/shares) still work |
+| TikTok redirect | `TIKTOK_REDIRECT_URI` (default `http://127.0.0.1:8787/auth/tiktok/callback`) | TikTok may require an https redirect, so use a tunnel (e.g. cloudflared) if it rejects localhost |
+| Faster captions for Twitch | `pip install faster-whisper` | Word captions on Twitch clips / own footage |
 
-## Later, when justified by data
-- **Daily Routine:** Claude can schedule itself to run a production session every day
-  and a metrics session weekly — opt-in, since it spends credits unattended.
-- **Dashboard frontend:** ledger `report` is enough pre-launch; once there are >20 posts
-  of metrics, build the dashboard (published artifact or a small Worker).
-- **Cross-posting:** YouTube Shorts + Instagram Reels reuse of the same files.
-- **Second revenue stream:** clipping bounties (Whop-style) if you join a program —
-  separate content stream with its own rules; Claude sets it up alongside.
+Put them in your shell profile or a `.env` you `source` (`.env` is gitignored).
+
+If YouTube says "Sign in to confirm you're not a bot", set
+`"ingest": {"cookies_from_browser": "chrome"}` (or firefox/edge/safari) in `config/account.json`.
+
+## 3. Run
+```bash
+python -m clipfarm serve
+```
+Open http://127.0.0.1:8787 → **Run cycle** for a first scout + produce, or flip **Autopilot** on.
+
+## 4. Status of external accounts
+- TikTok @chat.clip.that: exists, 7 pre-pivot posts (non-GTA, incl. `#ad` campaign posts).
+- Whop / Content Rewards: user-gated. Join GTA 6 campaigns surfaced in Sources → Campaigns.
+- Higgsfield: optional now (AI intros/upscales). TikTok draft upload via `tiktok_prepare_publish`
+  still requires `tiktok_connect` (user OAuth) and a publicly reachable clip URL.

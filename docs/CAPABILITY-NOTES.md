@@ -1,4 +1,23 @@
-# Capability notes — clipping pipeline feasibility (validated 2026-09-22)
+# Capability notes — clipping pipeline feasibility
+
+## Re-verified 2026-11-18 (GTA 6 build session)
+Network policy has been partially opened since 2026-09-22:
+| Host / capability | Result |
+|---|---|
+| youtube.com search + metadata + json3 auto-captions | **works** (word-level timings) — but bot-checks the datacenter IP after ~10 rapid metadata calls |
+| *.googlevideo.com (YouTube media) | **blocked** (000) → no YouTube rendering from cloud sessions |
+| twitch.tv channel clips listing via yt-dlp | **works** (title, views, duration, timestamp) |
+| twitch.tv category clips via yt-dlp | unsupported by yt-dlp → Helix API path (needs TWITCH_CLIENT_ID/SECRET) |
+| tiktok.com public profile via yt-dlp | **works**: per-video views/likes/comments/shares (no follower count) |
+| kick.com, huggingface.co, pypi | reachable |
+| ffmpeg render chain | **validated** again: 27s clip, both layouts, ~20s each, QC passes |
+
+Conclusion: cloud sessions can scout, plan, analyse and run agents; **rendering YouTube sources
+needs the user's machine** (or a policy that allows `*.googlevideo.com` — wildcard hosts are a
+Settings decision, not something a session can add).
+
+---
+## Original findings (2026-09-22)
 
 Findings from the in-session proof-of-capability run. Keep current: re-verify the
 network matrix after any environment policy change.

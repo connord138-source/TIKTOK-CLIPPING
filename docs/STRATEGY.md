@@ -1,84 +1,76 @@
-# Strategy
+# Strategy — GTA 6 clip page (@chat.clip.that)
 
-Goal: build a TikTok account into an income-producing asset using AI-generated
-short-form video, with Claude doing ~99% of the operating work.
+_Pivoted 2026-11-18 (eve of GTA 6 launch, Nov 19 2026). Supersedes the POV-history and generic
+streamer-clipping plans._
 
-## 1. How the money actually arrives (honest version)
+## Thesis
+GTA 6 is the biggest entertainment launch in years, and every streamer and YouTuber is
+playing it at once. That produces far more clippable moments than any one person can watch.
+A page that **finds the best moment within hours** and posts it as a clean, captioned 9:16
+clip can pick up views while the FYP is hungry for GTA content and before clip competition
+settles. The work that scales is discovery plus editing speed, so the farm automates both.
+Posting stays with a human.
 
-| Path | Requirements | Timeline | Expected value |
+## Content pillars (in priority order)
+1. **Streamer reactions & firsts**: "xQc's first police chase", "Kai meets Lucia". The biggest
+   reach, but only clip creators whose clipping program you've joined or who gave
+   permission (rights gate).
+2. **Chaos & physics**: police escalations, crashes, ragdolls, gators, NPC weirdness. These
+   travel even without the creator's audience.
+3. **Discoveries & details**: easter eggs, secrets, "GTA 6 vs GTA 5" comparisons, map facts.
+   They save and share well, and work as a series ("GTA 6 details you missed pt. 7").
+4. **Moment-of-the-day news**: records, glitches going viral, patch changes. Time-sensitive:
+   post within hours or skip.
+
+Format: 18–45s (target 30s). Hook banner on top for the whole clip, word-highlight captions,
+a "via {creator}" credit, loudness at −14 LUFS. First 2 seconds must make sense with zero
+context, so the moment selector is told to start on the action, not the setup.
+
+## Cadence: "the right amount"
+| Phase | Dates | Posts/day | Why |
 |---|---|---|---|
-| **Creator Rewards Program** | 10k followers, 100k views in last 30 days, videos **>1 min**, eligible region, "original content" review | realistically weeks 4–10 with 2/day consistency and 1–2 breakout videos | ~$0.40–$1.20 RPM on qualified views. 1M qualified views ≈ $400–$1,200 |
-| **TikTok Shop affiliate** | ~5k followers (open collab, US) | after growth phase | commission per sale; needs product-fit (for history niche: books, replicas, decor — workable but secondary) |
-| **Clipping bounties** (Whop-style creator programs) | none — pay per view from day 1 | immediate, but it's a *different* content stream (promoting a specific creator with their material, per their rules) | $0.20–$2.00 per 1k views paid by the creator |
-| **UGC/ad creation for brands** | a portfolio, not followers | as soon as we have 10–15 strong videos | $50–$300+ per deliverable; Higgsfield's marketing studio is literally built for this |
-| **Account sale / brand deals** | an audience | long game | exit option |
+| launch_surge | Nov 19 – Dec 3 | **5** | Peak search and FYP demand, while moment supply is fresh. Volume finds winners on a new account |
+| growth | Dec 4 – Jan 15 | **4** | Story/discovery phase. Cut volume, double down on proven pillars |
+| steady | Jan 16 → | **3** | Evergreen. GTA Online (expected 2027) is the next surge, so bump back to 5 |
 
-**Plan of record:** grow one account toward Creator Rewards (the compounding asset),
-treat UGC-for-brands as the near-term cash option once we have a portfolio, and keep
-clipping bounties as an optional parallel motion if you join a program. Expect **$0 for
-the first 4–8 weeks**. Anyone promising faster is selling a course.
+Guardrails built into the planner (`clipfarm/planner.py`):
+- **Bounds 2–6/day.** Above ~6 on a young account, posts compete with each other and quality slips.
+- **Max 2 clips per creator per day**, so the page stays a GTA page and isn't one streamer's fan page.
+- **Production follows the queue.** Render only enough to fill today's open slots plus ~1 day of
+  buffer, divided by your approval rate. Autopilot can't overproduce.
+- **Performance advisor.** Compares the median views of the last 3 days with the prior 11 (posts
+  ≥24h old only). ≥1.3× → +1/day, <0.6× → −1/day, otherwise hold. Any clip at ≥5× the median is
+  flagged as a breakout, so you go back to that creator or topic. Suggest-only until you
+  switch on `cadence.auto_adjust.apply`.
+- Slots (ET): 07:30 · 11:30 · 14:30 · 17:30 · 20:00 · 22:30, spread evenly for the day's target.
+  The gaming audience peaks in the evening. The analyst agent can re-tune slots from data.
 
-**Break-even math (fill in real numbers after batch 1):** if a finished 60–75s video
-costs `C` credits and credits cost ~`$P` each, a video needs roughly `(C × P) / (RPM/1000)`
-qualified views to pay for itself. This math lives here so spending decisions stay grounded.
+## Money
+1. **Paid clipping campaigns** (Whop Content Rewards and similar): ~$0.20–$6 per 1k verified
+   views, usually with a per-clip cap and a ~10% platform fee. GTA 6 campaigns are appearing
+   around launch (music promos like "Tokyo Girl" at $0.70/1k, capped at $35/clip; streamer
+   programs). Join the ones whose creators the scout keeps surfacing. That also flips their
+   footage to auto-clip.
+2. **TikTok Creator Rewards**: needs 10k followers and videos ≥1 min. A later play is
+   ≥60s "top 5 moments" compilations (raise `render.clip_seconds`).
+3. Later: game-adjacent affiliate (controllers, capture cards), and selling the page.
 
-## 2. Niche
-
-### Recommended: POV History ("You wake up in 1347…")
-Immersive first-person historical experiences, 60–75s, era-accurate visuals, scripted
-voiceover, on-screen captions, cliffhanger endings.
-
-Why this wins for us specifically:
-- **>1 min watchable** → Creator Rewards eligible from day one (most "satisfying"-style
-  AI content can't hold 60s honestly).
-- **Original scripting + multi-shot editing** → defensible against TikTok's
-  "unoriginal content" rejection, which kills most raw-AI-spam accounts at review time.
-- **Built-in tension formats** (countdown to Vesuvius, night before the battle, day-by-day
-  plague spread) → completion rate, which is the single strongest ranking signal.
-- **Evergreen** → old videos keep earning views; the library compounds.
-- **Higgsfield fit:** cinematic text-to-video with native audio (Seedance 2.5 / FLUX 3),
-  consistent look via a Shorts Studio style preset, VO via generate_audio.
-- **Differentiator to develop:** "satisfying history" hybrids — process videos with era
-  POV (a sword forged for you in 1350, armor assembled piece by piece). Merges the two
-  highest-performing AI formats without inheriting the spam-flag risk of pure ASMR loops.
-
-### Alternates considered
-- **Oddly-satisfying / AI-ASMR physics** (glass fruit, hydraulic press): fastest raw
-  follower growth and cheapest per video, but low RPM, weak >1min eligibility, and the
-  highest "mass-produced content" rejection risk. Verdict: growth engine, not income
-  engine; borrow its visual language inside POV History instead.
-- **Character vlog** (creature/persona daily vlogs, Bigfoot-style): brandable with merch
-  upside, but saturated since 2025 and success hinges on comedy writing consistency.
-  Verdict: viable pivot if POV History stalls; Higgsfield character sheets make it cheap
-  to test later.
-
-One account, one niche until Creator Rewards is unlocked. Multi-account splits focus and
-trips TikTok's mass-production heuristics.
-
-## 3. Algorithm playbook (bake into every video)
-- **Hook in <1s:** open mid-action + text overlay question ("Why did everyone fear the
-  water in 1347?"). No logos, no intros.
-- **Completion beats everything:** 60–75s sweet spot — rewards-eligible but short enough
-  to finish. End on a loop or an explicit Part 2 cliffhanger.
-- **On-screen captions always** (sound-off viewers) + VO + subtle music under.
-- **Series structure:** numbered ("1347, Day 4"), consistent title card style → binge
-  behavior + profile visits, which drive follows.
-- **Post at audience peak:** 7–10pm ET for US-heavy history audience; 2/day, ≥6h apart.
-- **Hashtags:** 3–5 total — #history #pov + 1–2 topic tags. Skip hashtag soup.
-- **Reply to top comments with videos** — comment-reply videos get boosted distribution
-  and write our backlog for us.
-- **Seed the account right:** first 5 posts are the audition; lead with the 5 strongest
-  concepts, not a warm-up.
-
-## 4. Risks & rules (account survival)
-1. **Unoriginal-content rejection at Creator Rewards review** — the #1 killer of AI
-   accounts. Mitigation: original scripts, multi-shot edits, consistent branded series
-   style, VO + captions. Never repost-style content.
-2. **AI labeling:** TikTok requires labeling realistic AIGC. Label ON for every post —
-   it does not meaningfully hurt distribution; getting caught without it can.
-3. **No real-person likenesses, no copyrighted characters/music.** Use TikTok's licensed
-   sound library at post time if we want trending audio under our VO.
-4. **Credit burn without feedback:** never spend past the session cap before metrics
-   from prior posts justify the next batch. The ledger's cost-per-1k-views is the KPI.
-5. **Platform concentration:** all repurposable to YouTube Shorts + Reels later (a
-   distribution-only motion, near-zero extra production cost — phase 2).
+## Risks & rules
+- **Copyright / rights.** Clipping a creator without a program or permission risks DMCA strikes
+  (three strikes and the account is gone) and TikTok's unoriginal-content suppression. The
+  rights gate enforces this: only `campaign | permission | own` auto-render, and the rest
+  waits for your call. Transformative edits (hooks, captions, curation, credit) help but
+  aren't a licence.
+- **Rockstar / Take-Two.** Gameplay videos are broadly tolerated. Avoid leaked or pre-release
+  material and anything implying official affiliation. No Rockstar logos as branding.
+- **Brand safety.** The scout hard-filters sexual content (the game has some, and early
+  streams surfaced "18+" clips). TikTok is unforgiving here.
+- **Bot checks.** YouTube blocks datacenter IPs. Run the farm on your own machine
+  (residential IP), and set `ingest.cookies_from_browser` if it still gets challenged.
+- **Labels.** Real gameplay is **not** AI-generated, so leave TikTok's AI label off. Turn it on
+  only for clips that include AI visuals or voice (e.g. Higgsfield intros).
+- **Account history.** The account has 7 earlier non-GTA posts, including `#ad` campaign posts
+  (Coinbase, MW4). Don't delete campaign posts until their payouts clear. After that,
+  archiving the off-niche posts tightens the page's signal.
+- **Identity.** The handle `chat.clip.that` is generic. A GTA-specific handle would convert
+  better on profile visits, but that's your call (CLAUDE.md rule 6).

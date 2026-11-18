@@ -1,0 +1,24 @@
+{
+  "policy": {
+    "auto_render": ["campaign", "permission", "own"],
+    "note": "Levels: campaign | permission | own | official | unverified | blocked. Only auto_render levels are clipped unattended; everything else waits in the dashboard 'Needs your call' list. Upgrade a whole channel once you join its clipping program."
+  },
+  "channels": [
+    {"platform": "youtube", "name": "Rockstar Games", "rights": "official",
+     "notes": "Trailers/press. Transformative edits only (commentary/breakdown hooks), never straight re-uploads."},
+    {"platform": "twitch", "login": "kaicenat", "name": "Kai Cenat", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "xqc", "name": "xQc", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "summit1g", "name": "summit1g", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "caseoh_", "name": "CaseOh", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "jynxzi", "name": "Jynxzi", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "hasanabi", "name": "HasanAbi", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "shroud", "name": "shroud", "rights": "unverified", "watch": true},
+    {"platform": "twitch", "login": "lacy", "name": "Lacy", "rights": "unverified", "watch": true}
+  ],
+  "campaigns": [
+    {"id": "cr-gta6-tokyo-girl", "name": "GTA 6 Clipping Campaign – Tokyo Girl (music promo)", "platform": "whop/contentrewards",
+     "rate_per_1k": 0.70, "max_per_clip": 35, "status": "candidate",
+     "requirements": "GTA 6-themed clip using the song 'Tokyo Girl' by Passive as the audio. Verify live terms before joining.",
+     "source": "https://contentrewards.com/articles/gta-6-clipping"}
+  ]
+}
