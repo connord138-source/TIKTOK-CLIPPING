@@ -18,7 +18,7 @@ pip install -r requirements.txt && python -m clipfarm doctor
 ```bash
 python -m clipfarm serve
 ```
-→ http://127.0.0.1:8787 · full setup and keys: `docs/SETUP.md`
+→ http://127.0.0.1:8787 · **step-by-step: `docs/START-HERE.md`** · keys: `docs/SETUP.md`
 
 ## Layout
 ```
