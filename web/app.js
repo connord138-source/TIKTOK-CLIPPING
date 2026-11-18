@@ -242,15 +242,15 @@ async function viewScout() {
   const url = h("input", { type: "url", placeholder: "YouTube / Twitch / direct video URL", style: { flex: "1", minWidth: "240px" } });
   const start = h("input", { type: "number", placeholder: "start s", style: { width: "90px" } });
   const end = h("input", { type: "number", placeholder: "end s", style: { width: "90px" } });
-  const rsel = h("select", {}, ["own", "campaign", "permission", "official"].map((r) => h("option", { value: r }, r)));
+  const rsel = h("select", { "aria-label": "Rights for this link" }, [["unverified", "no permission yet (my call)"], ["campaign", "campaign"], ["permission", "permission"], ["own", "my own footage"], ["official", "official"]].map(([v, l]) => h("option", { value: v }, l)));
   const csel = h("select", {}, h("option", { value: "" }, "no campaign"), campaigns.map((c) => h("option", { value: c.id }, c.name)));
-  const manual = h("div", { class: "card" }, h("h2", {}, "Clip a specific URL", h("small", {}, "campaign source links, your own footage, a moment you spotted")),
+  const manual = h("div", { class: "card" }, h("h2", {}, "Clip a link you found", h("small", {}, "paste any YouTube or Twitch video, a campaign source link, or a file path")),
     h("div", { class: "row" }, url, start, end, rsel, csel,
       h("button", { class: "btn primary", onclick: () => {
         if (!url.value) return toast("Paste a URL", true);
         runJob("clip_url", { url: url.value, start: start.value ? +start.value : null, end: end.value ? +end.value : null, rights: rsel.value, campaign_id: csel.value || null });
       } }, "Clip it")),
-    h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Leave start/end blank to let the brain find the best moments."));
+    h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Leave start/end blank and the farm finds the best 1–2 moments itself. Clips land in Review; a link you paste is clipped whatever its rights label, so that call is yours."));
 
   const trend = st.trend_queries.length ? h("div", { class: "callout good" }, "Claude trend queries in rotation: ", st.trend_queries.join(" · "),
     " ", h("button", { class: "btn sm", onclick: () => runJob("trends") }, "Refresh")) : null;
@@ -274,7 +274,7 @@ async function viewScout() {
         h("td", { class: "num" }, c.score ?? "—"),
         h("td", {}, sel), h("td", {}, chip(c.status)),
         h("td", {}, h("div", { class: "row", style: { flexWrap: "nowrap" } },
-          h("button", { class: "btn sm primary", onclick: () => act(() => api(`/api/candidates/${encodeURIComponent(c.id)}`, { action: "queue", rights: c.rights === "unverified" ? "permission" : null }).then(() => api("/api/jobs", { type: "produce", params: { max_renders: 2 } })), "Queued — producing") }, "Clip"),
+          h("button", { class: "btn sm primary", onclick: () => act(() => api(`/api/candidates/${encodeURIComponent(c.id)}`, { action: "queue" }).then(() => api("/api/jobs", { type: "produce", params: { max_renders: 2 } })), "Queued — producing") }, "Clip"),
           c.channel ? h("button", { class: "btn sm", title: "Mark this channel as clipping-program/permission: all its uploads auto-clip", onclick: () => act(() => api(`/api/candidates/${encodeURIComponent(c.id)}`, { rights: "permission", apply_channel: true }), `${c.channel} trusted`) }, "Trust channel") : null,
           h("button", { class: "btn sm", onclick: () => act(() => api(`/api/candidates/${encodeURIComponent(c.id)}`, { action: "skip" })) }, "Skip"))));
     }))));

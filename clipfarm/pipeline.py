@@ -227,7 +227,7 @@ def rerender(clip_id: str) -> dict:
 
 
 def _clip_url(p: dict) -> dict:
-    cand = scout.add_url(p["url"], rights_level=p.get("rights", "own"), title=p.get("title"),
+    cand = scout.add_url(p["url"], rights_level=p.get("rights") or "unverified", title=p.get("title"),
                          campaign_id=p.get("campaign_id"), start=p.get("start"), end=p.get("end"))
     return {"clips": produce_candidate(cand)}
 

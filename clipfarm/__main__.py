@@ -6,7 +6,7 @@
   python -m clipfarm produce [--n 4]        # render clips the queue needs (or exactly n)
   python -m clipfarm metrics                # pull TikTok stats, link posts, earnings
   python -m clipfarm cycle                  # scout -> produce -> metrics
-  python -m clipfarm clip URL [--start S --end E] [--rights own|campaign|permission|official]
+  python -m clipfarm clip URL [--start S --end E] [--rights unverified|own|campaign|permission|official]
   python -m clipfarm candidates [--status needs_rights] [--limit 20]
   python -m clipfarm clips [--status rendered]
   python -m clipfarm set-clip c0001 approve|reject|posted [--url TIKTOK_URL] [--reason TEXT]
@@ -78,7 +78,7 @@ def main(argv=None) -> int:
     c.add_argument("url")
     c.add_argument("--start", type=float)
     c.add_argument("--end", type=float)
-    c.add_argument("--rights", default="own")
+    c.add_argument("--rights", default="unverified", choices=["unverified", "own", "campaign", "permission", "official"])
     c.add_argument("--campaign")
     ca = sub.add_parser("candidates")
     ca.add_argument("--status")

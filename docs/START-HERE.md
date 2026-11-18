@@ -99,6 +99,19 @@ The farm only auto-clips creators you have permission for. Pick at least one of 
   any of their videos in the **Scout** tab and click **Trust channel**. All their uploads now
   auto-clip.
 
+### B1b. Or paste links you found yourself
+You can skip the scout and feed the farm directly:
+1. Find a popular GTA 6 video on YouTube (or a Twitch clip) and copy its link.
+2. Dashboard → **Scout** tab → **Clip a link you found** → paste the link.
+3. Leave start/end blank (the farm picks the best 1–2 moments), or type the seconds if you
+   already know the moment.
+4. Set the rights dropdown honestly: **campaign** / **permission** / **my own footage** if one
+   applies, otherwise leave **no permission yet (my call)**.
+5. Click **Clip it**. The clips appear in **Review** a few minutes later.
+
+A pasted link is always clipped, whatever the label: that decision is yours per link. Clips
+from creators with no program carry the copyright-strike risk described in `docs/STRATEGY.md`.
+
 ### B2. Find and make clips
 1. Click **Run cycle** (top right). It searches YouTube and Twitch, then makes clips.
 2. Watch progress in **Autopilot & activity**. A run takes about 2–10 minutes.
