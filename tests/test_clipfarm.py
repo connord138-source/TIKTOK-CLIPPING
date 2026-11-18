@@ -438,3 +438,16 @@ def test_dashboard_keys_are_stored_locally_and_never_echoed(monkeypatch):
     finally:
         core.save_keys({"ANTHROPIC_API_KEY": ""})
     assert server.connections_view()["keys"]["ANTHROPIC_API_KEY"]["set"] is False
+
+
+def test_tiktok_web_login_via_https_forwarding_page(fake_tiktok, monkeypatch):
+    page = "https://example.github.io/repo/tiktok-callback/"
+    cfg = core.load_config()
+    cfg.setdefault("tiktok", {})["redirect_uri"] = page
+    monkeypatch.setattr(tiktok, "load_config", lambda: cfg)
+    q = {k: v[0] for k, v in parse_qs(urlparse(tiktok.authorize_url(8787)).query).items()}
+    assert q["redirect_uri"] == page and "code_challenge" not in q      # web flow: no PKCE
+    tiktok.finish_login("the-code", q["state"], 8787)
+    sent = fake_tiktok.token_calls[-1]
+    assert sent["redirect_uri"] == page and "code_verifier" not in sent
+    assert tiktok.status_summary(8787)["default_redirect_uri"] == "http://127.0.0.1:8787/auth/tiktok/callback/"

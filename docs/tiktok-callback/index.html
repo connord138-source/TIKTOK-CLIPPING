@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Returning to Clipfarm</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; background: #0f0d14; color: #f2eff7; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 16px; }
+  main { max-width: 480px; text-align: center; }
+  a { color: #ff4f9a; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Finishing TikTok login</h1>
+  <p id="msg">Sending you back to your Clipfarm dashboard.</p>
+  <p><a id="link" href="http://127.0.0.1:8787/auth/tiktok/callback/">Click here if nothing happens</a></p>
+</main>
+<script>
+  // TikTok will not send a login back to an address on your own computer, so it sends it to
+  // this page, and this page hands the same parameters to the dashboard running on your PC.
+  // Nothing is stored or sent anywhere else.
+  var target = "http://127.0.0.1:8787/auth/tiktok/callback/" + location.search;
+  document.getElementById("link").href = target;
+  if (location.search.length > 1) location.replace(target);
+  else document.getElementById("msg").textContent = "This page only works as the last step of connecting TikTok from the Clipfarm dashboard.";
+</script>
+</body>
+</html>

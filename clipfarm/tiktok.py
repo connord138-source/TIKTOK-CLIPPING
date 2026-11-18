@@ -85,9 +85,18 @@ def scopes() -> list[str]:
     return BASE_SCOPES + extra
 
 
+def default_redirect_uri(port: int) -> str:
+    return f"http://127.0.0.1:{port}/auth/tiktok/callback/"
+
+
 def redirect_uri(port: int) -> str:
-    """Desktop-app rule: host must be localhost/127.0.0.1 and a port is required."""
-    return os.environ.get("TIKTOK_REDIRECT_URI") or f"http://127.0.0.1:{port}/auth/tiktok/callback/"
+    """Where TikTok sends the browser after login. Default is the local dashboard (TikTok's
+    Desktop rule: localhost/127.0.0.1 + port). TikTok's portal can refuse local addresses; then
+    set tiktok.redirect_uri (Connections tab) to an https page that forwards to the dashboard,
+    e.g. the GitHub Pages copy of docs/tiktok-callback/."""
+    return (os.environ.get("TIKTOK_REDIRECT_URI")
+            or (load_config().get("tiktok", {}).get("redirect_uri") or "").strip()
+            or default_redirect_uri(port))
 
 
 def pkce_pair() -> tuple[str, str]:
@@ -99,14 +108,17 @@ def authorize_url(port: int) -> str:
     if not client_key():
         raise TikTokError("not_configured", "save your TikTok client key and secret first")
     state = secrets.token_urlsafe(16)
-    verifier, challenge = pkce_pair()
+    uri = redirect_uri(port)
+    params = {"client_key": client_key(), "scope": ",".join(scopes()), "response_type": "code",
+              "redirect_uri": uri, "state": state}
     _pending_auth.clear()
-    _pending_auth[state] = verifier
-    q = urllib.parse.urlencode({
-        "client_key": client_key(), "scope": ",".join(scopes()), "response_type": "code",
-        "redirect_uri": redirect_uri(port), "state": state,
-        "code_challenge": challenge, "code_challenge_method": "S256"})
-    return AUTHORIZE + "?" + q
+    if uri.startswith("https://"):   # TikTok "Web" login: no PKCE in its spec
+        _pending_auth[state] = ""
+    else:                            # TikTok "Desktop" login: PKCE required
+        verifier, challenge = pkce_pair()
+        _pending_auth[state] = verifier
+        params.update(code_challenge=challenge, code_challenge_method="S256")
+    return AUTHORIZE + "?" + urllib.parse.urlencode(params)
 
 
 def _token_request(fields: dict) -> dict:
@@ -122,11 +134,13 @@ def _token_request(fields: dict) -> dict:
 
 
 def finish_login(code: str, state: str, port: int) -> dict:
-    verifier = _pending_auth.pop(state, None)
-    if not verifier:
+    if state not in _pending_auth or not code:
         raise TikTokError("state_mismatch", "start again from Connections > Connect TikTok")
-    return _token_request({"code": code, "grant_type": "authorization_code",
-                           "redirect_uri": redirect_uri(port), "code_verifier": verifier})
+    verifier = _pending_auth.pop(state)
+    fields = {"code": code, "grant_type": "authorization_code", "redirect_uri": redirect_uri(port)}
+    if verifier:
+        fields["code_verifier"] = verifier
+    return _token_request(fields)
 
 
 def disconnect() -> None:
@@ -156,6 +170,7 @@ def status_summary(port: int) -> dict:
     return {"configured": bool(client_key() and os.environ.get("TIKTOK_CLIENT_SECRET")),
             "connected": bool(tok), "scopes": granted, "can_upload": "video.upload" in granted,
             "can_read_stats": "video.list" in granted, "redirect_uri": redirect_uri(port),
+            "default_redirect_uri": default_redirect_uri(port),
             "pending_24h": pending_count(), "pending_cap": PENDING_CAP}
 
 

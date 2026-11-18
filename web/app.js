@@ -509,6 +509,8 @@ async function viewConnections() {
   // TikTok
   const ck = secret("Client key"), cs = secret("Client secret");
   const uri = h("code", {}, t.redirect_uri);
+  const ru = h("input", { type: "text", placeholder: "https://… (only if TikTok refuses the address above)", style: { flex: "1", minWidth: "260px" } });
+  const customUri = t.redirect_uri !== t.default_redirect_uri;
   const step = (n, ...kids) => h("li", { style: { margin: "10px 0" } }, ...kids);
   const tiktokCard = h("div", { class: "card" },
     h("h2", {}, "TikTok", h("small", {}, "send clips to your drafts in one click")),
@@ -524,7 +526,15 @@ async function viewConnections() {
       step(1, "Create a TikTok developer app at ", h("a", { href: "https://developers.tiktok.com/apps", target: "_blank", rel: "noopener" }, "developers.tiktok.com"),
         ". Add the products ", h("strong", {}, "Login Kit"), " and ", h("strong", {}, "Content Posting API"), ". In Login Kit choose ", h("strong", {}, "Desktop"), "."),
       step(2, "In the app's Login Kit settings, add this redirect URI exactly: ", uri, " ",
-        h("button", { class: "btn sm", onclick: () => navigator.clipboard.writeText(t.redirect_uri).then(() => toast("Redirect URI copied"), () => toast("Copy failed", true)) }, "Copy")),
+        h("button", { class: "btn sm", onclick: () => navigator.clipboard.writeText(t.redirect_uri).then(() => toast("Redirect URI copied"), () => toast("Copy failed", true)) }, "Copy"),
+        h("div", { class: "row", style: { marginTop: "8px" } },
+          h("span", { class: "muted", style: { fontSize: "12px" } }, "Different redirect address:"), ru,
+          h("button", { class: "btn sm", onclick: () => {
+            const v = ru.value.trim();
+            if (!/^https?:\/\/\S+$/.test(v)) return toast("Paste the full address, starting with https://", true);
+            act(() => api("/api/config", { tiktok: { redirect_uri: v } }), "Redirect address saved");
+          } }, "Save address"),
+          customUri ? h("button", { class: "btn sm", onclick: () => act(() => api("/api/config", { tiktok: { redirect_uri: "" } }), "Back to the default address") }, "Use default") : null)),
       step(3, "In the app's Sandbox settings, add your TikTok account as a target user (or submit the app for review)."),
       step(4, "Paste the app's client key and secret: ", keyState("TIKTOK_CLIENT_KEY"),
         h("div", { class: "row", style: { marginTop: "8px" } }, ck, cs,
