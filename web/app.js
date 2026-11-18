@@ -52,6 +52,7 @@ const runJob = (type, params) => act(() => api("/api/jobs", { type, params }), `
 
 const STATUS = {
   rendered: ["warn", "needs review"], approved: ["good", "ready to post"], posted: ["info", "posted"],
+  drafted: ["accent", "in TikTok drafts"],
   rejected: ["neutral", "rejected"], failed: ["bad", "failed"], rendering: ["accent", "rendering"],
   new: ["neutral", "new"], queued: ["accent", "queued"], processing: ["accent", "processing"],
   processed: ["good", "processed"], skipped: ["neutral", "skipped"], needs_rights: ["warn", "needs your call"],
@@ -61,7 +62,7 @@ const RIGHTS = { campaign: "good", permission: "good", own: "good", official: "i
 const rightsChip = (r) => h("span", { class: `chip ${RIGHTS[r] || "neutral"}`, title: "rights level" }, r || "unverified");
 
 // ---------------------------------------------------------------- state
-const S = { tab: "today", state: null, libFilter: "approved", scoutFilter: "needs_rights,new,queued", sort: { key: "views", dir: -1 } };
+const S = { tab: "today", state: null, libFilter: "approved,drafted", scoutFilter: "needs_rights,new,queued", sort: { key: "views", dir: -1 } };
 
 async function refresh() {
   try { S.state = await api("/api/state"); } catch (e) { toast("Server unreachable: " + e.message, true); return; }
@@ -103,13 +104,13 @@ function setTab(t) {
 // ---------------------------------------------------------------- Today
 async function viewToday() {
   const st = S.state, p = st.plan, k = st.kpis;
-  const clips = await api("/api/clips?status=approved,posted");
+  const clips = await api("/api/clips?status=approved,drafted,posted");
   const byId = Object.fromEntries(clips.map((c) => [c.id, c]));
   const pct = Math.min(100, Math.round((p.posted_today / Math.max(p.target, 1)) * 100));
 
   const tiles = h("div", { class: "grid kpis" },
     kpi("Posted today", `${p.posted_today}/${p.target}`, `${p.phase.replace("_", " ")} phase`, pct),
-    kpi("Ready to post", p.ready, `${p.in_review} awaiting review`),
+    kpi("Ready to post", p.ready, `${p.in_drafts || 0} in TikTok drafts · ${p.in_review} awaiting review`),
     kpi("Total views", fmt(k.views), `${k.posted} posts · avg ${fmt(k.avg_views)}`),
     kpi("Followers", fmt(k.followers), k.last_metrics_at ? `metrics ${ago(k.last_metrics_at)}` : "pull metrics →"),
     kpi("Est. campaign earnings", money(k.earnings), "after platform fee"),
@@ -118,6 +119,7 @@ async function viewToday() {
   const slotBoard = h("div", { class: "slots" }, p.slots.map((s) => {
     const c = s.clip_id && byId[s.clip_id];
     const label = { posted: ["info", "posted"], missed: ["neutral", "missed"], assigned: ["good", s.due ? "post now" : "assigned"], empty: ["warn", "empty"] }[s.state];
+    if (s.in_drafts) { label[0] = "accent"; label[1] = s.due ? "post from drafts" : "in TikTok drafts"; }
     return h("div", { class: "slot" + (s.due && s.state === "assigned" ? " due" : "") },
       h("div", { class: "row" }, h("span", { class: "time" }, s.time), h("span", { class: `chip ${label[0]}` }, label[1])),
       c && c.thumb ? h("img", { src: "/" + c.thumb, alt: c.hook || "" }) : null,
@@ -125,7 +127,8 @@ async function viewToday() {
       c && s.state === "assigned" ? h("div", { class: "row", style: { marginTop: "8px" } },
         h("a", { class: "btn sm", href: "/" + c.file, download: `${c.id}.mp4` }, "Download"),
         h("button", { class: "btn sm", onclick: () => copy(c.caption) }, "Copy caption"),
-        h("button", { class: "btn sm primary", onclick: () => markPosted(c) }, "Posted")) : null);
+        h("button", { class: "btn sm primary", onclick: () => markPosted(c) }, "Posted")) : null,
+      c && s.in_drafts ? h("div", { class: "muted", style: { fontSize: "12px", marginTop: "6px" } }, "Already in your TikTok drafts: open TikTok, add the caption, post.") : null);
   }));
 
   const perf = p.performance;
@@ -152,7 +155,8 @@ async function viewToday() {
       st.config.cadence.auto_adjust.apply ? "Auto-apply is ON: the advisor changes today's target." : "Auto-apply is OFF (Autopilot tab) — suggestions only."));
 
   return h("div", { class: "grid" }, tiles,
-    h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)), slotBoard),
+    h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)), slotBoard,
+      h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "To send approved clips to your TikTok drafts instead of downloading them, open Claude on this folder and type /drafts.")),
     h("div", { class: "grid two" }, prod, advice));
 }
 function kpi(label, value, sub, pct) {
@@ -205,7 +209,7 @@ function clipCard(c) {
 // ---------------------------------------------------------------- Library
 async function viewLibrary() {
   const clips = await api("/api/clips?status=" + S.libFilter);
-  const filters = [["approved", "Ready to post"], ["posted", "Posted"], ["rejected", "Rejected"], ["failed", "Failed"], ["approved,posted,rejected,failed,rendered", "All"]];
+  const filters = [["approved,drafted", "Ready to post"], ["posted", "Posted"], ["rejected", "Rejected"], ["failed", "Failed"], ["approved,drafted,posted,rejected,failed,rendered", "All"]];
   const head = h("div", { class: "section-head" }, h("h1", {}, "Clip library"), h("span", { class: "spacer" }),
     filters.map(([v, l]) => h("button", { class: "btn sm" + (S.libFilter === v ? " primary" : ""), onclick: () => { S.libFilter = v; renderTab(); } }, l)));
   if (!clips.length) return h("div", {}, head, h("div", { class: "empty" }, "No clips here yet."));
@@ -222,7 +226,7 @@ async function viewLibrary() {
       h("div", { class: "actions" },
         c.file ? h("a", { class: "btn", href: "/" + c.file, download: `${c.id}.mp4` }, "Download") : null,
         h("button", { class: "btn", onclick: () => copy(c.caption) }, "Copy caption"),
-        c.status === "approved" ? h("button", { class: "btn primary", onclick: () => markPosted(c) }, "Mark posted") : null,
+        ["approved", "drafted"].includes(c.status) ? h("button", { class: "btn primary", onclick: () => markPosted(c) }, "Mark posted") : null,
         ["approved", "rejected"].includes(c.status) ? h("button", { class: "btn", onclick: () => act(() => api(`/api/clips/${c.id}`, { action: "unreview" }), "Back to review") }, "Back to review") : null));
   })));
 }

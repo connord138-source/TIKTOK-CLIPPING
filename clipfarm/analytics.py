@@ -157,7 +157,7 @@ def _match_unlinked(vids: list[dict]) -> int:
     """Link TikTok videos to clips the user posted without pasting the URL (caption similarity)."""
     clips = Store.all(Store.clips)
     linked = {c.get("tiktok_id") for c in clips if c.get("tiktok_id")}
-    pool = [c for c in clips if not c.get("tiktok_id") and c.get("status") in ("approved", "posted")]
+    pool = [c for c in clips if not c.get("tiktok_id") and c.get("status") in ("approved", "drafted", "posted")]
     n = 0
     for v in vids:
         if v["tiktok_id"] in linked or not pool:

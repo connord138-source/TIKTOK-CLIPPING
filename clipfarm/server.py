@@ -22,6 +22,11 @@ from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, load_config,
 WEB = Path(__file__).resolve().parent.parent / "web"  # code-relative (data root may differ)
 _oauth_state = {"value": None}
 
+# Explicit types: the Windows registry can map .js/.css to text/plain, which breaks the page.
+MIME = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
+        ".js": "text/javascript; charset=utf-8", ".mp4": "video/mp4", ".jpg": "image/jpeg",
+        ".png": "image/png", ".json": "application/json"}
+
 # Settings the UI may change. Everything else is edited in config/*.json by hand or by Claude.
 EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style"}
 
@@ -79,6 +84,30 @@ def analytics_view() -> dict:
             "clips": table, "performance": planner.plan()["performance"]}
 
 
+def drafts_view() -> dict:
+    """What the /drafts Claude command works from: approved clips in slot order, with the
+    absolute file path and the text to prefill; plus clips already sent to TikTok drafts."""
+    cfg = load_config()
+    clips = {c["id"]: c for c in Store.all(Store.clips)}
+    p = planner.plan()
+    slot_of = {b["clip_id"]: b["time"] for b in p["slots"] if b.get("clip_id")}
+    order = sorted((c for c in clips.values() if c.get("status") == "approved"),
+                   key=lambda c: (slot_of.get(c["id"], "99:99"), -(c.get("score") or 0)))
+    to_send = []
+    for c in order:
+        f = (ROOT / c["file"]).resolve() if c.get("file") else None
+        to_send.append({"id": c["id"], "slot": slot_of.get(c["id"]), "file": str(f) if f else None,
+                        "file_exists": bool(f and f.is_file()),
+                        "size_mb": round(f.stat().st_size / 1e6, 1) if f and f.is_file() else None,
+                        "duration": c.get("duration"), "title": (c.get("hook") or "")[:150],
+                        "description": (c.get("caption") or "")[:4000], "rights": c.get("rights"),
+                        "campaign_id": c.get("campaign_id")})
+    sent = [{"id": c["id"], "slot": slot_of.get(c["id"]), **(c.get("draft") or {})}
+            for c in clips.values() if c.get("status") == "drafted"]
+    return {"mode": "UPLOAD_TO_DRAFT", "is_aigc": bool(cfg.get("tiktok", {}).get("ai_generated_label")),
+            "open_slots_today": p["open_slots"], "to_send": to_send, "in_tiktok_drafts": sent}
+
+
 def clip_action(cid: str, body: dict) -> dict:
     action = body.get("action")
     clip = Store.get(Store.clips, cid)
@@ -88,6 +117,12 @@ def clip_action(cid: str, body: dict) -> dict:
         return Store.update(Store.clips, cid, status="approved", approved_at=now_iso())
     if action == "reject":
         return Store.update(Store.clips, cid, status="rejected", reject_reason=body.get("reason"))
+    if action == "drafted":  # sent to the user's TikTok drafts (via Higgsfield, see /drafts)
+        draft = {**(clip.get("draft") or {}), "sent_at": now_iso(),
+                 **{k: body[k] for k in ("publish_id", "publish_session_id", "video_url") if body.get(k)}}
+        return Store.update(Store.clips, cid, status="drafted", draft=draft)
+    if action == "undraft":
+        return Store.update(Store.clips, cid, status="approved")
     if action == "unreview":
         return Store.update(Store.clips, cid, status="rendered")
     if action == "posted":
@@ -173,7 +208,7 @@ class Handler(BaseHTTPRequestHandler):
         if not path.is_file():
             return self._json({"error": "not found"}, 404)
         size = path.stat().st_size
-        ctype = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        ctype = MIME.get(path.suffix.lower()) or mimetypes.guess_type(path.name)[0] or "application/octet-stream"
         rng = re.match(r"bytes=(\d*)-(\d*)", self.headers.get("Range") or "")
         start, end = 0, size - 1
         if rng and (rng.group(1) or rng.group(2)):

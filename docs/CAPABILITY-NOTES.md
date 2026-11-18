@@ -12,6 +12,19 @@ Network policy has been partially opened since 2026-09-22:
 | kick.com, huggingface.co, pypi | reachable |
 | ffmpeg render chain | **validated** again: 27s clip, both layouts, ~20s each, QC passes |
 
+### Higgsfield → TikTok drafts (tested 2026-11-18 from the cloud session)
+| Step | Result |
+|---|---|
+| `tiktok_accounts` | one account, `active`, connected 2026-09-26 |
+| `media_upload` + curl PUT to `upload.higgsfield.ai` | **HTTP 200** (7 MB, 27 s test clip) |
+| `media_confirm` | `uploaded`, returns a Higgsfield CloudFront URL |
+| `tiktok_prepare_publish` (`UPLOAD_TO_DRAFT`) | returns a publish session + a **form the user must submit**; Claude cannot submit it, and clients without MCP Apps widgets cannot publish |
+| Form submit → draft appears in TikTok | not yet confirmed by the user |
+| Does the caption carry into the TikTok draft? | unknown; the user may need to paste it in TikTok |
+
+So drafts cannot be sent by the Python farm or by autopilot: each one needs a Claude session
+that can read the clip file, plus one form submit from the user.
+
 Conclusion: cloud sessions can scout, plan, analyse and run agents; **rendering YouTube sources
 needs the user's machine** (or a policy that allows `*.googlevideo.com` — wildcard hosts are a
 Settings decision, not something a session can add).

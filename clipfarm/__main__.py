@@ -10,6 +10,8 @@
   python -m clipfarm candidates [--status needs_rights] [--limit 20]
   python -m clipfarm clips [--status rendered]
   python -m clipfarm set-clip c0001 approve|reject|posted [--url TIKTOK_URL] [--reason TEXT]
+  python -m clipfarm drafts                 # approved clips waiting to go to TikTok drafts (JSON)
+  python -m clipfarm set-clip c0001 drafted [--publish-id ID] [--session ID] [--video-url URL]
   python -m clipfarm rerender c0001 [--hook "New hook"] [--start S --end E]
   python -m clipfarm import-csv export.csv
   python -m clipfarm trends                 # force-refresh Claude trend queries
@@ -46,7 +48,7 @@ def doctor() -> int:
     print(f"{'OK ' if js else 'WARN'} js runtime   {js or 'install deno (YouTube extraction needs a JS runtime)'}")
     import os
     if not brain.available():
-        print("WARN claude brain  pip install anthropic, then set ANTHROPIC_API_KEY (heuristics until then)")
+        print("WARN claude brain  no ANTHROPIC_API_KEY set yet (the farm runs on simpler rules until then)")
     elif os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"):
         print("OK  claude brain  anthropic SDK + key in env")
     else:
@@ -87,9 +89,13 @@ def main(argv=None) -> int:
     cl.add_argument("--status")
     sc = sub.add_parser("set-clip")
     sc.add_argument("id")
-    sc.add_argument("action", choices=["approve", "reject", "posted", "unreview"])
+    sc.add_argument("action", choices=["approve", "reject", "posted", "unreview", "drafted", "undraft"])
     sc.add_argument("--url")
     sc.add_argument("--reason")
+    sc.add_argument("--publish-id")
+    sc.add_argument("--session")
+    sc.add_argument("--video-url")
+    sub.add_parser("drafts")
     rr = sub.add_parser("rerender")
     rr.add_argument("id")
     rr.add_argument("--hook")
@@ -138,7 +144,11 @@ def main(argv=None) -> int:
         _print([{k: r.get(k) for k in ("id", "status", "score", "hook", "channel", "duration", "file",
                                        "grid", "qc", "metrics")} for r in rows])
     elif a.cmd == "set-clip":
-        _print(server.clip_action(a.id, {"action": a.action, "tiktok_url": a.url, "reason": a.reason}))
+        _print(server.clip_action(a.id, {"action": a.action, "tiktok_url": a.url, "reason": a.reason,
+                                         "publish_id": a.publish_id, "publish_session_id": a.session,
+                                         "video_url": a.video_url}))
+    elif a.cmd == "drafts":
+        _print(server.drafts_view())
     elif a.cmd == "rerender":
         fields = {k: v for k, v in (("hook", a.hook), ("start", a.start), ("end", a.end)) if v is not None}
         if fields:

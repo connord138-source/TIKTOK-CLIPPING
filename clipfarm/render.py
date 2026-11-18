@@ -22,9 +22,11 @@ LAYOUT_TEXT_Y = {"blurpad": (330, 1330), "zoom": (220, 1560), "split": (60, 1700
 def fetch_source(cand: dict, start: float, end: float, pad: float = 1.0) -> tuple[Path, float]:
     """-> (media_path, base_offset). Clip time t in source == local time (t - base)."""
     url = cand["url"]
-    local = Path(url)
-    if local.exists():
-        return local, 0.0
+    if not re.match(r"https?://", url):
+        local = Path(url.strip().strip('"')).expanduser()
+        if local.exists():
+            return local, 0.0
+        raise RuntimeError(f"file not found: {local}")
     work = WORK_DIR / cand["id"].replace(":", "_")
     work.mkdir(parents=True, exist_ok=True)
     fmt = "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/bv*[height<=1080]+ba/b[height<=1080]/b"

@@ -200,3 +200,41 @@ def test_produce_end_to_end_local_source(tmp_path, monkeypatch):
     assert server.clip_action(clip["id"], {"action": "approve"})["status"] == "approved"
     posted = server.clip_action(clip["id"], {"action": "posted", "tiktok_url": "https://www.tiktok.com/@a/video/7301234567890123456"})
     assert posted["tiktok_id"] == "7301234567890123456"
+
+
+# ---------------------------------------------------------------- TikTok drafts hand-off
+def test_drafts_view_and_drafted_status_flow(farm_root):
+    clip_file = farm_root / "media" / "clips" / "c0001.mp4"
+    clip_file.parent.mkdir(parents=True, exist_ok=True)
+    clip_file.write_bytes(b"x" * 2048)
+    Store.upsert(Store.clips, {"id": "c0001", "status": "approved", "score": 90, "hook": "Gator ate the car",
+                               "caption": "Gator ate the car\n\n#gta6", "file": "media/clips/c0001.mp4"})
+    Store.upsert(Store.clips, {"id": "c0002", "status": "approved", "score": 50, "hook": "h2", "caption": "c2",
+                               "file": "media/clips/missing.mp4"})
+    view = server.drafts_view()
+    assert view["mode"] == "UPLOAD_TO_DRAFT" and view["is_aigc"] is False
+    first = view["to_send"][0]
+    assert first["id"] == "c0001" and first["file_exists"] and first["file"].endswith("c0001.mp4")
+    assert first["title"] == "Gator ate the car" and "#gta6" in first["description"]
+    assert view["to_send"][1]["file_exists"] is False
+
+    out = server.clip_action("c0001", {"action": "drafted", "publish_id": "p123", "publish_session_id": "s1"})
+    assert out["status"] == "drafted" and out["draft"]["publish_id"] == "p123" and out["draft"]["sent_at"]
+    view = server.drafts_view()
+    assert [c["id"] for c in view["to_send"]] == ["c0002"]
+    assert view["in_tiktok_drafts"][0]["id"] == "c0001" and view["in_tiktok_drafts"][0]["publish_id"] == "p123"
+
+    p = planner.plan()
+    assert p["ready"] == 2 and p["in_drafts"] == 1
+    assigned = [b for b in p["slots"] if b["state"] == "assigned"]
+    if assigned:  # a drafted clip takes the next open slot ahead of merely-approved ones
+        assert assigned[0]["clip_id"] == "c0001" and assigned[0]["in_drafts"]
+
+    # once it is live, metrics auto-link it by caption and mark it posted
+    analytics.record([{"tiktok_id": "999", "views": 10, "description": "Gator ate the car #gta6", "created": NOW.timestamp()}], {}, "test")
+    assert Store.get(Store.clips, "c0001")["status"] == "posted"
+
+
+def test_local_path_vs_url_source(tmp_path):
+    with pytest.raises(RuntimeError, match="file not found"):
+        render.fetch_source({"id": "url:x", "url": str(tmp_path / "nope.mp4")}, 0, 5)

@@ -11,10 +11,13 @@ user's control room, and Claude sessions operate it via the CLI and the agents i
 - `data/clips.json`, `data/candidates.json`, `data/metrics.json`, `data/trends.json`: state
 - `docs/STRATEGY.md` (why), `docs/OPERATIONS.md` (runbook), `docs/SETUP.md`, `docs/CAPABILITY-NOTES.md`
 - CLI: `python -m clipfarm --help` · tests: `python -m pytest -q tests`
+- Commands: `/farm` (scout, produce, analyse) · `/drafts` (approved clips → TikTok drafts)
+- Clip statuses: `rendering → rendered → approved → drafted → posted` (or `rejected` / `failed`)
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
-1. **Never post to TikTok.** Clips are delivered as files/drafts; the user posts. `publish_mode`
-   governs this. Autopilot never posts.
+1. **Never post to TikTok.** Clips are delivered as files or TikTok drafts; the user posts.
+   `publish_mode` governs this. Autopilot never posts. With Higgsfield, the mode is always
+   `UPLOAD_TO_DRAFT`, never `DIRECT_POST`, and the user submits the publish form themselves.
 2. **Rights gate.** Only `campaign | permission | own` sources auto-render. Never set a channel to
    campaign/permission unless the user confirms they joined that program or have permission.
 3. **Brand safety.** Keep the NSFW filter on; no sexual content, no leaks, no real-person
@@ -35,8 +38,10 @@ User-gated next steps: run locally (`docs/SETUP.md`), add ANTHROPIC_API_KEY, joi
 clipping programs for the creators the scout surfaces most, then "Trust channel" them.
 
 ## Tool crib (Higgsfield MCP: optional now)
-- TikTok: `tiktok_accounts` → `tiktok_connect` (user OAuth) → `tiktok_prepare_publish` (drafts only) →
-  `tiktok_publish_status` · `tiktok_music_trending` for trending sounds
-- Media in: `media_import_url` (needs a public URL) · Upscale: `upscale_video` · Quality gate: `virality_predictor`
+- TikTok drafts (`/drafts` runs this): `tiktok_accounts` (account is connected and active) →
+  `media_upload` → curl PUT the clip → `media_confirm` → `tiktok_prepare_publish` with
+  `UPLOAD_TO_DRAFT` → **the user submits the form** → `tiktok_publish_status`. The video must be
+  Higgsfield-hosted, and the session needs to read `media/clips/` (the user's computer).
+- `tiktok_music_trending` for trending sounds · Upscale: `upscale_video` · Quality gate: `virality_predictor`
 - AI intros (label ON): `generate_video` (`seedance_2_5`, `flux_3_video`, …) · `generate_audio`
 - Account: `balance`, `show_plans_and_credits` (only when the user wants to buy)

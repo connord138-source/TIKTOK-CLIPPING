@@ -137,6 +137,16 @@ Aim to approve 5 a day.
 5. Back in the dashboard: click **Posted** and paste the TikTok video link.
 6. If you're in a campaign, submit the TikTok link on the campaign page so you get paid.
 
+### B4b. Or send clips to your TikTok drafts (skips the download-to-phone step)
+1. Install the **Claude desktop app** on this computer and sign in with the same account.
+2. Open the **Code** tab and choose the folder `C:\Users\<you>\TIKTOK-CLIPPING`.
+3. Type `/drafts` and press Enter.
+4. Claude uploads your approved clips and shows a TikTok form for each one. Check the preview,
+   pick your privacy and comment settings, and submit each form.
+5. Open TikTok on your phone. The clips are in your drafts (TikTok also sends an inbox
+   notification). Paste the caption if it's missing, then post at the slot time.
+6. In the dashboard, click **Posted** on that slot.
+
 ### B5. Turn on Autopilot
 Once you're happy with the clips, flip **Autopilot** on (top bar). It searches every 2 hours,
 makes clips when the queue runs low, and pulls your TikTok stats every 6 hours. It still never posts.

@@ -96,8 +96,9 @@ def plan() -> dict:
 
     clips = Store.all(Store.clips)
     posted_today = [c for c in clips if c.get("status") == "posted" and local_date(c.get("posted_at"), tz) == today]
-    ready = sorted([c for c in clips if c.get("status") == "approved"],
-                   key=lambda c: c.get("score") or 0, reverse=True)
+    # drafted = already sitting in the user's TikTok drafts, so they take the next slots first
+    ready = sorted([c for c in clips if c.get("status") in ("approved", "drafted")],
+                   key=lambda c: (c.get("status") == "drafted", c.get("score") or 0), reverse=True)
     review = [c for c in clips if c.get("status") == "rendered"]
 
     # slot board for today
@@ -114,11 +115,12 @@ def plan() -> dict:
         else:
             clip = queue.pop(0) if queue else None
             board.append({"time": hhmm, "state": "assigned" if clip else "empty",
-                          "clip_id": clip["id"] if clip else None, "due": at <= now_local})
+                          "clip_id": clip["id"] if clip else None, "due": at <= now_local,
+                          "in_drafts": bool(clip and clip.get("status") == "drafted")})
     open_slots = sum(1 for b in board if b["state"] in ("assigned", "empty"))
 
     # production need: fill today's open slots + a buffer, discounting by approval rate
-    decided = [c for c in clips if c.get("status") in ("approved", "posted", "rejected")]
+    decided = [c for c in clips if c.get("status") in ("approved", "drafted", "posted", "rejected")]
     approval = (sum(1 for c in decided if c["status"] != "rejected") / len(decided)) if len(decided) >= 10 else 0.7
     approval = max(approval, 0.3)
     need_ready = open_slots + math.ceil(target * cad.get("buffer_days", 1.0))
@@ -127,6 +129,7 @@ def plan() -> dict:
 
     return {"date": today, "timezone": str(tz), "phase": ph.get("name"), "phase_target": ph.get("posts_per_day"),
             "target": target, "posted_today": len(posted_today), "ready": len(ready), "in_review": len(review),
+            "in_drafts": sum(1 for c in ready if c.get("status") == "drafted"),
             "slots": board, "open_slots": open_slots, "approval_rate": round(approval, 2),
             "renders_needed": renders_needed, "performance": perf,
             "next_slot": next((b for b in board if b["state"] in ("assigned", "empty")), None)}

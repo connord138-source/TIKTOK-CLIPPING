@@ -31,6 +31,17 @@ network policy and YouTube bot-checks datacenter IPs, so **cloud sessions can sc
 analyse, but rendering YouTube sources needs your machine** (Twitch is the same: clip CDN
 untested). See `docs/CAPABILITY-NOTES.md`.
 
+## C. Sending clips to TikTok drafts (`/drafts`)
+Instead of Download → phone, approved clips can go straight to the TikTok drafts folder:
+1. Approve clips in the dashboard as usual.
+2. In a Claude session **on the computer that has the clips**, opened on this folder, type `/drafts`.
+3. Claude uploads each clip to Higgsfield and shows one TikTok form per clip. Submit each form.
+4. The clips show as **in TikTok drafts** on the Today tab. Open TikTok, paste the caption if it
+   isn't there, and post at the slot time. Click **Posted** in the dashboard.
+
+It can't be fully automatic: Higgsfield requires the account owner to submit the form for every
+clip, and only a Claude session (not the Python farm) can call Higgsfield.
+
 ## Pipeline (what each workflow does)
 | Workflow | Steps |
 |---|---|
@@ -39,7 +50,7 @@ untested). See `docs/CAPABILITY-NOTES.md`.
 | metrics | TikTok public profile (yt-dlp) or Display API (OAuth) or CSV → snapshots → link posts to clips → campaign earnings |
 
 Statuses: candidate `new → queued → processing → processed | skipped | failed | needs_rights`;
-clip `rendering → rendered → approved → posted | rejected | failed`.
+clip `rendering → rendered → approved → drafted (optional) → posted | rejected | failed`.
 
 ## Hard rules (also in CLAUDE.md)
 - Draft/file delivery only. The user posts. Never auto-post.
