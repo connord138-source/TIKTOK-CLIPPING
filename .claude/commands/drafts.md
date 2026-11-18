@@ -3,6 +3,9 @@ description: Send approved clips to the user's TikTok drafts through Higgsfield 
 ---
 Send approved clips to the user's **TikTok drafts** using the Higgsfield connector.
 
+This is the fallback path. If the dashboard's Connections tab shows TikTok as "connected · can
+send drafts", tell the user to use the **Send to TikTok drafts** button there instead.
+
 Hard rules
 - Mode is always `UPLOAD_TO_DRAFT`. Never `DIRECT_POST`. Never call `tiktok_publish` yourself:
   the user submits the publish form that `tiktok_prepare_publish` shows them.

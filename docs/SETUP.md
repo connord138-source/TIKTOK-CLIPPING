@@ -30,11 +30,17 @@ python -m clipfarm doctor
 |---|---|---|
 | Claude brain | `ANTHROPIC_API_KEY` (or `ant auth login`) | Claude picks moments, writes hooks/captions, generates trend queries. Without it, heuristics |
 | Twitch Helix | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` (free app at dev.twitch.tv) | Top GTA VI clips across **all** of Twitch, not just the watchlist |
-| TikTok Display API | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` (developers.tiktok.com app with Login Kit, scopes `user.info.basic,user.info.stats,video.list`) | Follower count + official stats. Without it, public-profile stats (views/likes/comments/shares) still work |
-| TikTok redirect | `TIKTOK_REDIRECT_URI` (default `http://127.0.0.1:8787/auth/tiktok/callback`) | TikTok may require an https redirect, so use a tunnel (e.g. cloudflared) if it rejects localhost |
+| TikTok app | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET` (developers.tiktok.com app with Login Kit for Desktop + Content Posting API) | One-click **Send to TikTok drafts**. Optional stats scopes (`user.info.stats`, `video.list`) add follower count to Analytics |
+| TikTok redirect | `TIKTOK_REDIRECT_URI` (default `http://127.0.0.1:8787/auth/tiktok/callback/`) | Only if you run the dashboard on another port or host |
 | Faster captions for Twitch | `pip install faster-whisper` | Word captions on Twitch clips / own footage |
 
-Put them in your shell profile or a `.env` you `source` (`.env` is gitignored).
+The simplest way to set any of these is the dashboard's **Connections** tab: paste and Save.
+They are stored in `data/secrets/keys.json` on your computer (gitignored). Environment
+variables also work.
+
+For one-click TikTok drafts, the TikTok app needs **Login Kit (Desktop)** and **Content
+Posting API** with scopes `user.info.basic` and `video.upload`; the redirect URI is shown in
+Connections. The stats scopes in the table are optional.
 
 If YouTube says "Sign in to confirm you're not a bot", set
 `"ingest": {"cookies_from_browser": "chrome"}` (or firefox/edge/safari) in `config/account.json`.

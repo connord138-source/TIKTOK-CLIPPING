@@ -28,6 +28,7 @@ clipfarm/            the engine (stdlib + yt-dlp + ffmpeg; anthropic SDK optiona
   brain.py           Claude calls (structured outputs, refusal fallback); heuristics if absent
   render.py          section download → 1080×1920 layouts, ASS captions, loudnorm, QC grid
   analytics.py       TikTok public / Display API / CSV → metrics, auto-linking, earnings
+  tiktok.py          TikTok login (PKCE) + upload to the user's inbox/drafts + posted sync
   planner.py         cadence phases, slot board, production need, performance advisor
   pipeline.py        workflows (scout/produce/metrics/cycle), job runner, autopilot
   server.py          localhost JSON API + media streaming + TikTok OAuth

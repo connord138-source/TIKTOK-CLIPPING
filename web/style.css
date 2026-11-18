@@ -100,7 +100,7 @@ main { padding: 20px; max-width: 1400px; margin: 0 auto; }
 .btn.danger { color: var(--bad); }
 .btn.sm { padding: 4px 9px; min-height: 28px; font-size: 12px; }
 .btn:disabled { opacity: .5; cursor: default; }
-input[type=text], input[type=url], input[type=number], select, textarea {
+input[type=text], input[type=url], input[type=number], input[type=password], select, textarea {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px;
   min-height: 34px; max-width: 100%;
 }
@@ -215,3 +215,5 @@ details summary { cursor: pointer; color: var(--text-2); }
   .kpi .value { font-size: 22px; }
   td .title { max-width: 180px; }
 }
+
+code { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; font-size: 12px; word-break: break-all; }

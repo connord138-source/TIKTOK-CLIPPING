@@ -45,14 +45,14 @@ function toast(msg, err = false) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 4200);
 }
 async function act(fn, ok) {
-  try { const r = await fn(); if (ok) toast(ok); await refresh(); return r; }
+  try { const r = await fn(); if (ok) toast(ok); await refresh(true); return r; }
   catch (e) { toast(e.message, true); }
 }
 const runJob = (type, params) => act(() => api("/api/jobs", { type, params }), `Started ${type}`);
 
 const STATUS = {
   rendered: ["warn", "needs review"], approved: ["good", "ready to post"], posted: ["info", "posted"],
-  drafted: ["accent", "in TikTok drafts"],
+  drafted: ["accent", "in TikTok drafts"], sending: ["accent", "sending to TikTok"],
   rejected: ["neutral", "rejected"], failed: ["bad", "failed"], rendering: ["accent", "rendering"],
   new: ["neutral", "new"], queued: ["accent", "queued"], processing: ["accent", "processing"],
   processed: ["good", "processed"], skipped: ["neutral", "skipped"], needs_rights: ["warn", "needs your call"],
@@ -64,10 +64,10 @@ const rightsChip = (r) => h("span", { class: `chip ${RIGHTS[r] || "neutral"}`, t
 // ---------------------------------------------------------------- state
 const S = { tab: "today", state: null, libFilter: "approved,drafted", scoutFilter: "needs_rights,new,queued", sort: { key: "views", dir: -1 } };
 
-async function refresh() {
+async function refresh(force = false) {
   try { S.state = await api("/api/state"); } catch (e) { toast("Server unreachable: " + e.message, true); return; }
   renderChrome();
-  await renderTab();
+  await renderTab(force);
 }
 
 function renderChrome() {
@@ -85,20 +85,22 @@ function renderChrome() {
 }
 
 // ---------------------------------------------------------------- tabs
-const TABS = { today: viewToday, review: viewReview, library: viewLibrary, scout: viewScout, analytics: viewAnalytics, sources: viewSources, activity: viewActivity };
-async function renderTab() {
+const TABS = { today: viewToday, review: viewReview, library: viewLibrary, scout: viewScout, analytics: viewAnalytics, sources: viewSources, activity: viewActivity, connections: viewConnections };
+async function renderTab(force = false) {
   const view = $("#view");
-  const focused = document.activeElement;
-  if (focused && view.contains(focused) && ["INPUT", "TEXTAREA", "SELECT"].includes(focused.tagName)) return; // don't clobber typing
-  const playing = [...view.querySelectorAll("video")].some((v) => !v.paused);
-  if (playing) return;
+  if (!force) {  // background refresh: never wipe typing, edits not yet saved, or a playing video
+    const focused = document.activeElement;
+    if (focused && view.contains(focused) && ["INPUT", "TEXTAREA", "SELECT"].includes(focused.tagName)) return;
+    if (view.querySelector("[data-dirty]")) return;
+    if ([...view.querySelectorAll("video")].some((v) => !v.paused)) return;
+  }
   const node = await TABS[S.tab]();
   view.replaceChildren(node);
 }
 function setTab(t) {
   S.tab = t; location.hash = t;
   document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === t));
-  renderTab();
+  renderTab(true);
 }
 
 // ---------------------------------------------------------------- Today
@@ -125,10 +127,12 @@ async function viewToday() {
       c && c.thumb ? h("img", { src: "/" + c.thumb, alt: c.hook || "" }) : null,
       c ? h("div", { class: "muted", style: { fontSize: "12px", marginTop: "6px" } }, c.hook) : null,
       c && s.state === "assigned" ? h("div", { class: "row", style: { marginTop: "8px" } },
-        h("a", { class: "btn sm", href: "/" + c.file, download: `${c.id}.mp4` }, "Download"),
+        sendBtn(c),
+        s.in_drafts ? null : h("a", { class: "btn sm", href: "/" + c.file, download: `${c.id}.mp4` }, "Download"),
         h("button", { class: "btn sm", onclick: () => copy(c.caption) }, "Copy caption"),
-        h("button", { class: "btn sm primary", onclick: () => markPosted(c) }, "Posted")) : null,
-      c && s.in_drafts ? h("div", { class: "muted", style: { fontSize: "12px", marginTop: "6px" } }, "Already in your TikTok drafts: open TikTok, add the caption, post.") : null);
+        h("button", { class: "btn sm" + (s.in_drafts ? " primary" : ""), onclick: () => markPosted(c) }, "Posted")) : null,
+      c ? draftError(c) : null,
+      c && s.in_drafts ? h("div", { class: "muted", style: { fontSize: "12px", marginTop: "6px" } }, "In your TikTok inbox. Open TikTok, tap the notification, paste the caption, post.") : null);
   }));
 
   const perf = p.performance;
@@ -156,9 +160,22 @@ async function viewToday() {
 
   return h("div", { class: "grid" }, tiles,
     h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)), slotBoard,
-      h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "To send approved clips to your TikTok drafts instead of downloading them, open Claude on this folder and type /drafts.")),
+      h("div", { class: "row", style: { marginTop: "12px" } },
+        st.tiktok_api.can_upload
+          ? [h("button", { class: "btn", onclick: () => runJob("send_drafts") }, "Send all ready clips to TikTok drafts"),
+             h("span", { class: "muted", style: { fontSize: "12px" } }, `TikTok allows ${st.tiktok_api.pending_cap} unposted drafts per 24 hours (${st.tiktok_api.pending_24h} waiting now).`)]
+          : h("span", { class: "muted", style: { fontSize: "12px" } }, "Want clips sent straight to your TikTok drafts? Do the one-time setup in ",
+              h("a", { href: "#connections" }, "Connections"), "."))),
     h("div", { class: "grid two" }, prod, advice));
 }
+function sendBtn(c, cls = "btn sm primary") {
+  if (c.status !== "approved") return null;
+  if (c.sending) return h("button", { class: cls, disabled: true }, "Sending…");
+  if (!S.state.tiktok_api.can_upload) return h("button", { class: cls.replace(" primary", ""), title: "One-time setup in the Connections tab", onclick: () => setTab("connections") }, "Connect TikTok to send");
+  return h("button", { class: cls, title: "Upload this clip to your TikTok drafts", onclick: () => act(() => api(`/api/clips/${c.id}`, { action: "send_to_drafts" }), `Sending ${c.id} to your TikTok drafts`) }, "Send to TikTok drafts");
+}
+const draftError = (c) => c.draft_error ? h("div", { class: "issues", style: { marginTop: "6px" } }, "Not sent: " + c.draft_error) : null;
+
 function kpi(label, value, sub, pct) {
   return h("div", { class: "card kpi" }, h("div", { class: "label" }, label), h("div", { class: "value" }, value),
     h("div", { class: "sub" }, sub), pct !== undefined ? h("div", { class: "progress" }, h("span", { style: { width: pct + "%" } })) : null);
@@ -211,22 +228,24 @@ async function viewLibrary() {
   const clips = await api("/api/clips?status=" + S.libFilter);
   const filters = [["approved,drafted", "Ready to post"], ["posted", "Posted"], ["rejected", "Rejected"], ["failed", "Failed"], ["approved,drafted,posted,rejected,failed,rendered", "All"]];
   const head = h("div", { class: "section-head" }, h("h1", {}, "Clip library"), h("span", { class: "spacer" }),
-    filters.map(([v, l]) => h("button", { class: "btn sm" + (S.libFilter === v ? " primary" : ""), onclick: () => { S.libFilter = v; renderTab(); } }, l)));
+    filters.map(([v, l]) => h("button", { class: "btn sm" + (S.libFilter === v ? " primary" : ""), onclick: () => { S.libFilter = v; renderTab(true); } }, l)));
   if (!clips.length) return h("div", {}, head, h("div", { class: "empty" }, "No clips here yet."));
   return h("div", {}, head, h("div", { class: "grid clips" }, clips.map((c) => {
     const m = c.metrics || {};
     return h("div", { class: "card clip" },
-      h("div", { class: "row" }, h("strong", {}, c.id), chip(c.status), rightsChip(c.rights)),
+      h("div", { class: "row" }, h("strong", {}, c.id), chip(c.sending ? "sending" : c.status), rightsChip(c.rights)),
       c.file ? h("video", { src: "/" + c.file, controls: true, preload: "none", poster: c.thumb ? "/" + c.thumb : null, playsinline: true }) : null,
       h("div", { class: "hook" }, c.hook || ""),
       c.status === "failed" ? h("div", { class: "issues" }, c.error || "") : null,
+      draftError(c),
       h("div", { class: "caption-box" }, c.caption || ""),
       c.status === "posted" ? h("div", { class: "meta" }, `${fmt(m.views)} views · ${fmt(m.likes)} likes · ${fmt(m.comments)} comments · ${fmt(m.shares)} shares`,
         c.est_earnings != null ? ` · ${money(c.est_earnings)}` : "", c.tiktok_url ? h("a", { href: c.tiktok_url, target: "_blank", rel: "noopener" }, "TikTok ↗") : null) : null,
       h("div", { class: "actions" },
+        sendBtn(c, "btn primary"),
         c.file ? h("a", { class: "btn", href: "/" + c.file, download: `${c.id}.mp4` }, "Download") : null,
         h("button", { class: "btn", onclick: () => copy(c.caption) }, "Copy caption"),
-        ["approved", "drafted"].includes(c.status) ? h("button", { class: "btn primary", onclick: () => markPosted(c) }, "Mark posted") : null,
+        ["approved", "drafted"].includes(c.status) ? h("button", { class: "btn", onclick: () => markPosted(c) }, "Mark posted") : null,
         ["approved", "rejected"].includes(c.status) ? h("button", { class: "btn", onclick: () => act(() => api(`/api/clips/${c.id}`, { action: "unreview" }), "Back to review") }, "Back to review") : null));
   })));
 }
@@ -239,7 +258,7 @@ async function viewScout() {
   const filters = [["needs_rights", "Needs your call"], ["needs_rights,new,queued", "Open"], ["processed", "Processed"], ["skipped,failed", "Skipped/failed"]];
   const head = h("div", { class: "section-head" }, h("h1", {}, "Scout"),
     h("span", { class: "muted" }, `${st.candidates.total} sources tracked`), h("span", { class: "spacer" }),
-    filters.map(([v, l]) => h("button", { class: "btn sm" + (S.scoutFilter === v ? " primary" : ""), onclick: () => { S.scoutFilter = v; renderTab(); } }, l)),
+    filters.map(([v, l]) => h("button", { class: "btn sm" + (S.scoutFilter === v ? " primary" : ""), onclick: () => { S.scoutFilter = v; renderTab(true); } }, l)),
     h("button", { class: "btn sm", onclick: () => runJob("scout") }, "Scout now"));
 
   const campaigns = src.campaigns || [];
@@ -298,7 +317,7 @@ async function viewAnalytics() {
         const f = e.target.files[0]; if (!f) return;
         act(async () => api("/api/import-csv", await f.text()), "CSV imported");
       } })),
-    st.tiktok_api.configured ? h("a", { class: "btn", href: "/auth/tiktok" }, st.tiktok_api.connected ? "Reconnect TikTok API" : "Connect TikTok API") : null);
+    h("button", { class: "btn", onclick: () => setTab("connections") }, st.tiktok_api.connected ? "TikTok connected" : "Connect TikTok"));
 
   const daily = a.daily;
   const acct = (a.account || []).filter((x) => x.total_views != null);
@@ -317,7 +336,7 @@ async function viewAnalytics() {
   const table = h("div", { class: "card table-wrap" }, h("h3", {}, "Per-clip performance"),
     rows.length ? h("table", {},
       h("thead", {}, h("tr", {}, cols.map(([k, l, num]) => h("th", { class: (num ? "num " : "") + (k !== "thumb" ? "sortable" : ""),
-        onclick: () => { if (k === "thumb") return; S.sort = { key: k, dir: S.sort.key === k ? -S.sort.dir : -1 }; renderTab(); } }, l + (S.sort.key === k ? (S.sort.dir < 0 ? " ↓" : " ↑") : ""))))),
+        onclick: () => { if (k === "thumb") return; S.sort = { key: k, dir: S.sort.key === k ? -S.sort.dir : -1 }; renderTab(true); } }, l + (S.sort.key === k ? (S.sort.dir < 0 ? " ↓" : " ↑") : ""))))),
       h("tbody", {}, rows.map((r) => h("tr", {},
         h("td", {}, r.thumb ? h("img", { class: "thumb v", src: "/" + r.thumb, alt: "" }) : null),
         h("td", {}, r.tiktok_url ? h("a", { class: "title", href: r.tiktok_url, target: "_blank", rel: "noopener" }, r.hook || r.id) : h("span", { class: "title" }, r.hook || r.id)),
@@ -479,6 +498,76 @@ async function viewActivity() {
   return h("div", { class: "grid" }, settings, jobList);
 }
 
+// ---------------------------------------------------------------- Connections
+async function viewConnections() {
+  const cn = await api("/api/connections");
+  const t = cn.tiktok, k = cn.keys;
+  const saveKeys = (keys, ok) => act(() => api("/api/connections", { keys }), ok);
+  const keyState = (name) => k[name].set ? h("span", { class: "chip good" }, `saved ${k[name].hint || ""}`) : h("span", { class: "chip neutral" }, "not set");
+  const secret = (ph) => h("input", { type: "password", placeholder: ph, autocomplete: "off", style: { flex: "1", minWidth: "220px" } });
+
+  // TikTok
+  const ck = secret("Client key"), cs = secret("Client secret");
+  const uri = h("code", {}, t.redirect_uri);
+  const step = (n, ...kids) => h("li", { style: { margin: "10px 0" } }, ...kids);
+  const tiktokCard = h("div", { class: "card" },
+    h("h2", {}, "TikTok", h("small", {}, "send clips to your drafts in one click")),
+    h("div", { class: "row" },
+      t.can_upload ? h("span", { class: "chip good" }, "connected · can send drafts")
+        : t.connected ? h("span", { class: "chip warn" }, "connected · no upload permission")
+        : h("span", { class: "chip neutral" }, "not connected"),
+      t.can_read_stats ? h("span", { class: "chip info" }, "stats permission") : null),
+    cn.auth_message ? h("div", { class: "callout" + (cn.auth_message.ok ? " good" : ""), style: { marginTop: "10px" } }, cn.auth_message.text) : null,
+    t.connected && !t.can_upload ? h("div", { class: "callout", style: { marginTop: "10px" } },
+      "TikTok logged you in but did not grant video.upload. Add the Content Posting API product to your TikTok app, then connect again.") : null,
+    h("ol", { style: { paddingLeft: "20px", margin: "12px 0 0" } },
+      step(1, "Create a TikTok developer app at ", h("a", { href: "https://developers.tiktok.com/apps", target: "_blank", rel: "noopener" }, "developers.tiktok.com"),
+        ". Add the products ", h("strong", {}, "Login Kit"), " and ", h("strong", {}, "Content Posting API"), ". In Login Kit choose ", h("strong", {}, "Desktop"), "."),
+      step(2, "In the app's Login Kit settings, add this redirect URI exactly: ", uri, " ",
+        h("button", { class: "btn sm", onclick: () => navigator.clipboard.writeText(t.redirect_uri).then(() => toast("Redirect URI copied"), () => toast("Copy failed", true)) }, "Copy")),
+      step(3, "In the app's Sandbox settings, add your TikTok account as a target user (or submit the app for review)."),
+      step(4, "Paste the app's client key and secret: ", keyState("TIKTOK_CLIENT_KEY"),
+        h("div", { class: "row", style: { marginTop: "8px" } }, ck, cs,
+          h("button", { class: "btn primary", onclick: () => {
+            if (!ck.value.trim() || !cs.value.trim()) return toast("Paste both the client key and the client secret", true);
+            saveKeys({ TIKTOK_CLIENT_KEY: ck.value, TIKTOK_CLIENT_SECRET: cs.value }, "TikTok app keys saved");
+          } }, "Save"))),
+      step(5, t.configured ? h("a", { class: "btn primary", href: "/auth/tiktok" }, t.connected ? "Reconnect TikTok" : "Connect TikTok")
+          : h("button", { class: "btn", disabled: true }, "Connect TikTok"),
+        t.configured ? " Log in with the TikTok account you post from." : " Save the keys first.")),
+    h("div", { class: "row", style: { marginTop: "8px" } },
+      h("label", { class: "switch" }, h("input", { type: "checkbox", checked: !!(S.state.config.tiktok || {}).request_stats_scopes,
+        onchange: (e) => act(() => api("/api/config", { tiktok: { request_stats_scopes: e.target.checked } }), "Saved. Reconnect TikTok to apply.") }),
+        "Also ask for stats permissions (follower count in Analytics)"),
+      t.connected ? h("button", { class: "btn sm danger", onclick: () => act(() => api("/api/tiktok/disconnect", {}), "TikTok disconnected") }, "Disconnect") : null),
+    h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } },
+      "Clips only ever go to your TikTok inbox as drafts. You add the caption and post in the TikTok app. TikTok allows 5 unposted drafts per 24 hours."));
+
+  // Claude
+  const ak = secret("sk-ant-…");
+  const claudeCard = h("div", { class: "card" },
+    h("h2", {}, "Claude API key", h("small", {}, "picks the best moments, writes hooks and captions")),
+    h("div", { class: "row" }, keyState("ANTHROPIC_API_KEY"), k.ANTHROPIC_API_KEY.source ? h("span", { class: "muted" }, `from ${k.ANTHROPIC_API_KEY.source}`) : null,
+      cn.brain ? null : h("span", { class: "muted" }, "Without a key the farm uses simpler rules.")),
+    h("div", { class: "row", style: { marginTop: "10px" } }, ak,
+      h("button", { class: "btn primary", onclick: () => ak.value.trim() ? saveKeys({ ANTHROPIC_API_KEY: ak.value }, "Claude key saved") : toast("Paste the key first", true) }, "Save"),
+      k.ANTHROPIC_API_KEY.source === "dashboard" ? h("button", { class: "btn danger", onclick: () => saveKeys({ ANTHROPIC_API_KEY: "" }, "Claude key removed") }, "Remove") : null),
+    h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Create one at console.anthropic.com → API Keys."));
+
+  // Twitch
+  const ti = secret("Client ID"), ts = secret("Client secret");
+  const twitchCard = h("div", { class: "card" },
+    h("h2", {}, "Twitch keys", h("small", {}, "optional: top GTA 6 clips across all of Twitch")),
+    h("div", { class: "row" }, keyState("TWITCH_CLIENT_ID")),
+    h("div", { class: "row", style: { marginTop: "10px" } }, ti, ts,
+      h("button", { class: "btn primary", onclick: () => (ti.value.trim() && ts.value.trim()) ? saveKeys({ TWITCH_CLIENT_ID: ti.value, TWITCH_CLIENT_SECRET: ts.value }, "Twitch keys saved") : toast("Paste both values", true) }, "Save")),
+    h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Register an app at dev.twitch.tv/console to get them."));
+
+  return h("div", { class: "grid" }, h("div", { class: "section-head" }, h("h1", {}, "Connections"),
+    h("span", { class: "muted" }, "Keys are stored only on this computer (data/secrets, never committed).")),
+    tiktokCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
+}
+
 // ---------------------------------------------------------------- boot
 document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => setTab(b.dataset.tab)));
 $("#cycle-btn").addEventListener("click", () => runJob("cycle"));
@@ -494,5 +583,6 @@ window.addEventListener("hashchange", () => { const t = location.hash.slice(1); 
 const initial = location.hash.slice(1);
 if (TABS[initial]) S.tab = initial;
 document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === S.tab));
-refresh();
+$("#view").addEventListener("input", (e) => { if (e.target.type !== "checkbox" && e.target.type !== "file") e.target.dataset.dirty = "1"; });
+refresh(true);
 setInterval(() => { if (!document.hidden) refresh(); }, 8000);

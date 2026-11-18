@@ -31,8 +31,15 @@ network policy and YouTube bot-checks datacenter IPs, so **cloud sessions can sc
 analyse, but rendering YouTube sources needs your machine** (Twitch is the same: clip CDN
 untested). See `docs/CAPABILITY-NOTES.md`.
 
-## C. Sending clips to TikTok drafts (`/drafts`)
-Instead of Download → phone, approved clips can go straight to the TikTok drafts folder:
+## C. Sending clips to TikTok drafts
+**From the dashboard (primary).** After the one-time setup in the Connections tab (a TikTok
+developer app with Login Kit + Content Posting API, see `docs/START-HERE.md` B4a), every
+approved clip has a **Send to TikTok drafts** button, and Today has **Send all ready clips**.
+The farm uploads through TikTok's inbox endpoint, marks the clip `drafted`, and marks it
+`posted` on its own once you publish it from TikTok (checked every 5 minutes). Limits: 5
+unposted drafts per 24 hours, and captions are added in the TikTok app.
+
+**Through Claude and Higgsfield (fallback, `/drafts`).** No TikTok developer app needed:
 1. Approve clips in the dashboard as usual.
 2. In a Claude session **on the computer that has the clips**, opened on this folder, type `/drafts`.
 3. Claude uploads each clip to Higgsfield and shows one TikTok form per clip. Submit each form.

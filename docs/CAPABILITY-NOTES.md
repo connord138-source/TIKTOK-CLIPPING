@@ -25,6 +25,16 @@ Network policy has been partially opened since 2026-09-22:
 So drafts cannot be sent by the Python farm or by autopilot: each one needs a Claude session
 that can read the clip file, plus one form submit from the user.
 
+### Dashboard one-click drafts via TikTok's own API (built 2026-11-18)
+Implemented from TikTok's docs: desktop Login Kit with PKCE (hex SHA-256 challenge),
+`/v2/post/publish/inbox/video/init/` + chunked PUT, `/v2/post/publish/status/fetch/`.
+| Check | Result |
+|---|---|
+| Automated tests against a local stand-in for the API | pass (login, single and chunked upload, errors, posted sync) |
+| Real TikTok init endpoint with a bad token | answers `access_token_invalid` in the expected shape |
+| Real login + real upload with the user's TikTok app | **not tested** (needs the user's app) |
+| Does a sandbox (unreviewed) app get `video.upload` for inbox uploads? | **unknown**: docs say the app "must be approved for the video.upload scope" and don't say whether sandbox target users are exempt |
+
 Conclusion: cloud sessions can scout, plan, analyse and run agents; **rendering YouTube sources
 needs the user's machine** (or a policy that allows `*.googlevideo.com` — wildcard hosts are a
 Settings decision, not something a session can add).

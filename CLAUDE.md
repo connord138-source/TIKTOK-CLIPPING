@@ -11,13 +11,17 @@ user's control room, and Claude sessions operate it via the CLI and the agents i
 - `data/clips.json`, `data/candidates.json`, `data/metrics.json`, `data/trends.json`: state
 - `docs/STRATEGY.md` (why), `docs/OPERATIONS.md` (runbook), `docs/SETUP.md`, `docs/CAPABILITY-NOTES.md`
 - CLI: `python -m clipfarm --help` · tests: `python -m pytest -q tests`
-- Commands: `/farm` (scout, produce, analyse) · `/drafts` (approved clips → TikTok drafts)
+- Commands: `/farm` (scout, produce, analyse) · `/drafts` (Higgsfield fallback for TikTok drafts)
+- Dashboard does the rest: Connections tab holds keys (stored in `data/secrets/`, gitignored)
+  and the TikTok login; **Send to TikTok drafts** uploads approved clips via TikTok's API
 - Clip statuses: `rendering → rendered → approved → drafted → posted` (or `rejected` / `failed`)
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
 1. **Never post to TikTok.** Clips are delivered as files or TikTok drafts; the user posts.
-   `publish_mode` governs this. Autopilot never posts. With Higgsfield, the mode is always
-   `UPLOAD_TO_DRAFT`, never `DIRECT_POST`, and the user submits the publish form themselves.
+   `publish_mode` governs this. Autopilot never posts. The dashboard uploads only through
+   TikTok's inbox (draft) endpoint in `clipfarm/tiktok.py`; never add the direct-post endpoint.
+   With Higgsfield, the mode is always `UPLOAD_TO_DRAFT`, never `DIRECT_POST`, and the user
+   submits the publish form themselves.
 2. **Rights gate.** Only `campaign | permission | own` sources auto-render. Never set a channel to
    campaign/permission unless the user confirms they joined that program or have permission.
 3. **Brand safety.** Keep the NSFW filter on; no sexual content, no leaks, no real-person

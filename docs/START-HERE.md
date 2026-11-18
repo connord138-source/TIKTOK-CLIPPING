@@ -63,6 +63,9 @@ Windows (replace the key, then close and reopen PowerShell):
 setx ANTHROPIC_API_KEY "sk-ant-PASTE-YOURS"
 ```
 
+Easier: skip this command, start the dashboard (A6), open the **Connections** tab, paste the
+key under **Claude API key**, and click **Save**.
+
 ### A5. Check everything is installed
 ```bash
 python -m clipfarm doctor
@@ -137,7 +140,35 @@ Aim to approve 5 a day.
 5. Back in the dashboard: click **Posted** and paste the TikTok video link.
 6. If you're in a campaign, submit the TikTok link on the campaign page so you get paid.
 
-### B4b. Or send clips to your TikTok drafts (skips the download-to-phone step)
+### B4a. One-time: connect TikTok so the dashboard can send clips to your drafts
+TikTok only lets an app you register upload to your account, so this needs a free TikTok
+developer app. The labels on TikTok's site may differ slightly from these.
+1. Go to https://developers.tiktok.com, log in with your TikTok account, open **Manage apps**,
+   and create an app (any name, category Entertainment or similar).
+2. In the app, add two products: **Login Kit** and **Content Posting API**.
+3. In **Login Kit**, choose the **Desktop** platform and add the redirect URI shown in the
+   dashboard's **Connections** tab (click **Copy** there). It is normally
+   `http://127.0.0.1:8787/auth/tiktok/callback/`.
+4. Make sure the scopes `user.info.basic` and `video.upload` are enabled.
+5. Open the app's **Sandbox** settings, create a sandbox, and add your TikTok account as a
+   **target user**. Use the sandbox's client key and secret.
+6. In the dashboard → **Connections** → paste the **client key** and **client secret** → **Save**.
+7. Click **Connect TikTok**, log in, and approve. The card should say
+   **connected · can send drafts**.
+
+If TikTok refuses uploads from a sandbox app, the clip shows "Not sent" with the reason. In
+that case submit the app for review on TikTok's site, or keep using Download.
+
+### B4a-2. Send clips to your TikTok drafts from the dashboard
+1. **Today** tab → click **Send to TikTok drafts** on a slot, or **Send all ready clips**.
+2. Wait for the slot to say **in TikTok drafts** (usually under a minute).
+3. On your phone, open TikTok and tap the inbox notification. Paste the caption (TikTok's
+   draft upload doesn't carry captions; use **Copy caption** in the dashboard), then post.
+4. The dashboard marks the clip **posted** by itself within about five minutes.
+
+TikTok allows 5 unposted drafts per 24 hours, so post or delete drafts before sending more.
+
+### B4b. Fallback: send drafts through Claude and Higgsfield instead
 1. Install the **Claude desktop app** on this computer and sign in with the same account.
 2. Open the **Code** tab and choose the folder `C:\Users\<you>\TIKTOK-CLIPPING`.
 3. Type `/drafts` and press Enter.

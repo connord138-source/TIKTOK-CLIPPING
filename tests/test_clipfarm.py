@@ -238,3 +238,203 @@ def test_drafts_view_and_drafted_status_flow(farm_root):
 def test_local_path_vs_url_source(tmp_path):
     with pytest.raises(RuntimeError, match="file not found"):
         render.fetch_source({"id": "url:x", "url": str(tmp_path / "nope.mp4")}, 0, 5)
+
+
+# ---------------------------------------------------------------- TikTok API: one-click drafts
+import hashlib  # noqa: E402
+import threading  # noqa: E402
+from http.server import BaseHTTPRequestHandler, HTTPServer  # noqa: E402
+from urllib.parse import parse_qs, urlparse  # noqa: E402
+
+from clipfarm import core, tiktok  # noqa: E402
+
+
+class FakeTikTok:
+    """A local stand-in for TikTok's API, so the real HTTP code (headers, ranges, bytes) runs."""
+
+    def __init__(self):
+        self.received = b""
+        self.ranges, self.inits, self.token_calls = [], [], []
+        self.init_error = None
+        self.status = "SEND_TO_USER_INBOX"
+        self.post_ids = []
+        fake = self
+
+        class H(BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def _send(self, code, obj):
+                raw = json.dumps(obj).encode()
+                self.send_response(code)
+                self.send_header("Content-Length", str(len(raw)))
+                self.end_headers()
+                self.wfile.write(raw)
+
+            def do_POST(self):  # noqa: N802
+                body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+                if self.path.endswith("/oauth/token/"):
+                    f = {k: v[0] for k, v in parse_qs(body.decode()).items()}
+                    fake.token_calls.append(f)
+                    return self._send(200, {"access_token": f"at{len(fake.token_calls)}", "expires_in": 7200,
+                                            "refresh_token": f"rt{len(fake.token_calls)}", "refresh_expires_in": 15552000,
+                                            "open_id": "u1", "scope": "user.info.basic,video.upload", "token_type": "Bearer"})
+                assert self.headers["Authorization"].startswith("Bearer at")
+                if self.path.endswith("/inbox/video/init/"):
+                    if fake.init_error:
+                        return self._send(403, {"data": {}, "error": {"code": fake.init_error, "message": "x", "log_id": "l"}})
+                    fake.inits.append(json.loads(body))
+                    return self._send(200, {"data": {"publish_id": "v_inbox_file~v2.1",
+                                                     "upload_url": f"http://127.0.0.1:{fake.port}/upload?upload_id=1"},
+                                            "error": {"code": "ok", "message": "", "log_id": "l"}})
+                if self.path.endswith("/status/fetch/"):
+                    return self._send(200, {"data": {"status": fake.status, "publicaly_available_post_id": fake.post_ids},
+                                            "error": {"code": "ok", "message": "", "log_id": "l"}})
+                return self._send(404, {})
+
+            def do_PUT(self):  # noqa: N802
+                n = int(self.headers["Content-Length"])
+                data = self.rfile.read(n)
+                rng = self.headers["Content-Range"]
+                first, rest = rng.removeprefix("bytes ").split("-")
+                last, total = rest.split("/")
+                assert int(first) == len(fake.received) and int(last) - int(first) + 1 == n
+                assert self.headers["Content-Type"] == "video/mp4"
+                fake.received += data
+                fake.ranges.append(rng)
+                self.send_response(201 if len(fake.received) == int(total) else 206)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
+        self.httpd = HTTPServer(("127.0.0.1", 0), H)
+        self.port = self.httpd.server_address[1]
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+
+
+@pytest.fixture
+def fake_tiktok(monkeypatch, farm_root):
+    fake = FakeTikTok()
+    monkeypatch.setattr(tiktok, "API", f"http://127.0.0.1:{fake.port}/v2/")
+    monkeypatch.setattr(tiktok.time, "sleep", lambda s: None)
+    monkeypatch.setenv("TIKTOK_CLIENT_KEY", "ck")
+    monkeypatch.setenv("TIKTOK_CLIENT_SECRET", "cs")
+    tiktok.TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tiktok.TOKEN_FILE.unlink(missing_ok=True)
+    yield fake
+    fake.httpd.shutdown()
+    tiktok.TOKEN_FILE.unlink(missing_ok=True)
+
+
+def _approved_clip(farm_root, cid="c0001", size=3000):
+    f = farm_root / "media" / "clips" / f"{cid}.mp4"
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_bytes(bytes(range(256)) * (size // 256) + b"z" * (size % 256))
+    Store.upsert(Store.clips, {"id": cid, "status": "approved", "score": 80, "hook": "h", "caption": "c",
+                               "file": f"media/clips/{cid}.mp4"})
+    return f
+
+
+def test_tiktok_login_uses_desktop_pkce_and_saves_rotating_tokens(fake_tiktok):
+    url = tiktok.authorize_url(8787)
+    q = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
+    assert q["client_key"] == "ck" and q["response_type"] == "code" and q["code_challenge_method"] == "S256"
+    assert q["redirect_uri"] == "http://127.0.0.1:8787/auth/tiktok/callback/"
+    assert q["scope"] == "user.info.basic,video.upload"
+    with pytest.raises(tiktok.TikTokError):
+        tiktok.finish_login("code", "wrong-state", 8787)
+    url = tiktok.authorize_url(8787)
+    q = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
+    tiktok.finish_login("the-code", q["state"], 8787)
+    sent = fake_tiktok.token_calls[-1]
+    assert sent["grant_type"] == "authorization_code" and sent["code"] == "the-code"
+    assert 43 <= len(sent["code_verifier"]) <= 128
+    assert hashlib.sha256(sent["code_verifier"].encode()).hexdigest() == q["code_challenge"]  # hex, per TikTok
+    assert tiktok.status_summary(8787)["can_upload"] is True
+    # expired access token -> refresh, and the rotated refresh token is the one kept
+    tok = tiktok.token()
+    tok["obtained_at"] -= 7200
+    core.write_json(tiktok.TOKEN_FILE, tok)
+    assert tiktok.access_token() == "at2"
+    assert fake_tiktok.token_calls[-1]["refresh_token"] == "rt1" and tiktok.token()["refresh_token"] == "rt2"
+
+
+def test_chunk_plan_follows_tiktok_rules():
+    assert tiktok.chunk_plan(3_000_000) == (3_000_000, 1)            # under 5 MB: whole file
+    assert tiktok.chunk_plan(64_000_000) == (64_000_000, 1)
+    size = 150_000_001
+    chunk, count = tiktok.chunk_plan(size)
+    assert chunk == 10_000_000 and count == 15
+    assert size - (count - 1) * chunk <= 128_000_000                 # final chunk absorbs the remainder
+
+
+def test_send_clip_uploads_and_marks_drafted_then_posted(fake_tiktok, farm_root):
+    f = _approved_clip(farm_root)
+    tiktok.finish_login("c", parse_qs(urlparse(tiktok.authorize_url(8787)).query)["state"][0], 8787)
+    out = server.clip_action("c0001", {"action": "send_to_drafts"})
+    assert out["sending"] is True
+    for _ in range(100):  # the dashboard runs the upload as a background job
+        if Store.get(Store.clips, "c0001")["status"] == "drafted":
+            break
+        threading.Event().wait(0.05)
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "drafted" and clip["sending"] is False
+    assert clip["draft"]["via"] == "tiktok_api" and clip["draft"]["publish_id"] == "v_inbox_file~v2.1"
+    assert clip["draft"]["state"] == "SEND_TO_USER_INBOX"
+    assert fake_tiktok.received == f.read_bytes() and fake_tiktok.ranges == ["bytes 0-2999/3000"]
+    assert fake_tiktok.inits[0] == {"source_info": {"source": "FILE_UPLOAD", "video_size": 3000,
+                                                    "chunk_size": 3000, "total_chunk_count": 1}}
+    assert tiktok.pending_count() == 1
+    # the user posts it from TikTok -> the next sync marks it posted with the video id
+    fake_tiktok.status, fake_tiktok.post_ids = "PUBLISH_COMPLETE", [7301234567890123456]
+    assert tiktok.sync_drafts() == {"posted": 1, "failed": 0}
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "posted" and clip["tiktok_id"] == "7301234567890123456"
+    assert clip["tiktok_url"].endswith("/video/7301234567890123456")
+
+
+def test_send_clip_chunked_upload_sends_exact_bytes(fake_tiktok, farm_root, monkeypatch):
+    f = _approved_clip(farm_root, size=1050)
+    monkeypatch.setattr(tiktok, "SINGLE_PUT_MAX", 1000)
+    monkeypatch.setattr(tiktok, "CHUNK", 400)
+    tiktok.finish_login("c", parse_qs(urlparse(tiktok.authorize_url(8787)).query)["state"][0], 8787)
+    tiktok.send_clip("c0001")
+    assert fake_tiktok.ranges == ["bytes 0-399/1050", "bytes 400-1049/1050"]
+    assert fake_tiktok.received == f.read_bytes()
+    assert fake_tiktok.inits[0]["source_info"]["total_chunk_count"] == 2
+
+
+def test_send_clip_failure_keeps_clip_approved_with_plain_error(fake_tiktok, farm_root):
+    _approved_clip(farm_root)
+    tiktok.finish_login("c", parse_qs(urlparse(tiktok.authorize_url(8787)).query)["state"][0], 8787)
+    fake_tiktok.init_error = "spam_risk_too_many_pending_share"
+    with pytest.raises(tiktok.TikTokError, match="5 unposted drafts"):
+        tiktok.send_clip("c0001")
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "approved" and clip["sending"] is False and "5 unposted drafts" in clip["draft_error"]
+    assert fake_tiktok.received == b""
+
+
+def test_send_requires_connection_and_approval(fake_tiktok, farm_root):
+    _approved_clip(farm_root)
+    with pytest.raises(ValueError, match="connect TikTok"):
+        server.clip_action("c0001", {"action": "send_to_drafts"})
+    Store.update(Store.clips, "c0001", status="rendered")
+    with pytest.raises(ValueError, match="approve"):
+        server.clip_action("c0001", {"action": "send_to_drafts"})
+
+
+def test_dashboard_keys_are_stored_locally_and_never_echoed(monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    core.KEYS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    core.save_keys({"ANTHROPIC_API_KEY": "  sk-ant-test-1234567890  "})
+    try:
+        import os
+        assert os.environ["ANTHROPIC_API_KEY"] == "sk-ant-test-1234567890"
+        view = server.connections_view()
+        assert view["keys"]["ANTHROPIC_API_KEY"] == {"set": True, "source": "dashboard", "hint": "…7890"}
+        assert "sk-ant-test" not in json.dumps(view)
+        with pytest.raises(ValueError):
+            core.save_keys({"PATH": "/evil"})
+    finally:
+        core.save_keys({"ANTHROPIC_API_KEY": ""})
+    assert server.connections_view()["keys"]["ANTHROPIC_API_KEY"]["set"] is False

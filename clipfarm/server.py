@@ -8,19 +8,18 @@ import json
 import mimetypes
 import os
 import re
-import secrets
 import threading
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from . import analytics, brain, pipeline, planner, rights
-from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, load_config, load_sources, log,
-                   now_iso, read_json, save_config, save_sources)
+from . import analytics, brain, pipeline, planner, rights, tiktok
+from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, keys_status, load_config,
+                   load_sources, log, now_iso, read_json, save_config, save_keys, save_sources)
 
 WEB = Path(__file__).resolve().parent.parent / "web"  # code-relative (data root may differ)
-_oauth_state = {"value": None}
+_server = {"port": 8787, "auth_message": None}  # port the dashboard runs on; last TikTok login result
 
 # Explicit types: the Windows registry can map .js/.css to text/plain, which breaks the page.
 MIME = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -28,7 +27,7 @@ MIME = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
         ".png": "image/png", ".json": "application/json"}
 
 # Settings the UI may change. Everything else is edited in config/*.json by hand or by Claude.
-EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style"}
+EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style", "tiktok"}
 
 
 def _kpis(clips: list[dict]) -> dict:
@@ -58,8 +57,7 @@ def state() -> dict:
                        "needs_rights": sum(1 for c in cands if c.get("status") == "needs_rights"),
                        "new": sum(1 for c in cands if c.get("status") == "new")},
         "autopilot": cfg.get("autopilot", {}), "brain": brain.available(),
-        "tiktok_api": {"configured": bool(os.environ.get("TIKTOK_CLIENT_KEY")),
-                       "connected": analytics.TOKEN_FILE.exists()},
+        "tiktok_api": tiktok.status_summary(_server["port"]),
         "trend_queries": read_json(pipeline.TRENDS, {}).get("queries", []),
         "jobs_running": [j["type"] for j in pipeline.list_jobs() if j["status"] == "running"],
         "config": {k: cfg.get(k) for k in EDITABLE},
@@ -108,6 +106,11 @@ def drafts_view() -> dict:
             "open_slots_today": p["open_slots"], "to_send": to_send, "in_tiktok_drafts": sent}
 
 
+def connections_view() -> dict:
+    return {"keys": keys_status(), "tiktok": tiktok.status_summary(_server["port"]),
+            "auth_message": _server["auth_message"], "brain": brain.available()}
+
+
 def clip_action(cid: str, body: dict) -> dict:
     action = body.get("action")
     clip = Store.get(Store.clips, cid)
@@ -117,7 +120,17 @@ def clip_action(cid: str, body: dict) -> dict:
         return Store.update(Store.clips, cid, status="approved", approved_at=now_iso())
     if action == "reject":
         return Store.update(Store.clips, cid, status="rejected", reject_reason=body.get("reason"))
-    if action == "drafted":  # sent to the user's TikTok drafts (via Higgsfield, see /drafts)
+    if action == "send_to_drafts":  # one-click: upload to the user's TikTok inbox via TikTok's API
+        if clip.get("status") != "approved":
+            raise ValueError("approve the clip first")
+        if clip.get("sending"):
+            return clip
+        if not tiktok.status_summary(_server["port"])["can_upload"]:
+            raise ValueError("connect TikTok first (Connections tab)")
+        updated = Store.update(Store.clips, cid, sending=True, draft_error=None)
+        pipeline.start_job("send_draft", {"clip_id": cid})
+        return updated
+    if action == "drafted":  # recorded by hand or by the Higgsfield /drafts command
         draft = {**(clip.get("draft") or {}), "sent_at": now_iso(),
                  **{k: body[k] for k in ("publish_id", "publish_session_id", "video_url") if body.get(k)}}
         return Store.update(Store.clips, cid, status="drafted", draft=draft)
@@ -282,23 +295,26 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(analytics_view())
             if u.path == "/api/jobs":
                 return self._json(pipeline.list_jobs())
+            if u.path == "/api/connections":
+                return self._json(connections_view())
             if u.path == "/auth/tiktok":
-                if not os.environ.get("TIKTOK_CLIENT_KEY"):
-                    return self._json({"error": "set TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET first (see docs/SETUP.md)"}, 400)
-                _oauth_state["value"] = secrets.token_urlsafe(16)
-                return self._redirect(analytics.oauth_url(self._redirect_uri(), _oauth_state["value"]))
-            if u.path == "/auth/tiktok/callback":
-                if not q.get("code") or q.get("state") != _oauth_state["value"]:
-                    return self._json({"error": "oauth state mismatch or missing code"}, 400)
-                analytics.oauth_exchange(q["code"], self._redirect_uri())
-                pipeline.start_job("metrics")
-                return self._redirect("/#analytics")
+                try:
+                    return self._redirect(tiktok.authorize_url(_server["port"]))
+                except tiktok.TikTokError as e:
+                    _server["auth_message"] = {"ok": False, "text": str(e)}
+                    return self._redirect("/#connections")
+            if u.path.rstrip("/") == "/auth/tiktok/callback":
+                try:
+                    if q.get("error"):
+                        raise tiktok.TikTokError(q["error"], q.get("error_description", ""))
+                    tiktok.finish_login(q.get("code", ""), q.get("state", ""), _server["port"])
+                    _server["auth_message"] = {"ok": True, "text": "TikTok connected."}
+                except tiktok.TikTokError as e:
+                    _server["auth_message"] = {"ok": False, "text": str(e)}
+                return self._redirect("/#connections")
             return self._json({"error": "not found"}, 404)
         except Exception as e:  # noqa: BLE001
             return self._json({"error": f"{type(e).__name__}: {e}"}, 500)
-
-    def _redirect_uri(self) -> str:
-        return os.environ.get("TIKTOK_REDIRECT_URI") or f"http://{self.headers.get('Host')}/auth/tiktok/callback"
 
     def do_POST(self):  # noqa: N802
         # Custom header blocks cross-site form posts / CSRF against the local server.
@@ -323,6 +339,14 @@ class Handler(BaseHTTPRequestHandler):
                 src["campaigns"] = [c for c in src["campaigns"] if c.get("id") != body["id"]] + [body]
                 save_sources(src)
                 return self._json(body)
+            if u.path == "/api/connections":
+                save_keys(body.get("keys") or {})
+                brain._client = None  # pick up a new Claude key on the next call
+                return self._json(connections_view())
+            if u.path == "/api/tiktok/disconnect":
+                tiktok.disconnect()
+                _server["auth_message"] = None
+                return self._json(connections_view())
             if u.path == "/api/config":
                 patch = {k: v for k, v in body.items() if k in EDITABLE}
                 cfg = deep_merge(load_config(), patch)
@@ -339,6 +363,8 @@ class Handler(BaseHTTPRequestHandler):
 
 def serve(host: str = "127.0.0.1", port: int = 8787, autopilot: bool = True) -> None:
     ensure_dirs()
+    _server["port"] = port
+    pipeline.reset_stuck()
     httpd = ThreadingHTTPServer((host, port), Handler)
     stop = threading.Event()
     if autopilot:

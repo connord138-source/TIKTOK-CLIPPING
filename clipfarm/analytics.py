@@ -2,8 +2,8 @@
 
 Backends (config analytics.method = auto | public | display_api):
   public       yt-dlp on https://www.tiktok.com/@handle  (no keys; views/likes/comments/shares)
-  display_api  official TikTok Display API via OAuth (adds follower count). Needs a TikTok
-               developer app: TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET env vars.
+  display_api  official TikTok API (adds follower count). Used when the TikTok login in
+               Connections was granted the optional stats permissions (video.list).
   csv          import of a TikTok Studio export (dashboard upload or CLI).
 """
 from __future__ import annotations
@@ -18,11 +18,9 @@ import time
 import urllib.parse
 import urllib.request
 
-from . import rights
-from .core import SECRETS_DIR, Store, load_config, log, mutate, now_iso, read_json, run_json, write_json, ytdlp_cmd
+from . import rights, tiktok
+from .core import Store, load_config, log, mutate, now_iso, read_json, run_json, write_json, ytdlp_cmd
 
-TOKEN_FILE = SECRETS_DIR / "tiktok_token.json"
-SCOPES = "user.info.basic,user.info.stats,video.list"
 
 
 def tiktok_id_from_url(url: str | None) -> str | None:
@@ -42,39 +40,6 @@ def pull_public(handle: str) -> tuple[list[dict], dict]:
     return vids, {"followers": d.get("channel_follower_count")}
 
 
-def oauth_url(redirect_uri: str, state: str) -> str:
-    q = urllib.parse.urlencode({"client_key": os.environ["TIKTOK_CLIENT_KEY"], "scope": SCOPES,
-                                "response_type": "code", "redirect_uri": redirect_uri, "state": state})
-    return "https://www.tiktok.com/v2/auth/authorize/?" + q
-
-
-def _token_request(fields: dict) -> dict:
-    body = urllib.parse.urlencode({"client_key": os.environ["TIKTOK_CLIENT_KEY"],
-                                   "client_secret": os.environ["TIKTOK_CLIENT_SECRET"], **fields}).encode()
-    req = urllib.request.Request("https://open.tiktokapis.com/v2/oauth/token/", data=body,
-                                 headers={"Content-Type": "application/x-www-form-urlencoded"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        tok = json.load(r)
-    if "access_token" not in tok:
-        raise RuntimeError(f"tiktok oauth: {tok}")
-    tok["obtained_at"] = time.time()
-    write_json(TOKEN_FILE, tok)
-    return tok
-
-
-def oauth_exchange(code: str, redirect_uri: str) -> dict:
-    return _token_request({"code": code, "grant_type": "authorization_code", "redirect_uri": redirect_uri})
-
-
-def _access_token() -> str | None:
-    tok = read_json(TOKEN_FILE, None)
-    if not tok:
-        return None
-    if time.time() > tok["obtained_at"] + tok.get("expires_in", 86400) - 300:
-        tok = _token_request({"grant_type": "refresh_token", "refresh_token": tok["refresh_token"]})
-    return tok["access_token"]
-
-
 def _api(method: str, path: str, token: str, body: dict | None = None) -> dict:
     req = urllib.request.Request("https://open.tiktokapis.com/v2/" + path, method=method,
                                  data=json.dumps(body).encode() if body is not None else None,
@@ -84,9 +49,7 @@ def _api(method: str, path: str, token: str, body: dict | None = None) -> dict:
 
 
 def pull_display_api() -> tuple[list[dict], dict]:
-    token = _access_token()
-    if not token:
-        raise RuntimeError("TikTok not connected (open the dashboard -> Analytics -> Connect TikTok)")
+    token = tiktok.access_token()
     fields = "id,create_time,share_url,video_description,title,duration,view_count,like_count,comment_count,share_count"
     vids, cursor = [], None
     for _ in range(10):
@@ -207,7 +170,7 @@ def record(vids: list[dict], account: dict, source: str) -> dict:
 def run_metrics() -> dict:
     cfg = load_config()
     method = cfg.get("analytics", {}).get("method", "auto")
-    if method in ("auto", "display_api") and read_json(TOKEN_FILE, None) and os.environ.get("TIKTOK_CLIENT_KEY"):
+    if method in ("auto", "display_api") and "video.list" in tiktok.granted_scopes():
         vids, acct = pull_display_api()
         return record(vids, acct, "display_api")
     handle = cfg.get("account_handle")

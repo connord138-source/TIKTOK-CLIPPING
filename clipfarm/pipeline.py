@@ -19,7 +19,7 @@ import traceback
 import uuid
 from datetime import datetime, timezone
 
-from . import analytics, brain, moments, planner, render, rights, scout
+from . import analytics, brain, moments, planner, render, rights, scout, tiktok
 from .core import (DATA_DIR, WORK_DIR, Store, _job_ctx, hours_since, load_config, log, mutate,
                    now_iso, read_json)
 
@@ -204,7 +204,11 @@ WORKFLOWS = {
     "clip_url": lambda p: _clip_url(p),
     "trends": lambda p: refresh_trend_queries(force=True),
     "rerender": lambda p: rerender(p["clip_id"]),
+    "send_draft": lambda p: tiktok.send_clip(p["clip_id"]),
+    "send_drafts": lambda p: tiktok.send_ready(p.get("max")),
+    "sync_drafts": lambda p: tiktok.sync_drafts(),
 }
+PARALLEL_OK = {"clip_url", "send_draft"}  # several of these may be queued at once
 
 
 def rerender(clip_id: str) -> dict:
@@ -237,7 +241,7 @@ def start_job(kind: str, params: dict | None = None) -> dict:
         raise ValueError(f"unknown job {kind}")
     with _jobs_lock:
         running = [j for j in _jobs.values() if j["status"] == "running"]
-        if any(j["type"] == kind for j in running) and kind != "clip_url":
+        if any(j["type"] == kind for j in running) and kind not in PARALLEL_OK:
             return next(j for j in running if j["type"] == kind)
         job = {"id": uuid.uuid4().hex[:8], "type": kind, "params": params or {}, "status": "running",
                "started_at": now_iso(), "log": []}
@@ -304,9 +308,30 @@ def autopilot_tick() -> list[str]:
     return started
 
 
+_last_draft_sync = [0.0]
+
+
+def drafts_tick() -> None:
+    """Runs whether or not autopilot is on: notice when the user posts a draft from TikTok."""
+    if time.time() - _last_draft_sync[0] < 300 or not tiktok.token() or not tiktok._api_drafts():
+        return
+    _last_draft_sync[0] = time.time()
+    res = tiktok.sync_drafts()
+    if res["posted"] or res["failed"]:
+        log(f"tiktok drafts: {res}")
+
+
+def reset_stuck() -> None:
+    """After a restart nothing is mid-send any more."""
+    for c in Store.all(Store.clips):
+        if c.get("sending"):
+            Store.update(Store.clips, c["id"], sending=False)
+
+
 def autopilot_loop(stop: threading.Event) -> None:
     while not stop.wait(60):
         try:
+            drafts_tick()
             started = autopilot_tick()
             if started:
                 log(f"autopilot started: {started}")

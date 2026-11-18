@@ -221,3 +221,43 @@ def run_json(cmd: list[str], timeout: int = 180):
 def ensure_dirs() -> None:
     for d in (DATA_DIR, MEDIA_DIR, WORK_DIR, CLIPS_DIR, SECRETS_DIR):
         d.mkdir(parents=True, exist_ok=True)
+    load_keys()
+
+
+# ---------------------------------------------------------------- keys saved from the dashboard
+# Stored in data/secrets/keys.json (gitignored) and copied into the process environment, so
+# the rest of the code keeps reading os.environ. Values are never sent back to the browser.
+KEYS_FILE = SECRETS_DIR / "keys.json"
+KEY_NAMES = ["ANTHROPIC_API_KEY", "TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET",
+             "TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET"]
+
+
+def load_keys() -> None:
+    for name, value in read_json(KEYS_FILE, {}).items():
+        if name in KEY_NAMES and value:
+            os.environ[name] = value
+
+
+def save_keys(patch: dict) -> None:
+    """Set (non-empty string) or clear (empty string) keys. Unknown names are rejected."""
+    with _lock:
+        keys = read_json(KEYS_FILE, {})
+        for name, value in patch.items():
+            if name not in KEY_NAMES:
+                raise ValueError(f"unknown key name: {name}")
+            value = (value or "").strip()
+            if value:
+                keys[name] = value
+                os.environ[name] = value
+            else:
+                keys.pop(name, None)
+                os.environ.pop(name, None)
+        write_json(KEYS_FILE, keys)
+
+
+def keys_status() -> dict:
+    saved = read_json(KEYS_FILE, {})
+    return {name: {"set": bool(os.environ.get(name)),
+                   "source": "dashboard" if saved.get(name) else ("environment" if os.environ.get(name) else None),
+                   "hint": ("…" + os.environ[name][-4:]) if len(os.environ.get(name, "")) >= 12 else None}
+            for name in KEY_NAMES}
