@@ -205,8 +205,11 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Cache-Control", "no-store")
-        self.end_headers()
-        self.wfile.write(raw)
+        try:
+            self.end_headers()
+            self.wfile.write(raw)
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            pass  # the browser navigated away mid-request
 
     def _body(self) -> bytes:
         n = int(self.headers.get("Content-Length") or 0)
@@ -285,6 +288,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(sorted(clips, key=lambda c: c["id"], reverse=True))
             if u.path == "/api/candidates":
                 c = [x for x in Store.all(Store.candidates) if q.get("unsafe") or not x.get("unsafe")]
+                if q.get("manual"):  # links the user pasted, newest first
+                    c = sorted((x for x in c if x.get("manual")), key=lambda x: x.get("updated_at") or "", reverse=True)
+                    return self._json([{k: v for k, v in x.items() if k != "heatmap"} for x in c[: int(q.get("limit", 5))]])
                 if q.get("status"):
                     c = [x for x in c if x.get("status") in q["status"].split(",")]
                 c = sorted(c, key=lambda x: x.get("score") or 0, reverse=True)[: int(q.get("limit", 200))]

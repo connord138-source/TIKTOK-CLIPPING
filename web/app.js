@@ -158,7 +158,7 @@ async function viewToday() {
     h("p", { class: "muted", style: { fontSize: "12px" } },
       st.config.cadence.auto_adjust.apply ? "Auto-apply is ON: the advisor changes today's target." : "Auto-apply is OFF (Autopilot tab) — suggestions only."));
 
-  return h("div", { class: "grid" }, tiles,
+  return h("div", { class: "grid" }, fullAutoCard(), tiles,
     h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)), slotBoard,
       h("div", { class: "row", style: { marginTop: "12px" } },
         st.tiktok_api.can_upload
@@ -168,6 +168,41 @@ async function viewToday() {
               h("a", { href: "#connections" }, "Connections"), "."))),
     h("div", { class: "grid two" }, prod, advice));
 }
+// "Full auto" = four switches the user owns. Nothing here ever posts: clips stop at TikTok drafts.
+function autoFlags() {
+  const c = S.state.config;
+  return { autopilot: !!(c.autopilot || {}).enabled, any: !!(c.produce || {}).include_unverified,
+           approve: !!((c.produce || {}).auto_approve || {}).enabled, send: !!(c.tiktok || {}).auto_send };
+}
+const setAuto = (on) => api("/api/config", { autopilot: { enabled: on }, produce: { include_unverified: on, auto_approve: { enabled: on } }, tiktok: { auto_send: on } });
+function fullAutoCard() {
+  const st = S.state, f = autoFlags(), on = f.autopilot && f.any && f.approve && f.send, some = f.autopilot || f.any || f.approve || f.send;
+  const notes = [
+    st.brain ? null : "No Claude key saved: clips are picked and approved by simple rules, without a visual check. Add the key in Connections.",
+    st.tiktok_api.can_upload ? null : "TikTok is not connected: clips will be made and approved but not sent to your drafts. Connect it in Connections.",
+  ].filter(Boolean);
+  if (on) return h("div", { class: "card" },
+    h("h2", {}, "Full auto is on ", h("span", { class: "chip good" }, "running")),
+    h("p", {}, "Every 2 hours it looks for trending GTA 6 videos, cuts clips, has Claude check each one, and sends up to 5 a day to your TikTok drafts."),
+    h("p", {}, h("strong", {}, "Your part: "), "open TikTok, tap the inbox notification, paste the caption, post."),
+    notes.map((n) => h("div", { class: "callout", style: { marginBottom: "8px" } }, n)),
+    h("div", { class: "row" },
+      h("button", { class: "btn", onclick: () => runJob("cycle") }, "Run a round now"),
+      h("button", { class: "btn danger", onclick: () => act(() => setAuto(false), "Full auto is off") }, "Turn off")));
+  return h("div", { class: "card" },
+    h("h2", {}, "Do it all for me", some ? h("small", {}, "partly on: see Autopilot & activity") : null),
+    h("p", {}, "One switch: the farm finds trending GTA 6 videos, cuts clips, has Claude check them, approves the good ones and sends them to your TikTok drafts. You only post them in TikTok."),
+    h("div", { class: "row" },
+      h("button", { class: "btn primary", onclick: () => {
+        const ok = confirm("Turn on full auto?\n\n" +
+          "• It clips trending GTA 6 videos from ANY creator, including ones you have no permission from. Copyright complaints and strikes on your TikTok account are your risk.\n" +
+          "• Clips are approved by Claude's check, without you watching them first.\n" +
+          "• Up to 5 clips a day are sent to your TikTok drafts.\n" +
+          "• Nothing is ever posted for you. You post from TikTok.\n\nYou can turn it off at any time.");
+        if (ok) act(() => setAuto(true).then(() => api("/api/jobs", { type: "cycle" })), "Full auto is on. First round started.");
+      } }, "Turn on full auto")));
+}
+
 function sendBtn(c, cls = "btn sm primary") {
   if (c.status !== "approved") return null;
   if (c.sending) return h("button", { class: cls, disabled: true }, "Sending…");
@@ -212,6 +247,7 @@ function clipCard(c) {
     h("div", { class: "meta" }, h("span", {}, c.channel || "?"), h("span", {}, `${mmss(c.start || 0)}–${mmss(c.end || 0)} (${c.duration}s)`),
       h("span", {}, c.picked_by === "brain" ? "picked by Claude" : "heuristic pick"), src ? h("a", { href: src, target: "_blank", rel: "noopener" }, "source ↗") : null),
     c.reason ? h("div", { class: "why" }, c.reason) : null,
+    c.review && c.review.reason ? h("div", { class: "why" }, `Claude's check (${c.review.quality}/100): ${c.review.reason}`) : null,
     qc.issues && qc.issues.length ? h("div", { class: "issues" }, "QC: " + qc.issues.join(" · ")) : null,
     h("label", { class: "muted" }, "On-screen hook", hook),
     h("label", { class: "muted" }, "Caption", cap),
@@ -255,6 +291,7 @@ async function viewScout() {
   const st = S.state;
   const cands = await api(`/api/candidates?status=${S.scoutFilter}&limit=150`);
   const src = await api("/api/sources");
+  const mine = await api("/api/candidates?manual=1&limit=5");
   const filters = [["needs_rights", "Needs your call"], ["needs_rights,new,queued", "Open"], ["processed", "Processed"], ["skipped,failed", "Skipped/failed"]];
   const head = h("div", { class: "section-head" }, h("h1", {}, "Scout"),
     h("span", { class: "muted" }, `${st.candidates.total} sources tracked`), h("span", { class: "spacer" }),
@@ -301,7 +338,13 @@ async function viewScout() {
           c.channel ? h("button", { class: "btn sm", title: "Mark this channel as clipping-program/permission: all its uploads auto-clip", onclick: () => act(() => api(`/api/candidates/${encodeURIComponent(c.id)}`, { rights: "permission", apply_channel: true }), `${c.channel} trusted`) }, "Trust channel") : null,
           h("button", { class: "btn sm", onclick: () => act(() => api(`/api/candidates/${encodeURIComponent(c.id)}`, { action: "skip" })) }, "Skip"))));
     }))));
-  return h("div", { class: "grid" }, head, policy, trend, manual, table);
+  const LINK = { queued: "waiting to start", processing: "working on it…", processed: "done", skipped: "no clip made", failed: "failed" };
+  const myLinks = mine.length ? h("div", { class: "card" }, h("h3", {}, "Links you pasted"),
+    mine.map((c) => h("div", { class: "row", style: { margin: "6px 0" } }, chip(c.status),
+      h("a", { class: "title", href: c.url, target: "_blank", rel: "noopener" }, c.title || c.url),
+      h("span", { class: "muted", style: { fontSize: "12px" } },
+        c.status === "processed" ? `${(c.clip_ids || []).length} clip(s) made: see Review` : (c.notes || LINK[c.status] || ""))))) : null;
+  return h("div", { class: "grid" }, head, policy, trend, manual, myLinks, table);
 }
 
 // ---------------------------------------------------------------- Analytics
@@ -495,7 +538,16 @@ async function viewActivity() {
       h("summary", {}, h("span", { class: `chip ${j.status === "done" ? "good" : j.status === "failed" ? "bad" : "accent"}` }, j.status), ` ${j.type} · ${ago(j.started_at)}`,
         j.result ? h("span", { class: "muted" }, " · " + JSON.stringify(j.result).slice(0, 140)) : null, j.error ? h("span", { class: "issues" }, " · " + j.error) : null),
       h("pre", { class: "log" }, (j.log || []).join("\n") || "(no log)"))) : h("div", { class: "empty" }, "No runs yet."));
-  return h("div", { class: "grid" }, settings, jobList);
+  const f = autoFlags();
+  const sw = (label, checked, path, note) => h("div", { style: { margin: "10px 0" } },
+    h("label", { class: "switch" }, h("input", { type: "checkbox", checked, onchange: (e) => patch(path, e.target.checked) }), label),
+    note ? h("div", { class: "muted", style: { fontSize: "12px", marginLeft: "46px" } }, note) : null);
+  const auto = h("div", { class: "card" }, h("h2", {}, "Full auto switches", h("small", {}, "the Today tab's big button flips all four")),
+    sw("Find and make clips on a schedule (autopilot)", f.autopilot, ["autopilot", "enabled"]),
+    sw("Clip trending videos from any creator", f.any, ["produce", "include_unverified"], "Includes creators you have no permission from. Copyright complaints and strikes are your risk. Off = only campaign, permission and your own footage."),
+    sw("Approve clips automatically", f.approve, ["produce", "auto_approve", "enabled"], "Claude looks at frames from each clip and approves or rejects it. Off = everything waits in Review."),
+    sw("Send approved clips to my TikTok drafts automatically", f.send, ["tiktok", "auto_send"], "Up to 5 unposted drafts at a time (TikTok's limit). It never posts."));
+  return h("div", { class: "grid" }, auto, settings, jobList);
 }
 
 // ---------------------------------------------------------------- Connections
@@ -524,7 +576,7 @@ async function viewConnections() {
       "TikTok logged you in but did not grant video.upload. Add the Content Posting API product to your TikTok app, then connect again.") : null,
     h("ol", { style: { paddingLeft: "20px", margin: "12px 0 0" } },
       step(1, "Create a TikTok developer app at ", h("a", { href: "https://developers.tiktok.com/apps", target: "_blank", rel: "noopener" }, "developers.tiktok.com"),
-        ". Add the products ", h("strong", {}, "Login Kit"), " and ", h("strong", {}, "Content Posting API"), ". In Login Kit choose ", h("strong", {}, "Desktop"), "."),
+        ". Add the products ", h("strong", {}, "Login Kit"), " and ", h("strong", {}, "Content Posting API"), "."),
       step(2, "In the app's Login Kit settings, add this redirect URI exactly: ", uri, " ",
         h("button", { class: "btn sm", onclick: () => navigator.clipboard.writeText(t.redirect_uri).then(() => toast("Redirect URI copied"), () => toast("Copy failed", true)) }, "Copy"),
         h("div", { class: "row", style: { marginTop: "8px" } },

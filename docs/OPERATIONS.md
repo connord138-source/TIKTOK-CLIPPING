@@ -49,6 +49,13 @@ unposted drafts per 24 hours, and captions are added in the TikTok app.
 It can't be fully automatic: Higgsfield requires the account owner to submit the form for every
 clip, and only a Claude session (not the Python farm) can call Higgsfield.
 
+## D. Full auto
+The Today tab's **Turn on full auto** button sets four switches (also listed in Autopilot &
+activity): autopilot, `produce.include_unverified`, `produce.auto_approve.enabled`,
+`tiktok.auto_send`. With all four on the only manual step is posting from TikTok. Claude's
+visual check (`brain.review_clip`) is what approves or rejects; clips it flags as sexual
+content are rejected in every mode. Sessions never flip these switches for the user.
+
 ## Pipeline (what each workflow does)
 | Workflow | Steps |
 |---|---|

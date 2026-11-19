@@ -451,3 +451,102 @@ def test_tiktok_web_login_via_https_forwarding_page(fake_tiktok, monkeypatch):
     sent = fake_tiktok.token_calls[-1]
     assert sent["redirect_uri"] == page and "code_verifier" not in sent
     assert tiktok.status_summary(8787)["default_redirect_uri"] == "http://127.0.0.1:8787/auth/tiktok/callback/"
+
+
+# ---------------------------------------------------------------- no-commentary gameplay + full auto
+def test_energy_windows_find_the_loud_action_and_start_just_before_it():
+    rms = [-50.0] * 600
+    for i in range(300, 318):
+        rms[i] = -12.0 if i % 3 else -30.0     # bursts of gunfire
+    wins = moments.energy_windows(rms, 600, 30, top=3)
+    assert wins and wins[0]["no_speech"] and 290 <= wins[0]["start"] <= 300
+    assert wins[0]["end"] - wins[0]["start"] == 30 and "no speech" in wins[0]["text"]
+    assert moments.energy_windows([-50.0] * 20, 20, 30, top=3) == []      # too short to rank
+
+
+@needs_ffmpeg
+def test_silent_gameplay_link_still_makes_a_clip_and_full_auto_approves_it(tmp_path, monkeypatch):
+    """The user's real failure: a video with no commentary produced nothing."""
+    src = tmp_path / "gameplay.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=size=1280x720:rate=30:duration=150",
+                    "-f", "lavfi", "-i", "sine=frequency=200:duration=150", "-f", "lavfi", "-i", "anoisesrc=d=150:a=0.9",
+                    "-filter_complex", "[1:a]volume=0.02[q];[2:a]volume='if(between(t,90,104),1,0)':eval=frame[b];[q][b]amix=inputs=2:normalize=0[o]",
+                    "-map", "0:v", "-map", "[o]", "-c:v", "libx264", "-preset", "ultrafast", "-c:a", "aac", "-shortest", str(src)], check=True)
+    monkeypatch.setattr(brain, "pick_moments", lambda *a, **k: None)          # no key: heuristics pick
+    monkeypatch.setattr(moments, "whisper_words", lambda media: [])
+    seen = {}
+
+    def fake_review(grid, hook, title):
+        seen["grid_exists"] = grid.is_file()
+        return {"approve": True, "quality": 82, "nsfw": False, "reason": "Clear action."}
+    monkeypatch.setattr(brain, "review_clip", fake_review)
+    cfg = core.load_config()
+    cfg["produce"]["auto_approve"] = {"enabled": True}
+    cfg["produce"]["include_unverified"] = True
+    monkeypatch.setattr(pipeline, "load_config", lambda: cfg)
+    monkeypatch.setattr(rights, "load_config", lambda: cfg)
+    res = pipeline._clip_url({"url": str(src)})                               # rights default: unverified
+    assert len(res["clips"]) >= 1
+    clip = Store.get(Store.clips, res["clips"][0])
+    assert 80 <= clip["start"] <= 92, clip["start"]                           # lands on the loud section
+    assert clip["status"] == "approved" and clip["auto_decided"] and clip["review"]["quality"] == 82
+    assert clip["rights"] == "unverified" and seen["grid_exists"]
+    assert clip["qc"]["ok"] and clip["qc"]["height"] == 1920
+
+
+def test_auto_approve_respects_the_rights_switch_and_rejects_nsfw(monkeypatch):
+    cfg = core.load_config()
+    cfg["produce"]["auto_approve"] = {"enabled": True}
+    monkeypatch.setattr(pipeline, "load_config", lambda: cfg)
+    monkeypatch.setattr(rights, "load_config", lambda: cfg)
+    monkeypatch.setattr(moments, "fetch_youtube_words", lambda c: [])
+    monkeypatch.setattr(moments, "find_moments", lambda c, w: [{"start": 0, "end": 20, "score": 90, "hook": "h",
+                                                                 "caption": "c", "hashtags": [], "source": "brain"}])
+    monkeypatch.setattr(render, "render_clip", lambda *a: {"file": "f.mp4", "thumb": None, "grid": "g.jpg",
+                                                            "qc": {"ok": True, "issues": []}, "layout": "blurpad"})
+    verdict = {"approve": True, "quality": 90, "nsfw": False, "reason": "ok"}
+    monkeypatch.setattr(brain, "review_clip", lambda *a: dict(verdict))
+    base = {"platform": "youtube", "url": "https://youtu.be/x", "channel": "c", "duration": 100, "title": "t"}
+
+    def make(cid, level):
+        Store.upsert(Store.candidates, {**base, "id": cid, "rights": level, "status": "queued"})
+        return Store.get(Store.clips, pipeline.produce_candidate(Store.get(Store.candidates, cid))[0])
+    assert make("yt:a", "unverified")["status"] == "rendered"      # switch off: a person decides
+    assert make("yt:b", "permission")["status"] == "approved"
+    cfg["produce"]["include_unverified"] = True
+    assert make("yt:c", "unverified")["status"] == "approved"      # the user turned "any creator" on
+    verdict.update(approve=False, quality=20, reason="menu screen")
+    rejected = make("yt:d", "permission")
+    assert rejected["status"] == "rejected" and rejected["reject_reason"] == "menu screen"
+    cfg["produce"]["auto_approve"] = {"enabled": False}
+    verdict.update(approve=True, quality=95, nsfw=True)
+    assert make("yt:e", "permission")["status"] == "rejected"      # sexual content never queues
+
+
+def test_any_creator_switch_releases_sources_that_were_waiting(monkeypatch):
+    Store.upsert(Store.candidates, {"id": "yt:1", "platform": "youtube", "rights": "unverified", "relevant": True,
+                                    "score": 90, "status": "needs_rights", "published_at": now_iso()})
+    assert pipeline.select_candidates(3) == []
+    cfg = core.load_config()
+    cfg["produce"]["include_unverified"] = True
+    monkeypatch.setattr(rights, "load_config", lambda: cfg)
+    assert [c["id"] for c in pipeline.select_candidates(3)] == ["yt:1"]
+
+
+def test_auto_send_tick_only_runs_when_switched_on_and_connected(monkeypatch, fake_tiktok, farm_root):
+    _approved_clip(farm_root)
+    started = []
+    monkeypatch.setattr(pipeline, "start_job", lambda kind, params=None: started.append((kind, params)))
+    cfg = core.load_config()
+    monkeypatch.setattr(pipeline, "load_config", lambda: cfg)
+    pipeline._last_auto_send[0] = 0.0
+    pipeline.auto_send_tick()
+    assert started == []                                           # switch off
+    cfg.setdefault("tiktok", {})["auto_send"] = True
+    pipeline.auto_send_tick()
+    assert started == []                                           # not connected
+    tiktok.finish_login("c", parse_qs(urlparse(tiktok.authorize_url(8787)).query)["state"][0], 8787)
+    pipeline.auto_send_tick()
+    assert started and started[0][0] == "send_drafts" and 1 <= started[0][1]["max"] <= 5
+    pipeline.auto_send_tick()
+    assert len(started) == 1                                       # waits 10 minutes before trying again

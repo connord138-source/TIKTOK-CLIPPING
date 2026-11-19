@@ -40,7 +40,8 @@ def _get_client():
     return _client
 
 
-def _ask(system: str, prompt: str, schema: dict, max_tokens: int = 8000) -> dict | None:
+def _ask(system: str, prompt, schema: dict, max_tokens: int = 8000) -> dict | None:
+    """prompt: a string, or a list of content blocks (text + images)."""
     if not available():
         return None
     cfg = _cfg()
@@ -80,7 +81,13 @@ moments that need the previous 5 minutes to understand.
 
 Hooks: <= 7 words, curiosity or stakes, no clickbait lies, no emojis spam (0-1 emoji).
 Captions: 1 short line + 3-6 hashtags; always include #gta6. Credit the creator in the caption
-as "via <channel>". Never invent events that are not in the transcript."""
+as "via <channel>". Never invent events that are not in the transcript.
+
+Some sources are pure gameplay with no commentary. Their windows carry no transcript, only a
+note about audio activity (loud bursts usually mean gunfire, crashes, sirens, explosions).
+For those, prefer the windows with the most activity, and write the hook and caption from what
+the video's title promises. Keep them general ("GTA 6 free roam is unreal") rather than
+claiming a specific event you cannot see."""
 
 _MOMENTS_SCHEMA = {
     "type": "object",
@@ -153,3 +160,45 @@ def suggest_queries(top_titles: list[str], winning_hooks: list[str], n: int = 5)
               "(specific discoveries, glitches, missions, places, characters, streamer moments).")
     out = _ask(SYSTEM_EDITOR, prompt, _QUERIES_SCHEMA, max_tokens=2000)
     return [q.strip() for q in out["queries"] if q.strip()][:n] if out else None
+
+
+SYSTEM_REVIEWER = """You are the final quality check for a TikTok clip page about GTA 6. You are shown
+one image: six frames taken evenly through a finished vertical clip (left to right, top to
+bottom). A hook banner sits near the top and there may be word captions lower down.
+
+Approve only if all of these hold:
+- it is clearly video-game footage that could be GTA 6 (or a streamer reacting to it), not
+  something unrelated;
+- something visibly happens across the frames (movement, action, a change of scene). Reject
+  menus, loading screens, maps, a static or frozen image, black frames, or a talking-head
+  intro/outro;
+- no nudity or sexual content (set nsfw true if there is any);
+- the hook text is readable and does not obviously contradict what the frames show.
+
+quality is 0-100: how likely this clip is to hold a viewer who has no context."""
+
+_REVIEW_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "approve": {"type": "boolean"},
+        "quality": {"type": "integer"},
+        "nsfw": {"type": "boolean"},
+        "reason": {"type": "string", "description": "one sentence"},
+    },
+    "required": ["approve", "quality", "nsfw", "reason"],
+    "additionalProperties": False,
+}
+
+
+def review_clip(grid: Path, hook: str, source_title: str) -> dict | None:
+    """Look at the clip's 6-frame contact sheet. None if the brain is unavailable."""
+    if not available() or not grid or not Path(grid).is_file():
+        return None
+    import base64
+    img = base64.standard_b64encode(Path(grid).read_bytes()).decode()
+    content = [
+        {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img}},
+        {"type": "text", "text": f"Hook on the clip: {hook!r}\nSource video title: {source_title!r}\n"
+                                 "Give your verdict."},
+    ]
+    return _ask(SYSTEM_REVIEWER, content, _REVIEW_SCHEMA, max_tokens=4000)

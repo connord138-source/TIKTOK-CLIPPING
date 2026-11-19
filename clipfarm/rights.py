@@ -13,7 +13,7 @@ material is surfaced in the dashboard so the user can one-click upgrade the *cha
 """
 from __future__ import annotations
 
-from .core import load_sources
+from .core import load_config, load_sources
 
 LEVELS = ["campaign", "permission", "own", "official", "unverified", "blocked"]
 DEFAULT_AUTO = ["campaign", "permission", "own"]
@@ -48,7 +48,10 @@ def resolve(platform: str, *idents: str | None) -> tuple[str, str | None]:
 
 def auto_render_allowed(level: str) -> bool:
     policy = load_sources().get("policy", {})
-    return level in policy.get("auto_render", DEFAULT_AUTO)
+    if level in policy.get("auto_render", DEFAULT_AUTO):
+        return True
+    # The user's own switch in the dashboard ("clip trending videos from any creator").
+    return level == "unverified" and bool(load_config().get("produce", {}).get("include_unverified"))
 
 
 def campaign(campaign_id: str | None) -> dict | None:

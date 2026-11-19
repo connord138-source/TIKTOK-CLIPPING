@@ -178,6 +178,21 @@ TikTok allows 5 unposted drafts per 24 hours, so post or delete drafts before se
    notification). Paste the caption if it's missing, then post at the slot time.
 6. In the dashboard, click **Posted** on that slot.
 
+### B4c. Or let it do everything: full auto
+On the **Today** tab, the top box says **Do it all for me**. Click **Turn on full auto** and
+confirm. From then on, with the PowerShell window left open, the farm:
+1. looks for trending GTA 6 videos every 2 hours;
+2. cuts clips from them (videos with no commentary are cut around the loudest action);
+3. has Claude look at frames from each clip and approve or reject it;
+4. sends approved clips to your TikTok drafts, up to 5 unposted at a time.
+
+Your part is to open TikTok, tap the inbox notification, paste the caption and post.
+
+What you agree to when you turn it on: it clips videos from any creator, including ones you
+have no permission from (copyright complaints and strikes are your risk), and clips reach
+your drafts without you watching them first. Each of the four switches can be turned off on
+its own in **Autopilot & activity**.
+
 ### B5. Turn on Autopilot
 Once you're happy with the clips, flip **Autopilot** on (top bar). It searches every 2 hours,
 makes clips when the queue runs low, and pulls your TikTok stats every 6 hours. It still never posts.

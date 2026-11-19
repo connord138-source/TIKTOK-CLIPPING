@@ -78,6 +78,82 @@ def whisper_words(media: Path) -> list[dict]:
     return words
 
 
+# ---------------------------------------------------------------- audio energy (no-commentary gameplay)
+def audio_energy(cand: dict) -> list[float]:
+    """Per-second loudness (dB RMS) of the whole source. Used when there is no speech to read:
+    gunfire, crashes, sirens and explosions show up as bursts above the video's normal level."""
+    work = WORK_DIR / cand["id"].replace(":", "_")
+    work.mkdir(parents=True, exist_ok=True)
+    cache = work / "energy.json"
+    if cache.exists():
+        return json.loads(cache.read_text())
+    url = cand["url"]
+    if not re.match(r"https?://", url):
+        media = Path(url.strip().strip('"')).expanduser()
+    else:
+        limit = load_config().get("produce", {}).get("max_source_minutes", 240)
+        if (cand.get("duration") or 0) > limit * 60:
+            log(f"moments {cand['id']}: {cand['duration'] / 60:.0f} min is over the {limit} min limit for audio analysis")
+            return []
+        hits = [h for h in glob.glob(str(work / "audio.*")) if not h.endswith((".part", ".ytdl"))]
+        if not hits:
+            proc = run(ytdlp_cmd() + ["-f", "ba[abr<=96]/ba/b[height<=360]/b", "-o", str(work / "audio.%(ext)s"), url],
+                       timeout=1200)
+            hits = [h for h in glob.glob(str(work / "audio.*")) if not h.endswith((".part", ".ytdl"))]
+            if not hits:
+                log(f"moments {cand['id']}: audio download failed: " + (proc.stderr.strip().splitlines() or ["?"])[-1][:200])
+                return []
+        media = Path(hits[0])
+    proc = run(["ffmpeg", "-hide_banner", "-nostats", "-loglevel", "error", "-i", str(media), "-vn", "-af",
+                "aresample=8000,asetnsamples=n=8000:p=0,astats=metadata=1:reset=1,"
+                "ametadata=mode=print:key=lavfi.astats.Overall.RMS_level:file=-", "-f", "null", "-"], timeout=1200)
+    rms = []
+    for m in re.finditer(r"RMS_level=(-?inf|-?[\d.]+)", proc.stdout):
+        rms.append(-90.0 if "inf" in m.group(1) else max(float(m.group(1)), -90.0))
+    if rms:
+        cache.write_text(json.dumps([round(v, 1) for v in rms]))
+    return rms
+
+
+def energy_windows(rms: list[float], total: float, length: int, top: int, min_gap: float = 45) -> list[dict]:
+    """Rank windows by how far and how often the audio jumps above the video's usual level."""
+    n = len(rms)
+    if n < length + 10:
+        return []
+    ordered = sorted(rms)
+    med, p95 = ordered[n // 2], ordered[int(n * 0.95)]
+    span = max(p95 - med, 3.0)
+    z = [max(-1.0, min((v - med) / span, 2.0)) for v in rms]
+    burst = [1 if i and rms[i] - rms[i - 1] >= 6 and z[i] > 0.5 else 0 for i in range(n)]
+    half = max(length // 2, 1)
+    scored = []
+    for t in range(0, n - length, 5):
+        seg = z[t:t + length]
+        s = sum(sorted(seg, reverse=True)[:half]) / half * 30 + sum(burst[t:t + length]) * 3
+        if t < 45:
+            s -= 10
+        if total and t + length > total - 30:
+            s -= 8
+        scored.append((round(s, 2), t))
+    scored.sort(reverse=True)
+    chosen: list[dict] = []
+    for sc, t in scored:
+        if any(abs(t - c["_t"]) < length + min_gap for c in chosen):
+            continue
+        first = next((i for i in range(t, t + length) if z[i] > 0.8), t)   # start ~3s before the action
+        start = float(max(0, min(first - 3, t + 8)))
+        end = float(min(start + length, n))
+        peak = max(rms[int(start):int(end)]) - med
+        chosen.append({"_t": t, "start": start, "end": end, "heuristic": sc, "no_speech": True,
+                       "text": f"(no speech in this video) audio activity: {sum(burst[int(start):int(end)])} sudden loud "
+                               f"bursts, peak {peak:+.0f} dB above the video's normal level"})
+        if len(chosen) >= top:
+            break
+    for c in chosen:
+        c.pop("_t")
+    return chosen
+
+
 # ---------------------------------------------------------------- scoring
 def _count(text: str, terms: list[str]) -> int:
     return sum(len(re.findall(r"(?<!\w)" + re.escape(t) + r"(?!\w)", text)) for t in terms)
@@ -170,11 +246,15 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
         windows = [{"start": 0.0, "end": float(min(total or hi, hi)), "heuristic": 50,
                     "text": window_text(words, 0, hi)}]
     else:
-        if not words and not cand.get("heatmap"):
-            log(f"moments {cand['id']}: no transcript and no heatmap -> no signal")
-            return []
-        windows = candidate_windows(words, cand.get("heatmap") or [], total, target,
-                                    top=rc.get("windows_to_brain", 6))
+        top = rc.get("windows_to_brain", 6)
+        if words or cand.get("heatmap"):
+            windows = candidate_windows(words, cand.get("heatmap") or [], total, target, top=top)
+        else:  # gameplay with no commentary: find the action from the audio instead
+            log(f"moments {cand['id']}: no speech or replay data; analysing the audio for action")
+            windows = energy_windows(audio_energy(cand), total, target, top=top)
+            if not windows:
+                log(f"moments {cand['id']}: no usable signal (no speech, no replay data, audio analysis empty)")
+                return []
 
     picks = brain.pick_moments(cand, windows, max_clips, (lo, hi))
     if picks is not None:

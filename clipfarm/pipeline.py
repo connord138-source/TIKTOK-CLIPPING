@@ -20,7 +20,7 @@ import uuid
 from datetime import datetime, timezone
 
 from . import analytics, brain, moments, planner, render, rights, scout, tiktok
-from .core import (DATA_DIR, WORK_DIR, Store, _job_ctx, hours_since, load_config, log, mutate,
+from .core import (DATA_DIR, ROOT, WORK_DIR, Store, _job_ctx, hours_since, load_config, log, mutate,
                    now_iso, read_json)
 
 TRENDS = DATA_DIR / "trends.json"
@@ -46,7 +46,7 @@ def select_candidates(n: int) -> list[dict]:
     counts = _creator_counts_today()
     cands = Store.all(Store.candidates)
     queued = [c for c in cands if c.get("status") == "queued"]
-    fresh = sorted([c for c in cands if c.get("status") == "new" and c.get("relevant")
+    fresh = sorted([c for c in cands if c.get("status") in ("new", "needs_rights") and c.get("relevant")
                     and (c.get("score") or 0) >= min_score
                     and (hours_since(c.get("published_at")) or 0) <= pc.get("max_source_age_hours", 72)],
                    key=lambda c: c.get("score") or 0, reverse=True)
@@ -58,9 +58,10 @@ def select_candidates(n: int) -> list[dict]:
             if c.get("rights") != "blocked":
                 Store.update(Store.candidates, c["id"], status="needs_rights")
             continue
-        if counts.get(c.get("channel"), 0) >= cap:
-            continue
-        counts[c.get("channel")] = counts.get(c.get("channel"), 0) + 1
+        if c.get("channel"):
+            if counts.get(c["channel"], 0) >= cap:
+                continue
+            counts[c["channel"]] = counts.get(c["channel"], 0) + 1
         picked.append(c)
     return picked[: max(n, len(queued))]
 
@@ -84,9 +85,15 @@ def produce_candidate(cand: dict) -> list[str]:
     Store.update(Store.candidates, cand["id"], status="processing")
     words: list[dict] = []
     if cand.get("platform") == "youtube":
-        words = moments.fetch_youtube_words(cand)
-        if not cand.get("heatmap") and not cand.get("duration"):
+        if not cand.get("channel") or not cand.get("duration"):  # found by search only: fill in the details
             cand.update(scout.youtube_meta(cand["url"]))
+            if not cand.get("rights_override"):
+                cand["rights"], cand["campaign_id"] = rights.resolve("youtube", cand.get("channel_id"), cand.get("channel"))
+            Store.upsert(Store.candidates, {k: v for k, v in cand.items() if k != "status"})
+            if not cand.get("manual") and not rights.auto_render_allowed(cand["rights"]):
+                Store.update(Store.candidates, cand["id"], status="needs_rights")
+                return []
+        words = moments.fetch_youtube_words(cand)
     else:  # whole short source (Twitch clip / file): download first, ASR if available
         src, _ = render.fetch_source(cand, 0, float(cand.get("duration") or 60))
         words = moments.whisper_words(src)
@@ -94,7 +101,8 @@ def produce_candidate(cand: dict) -> list[str]:
             cand["duration"] = render.probe(src)["duration"]
     picks = moments.find_moments(cand, words)
     if not picks:
-        Store.update(Store.candidates, cand["id"], status="skipped", notes="no clippable moment found")
+        Store.update(Store.candidates, cand["id"], status="skipped",
+                     notes="no clip made: no clear moment found (no speech to read and no stand-out action in the audio)")
         return []
     auto = cfg.get("produce", {}).get("auto_approve", {})
     made = []
@@ -108,15 +116,26 @@ def produce_candidate(cand: dict) -> list[str]:
             continue
         caption, tags = _compose_caption(pick, cand, cfg)
         status = "rendered"
-        if (auto.get("enabled") and out["qc"]["ok"] and (pick.get("score") or 0) >= auto.get("min_score", 80)
-                and cand.get("rights") in ("campaign", "permission", "own")):
-            status = "approved"
+        review = None
+        if cfg.get("produce", {}).get("visual_check", True) and out.get("grid"):
+            review = brain.review_clip(ROOT / out["grid"], pick.get("hook", ""), cand.get("title") or "")
+        if review and review.get("nsfw"):
+            status = "rejected"  # brand safety: never queue sexual content, whatever the mode
+        elif auto.get("enabled") and out["qc"]["ok"] and rights.auto_render_allowed(cand.get("rights", "unverified")):
+            if review:
+                ok = review["approve"] and review["quality"] >= auto.get("min_quality", 60)
+            else:
+                ok = (pick.get("score") or 0) >= auto.get("min_score", 80)
+            status = "approved" if ok else ("rejected" if review else "rendered")
         Store.update(Store.clips, clip_id, status=status, platform=cand.get("platform"),
                      source_url=cand["url"], source_title=cand.get("title"), channel=cand.get("channel"),
                      rights=cand.get("rights"), campaign_id=cand.get("campaign_id"),
                      start=pick["start"], end=pick["end"], duration=round(pick["end"] - pick["start"], 1),
                      score=pick.get("score"), hook=pick.get("hook"), caption=caption, hashtags=tags,
-                     reason=pick.get("reason"), picked_by=pick.get("source"), **out)
+                     reason=pick.get("reason"), picked_by=pick.get("source"), review=review,
+                     reject_reason=(review or {}).get("reason") if status == "rejected" else None,
+                     approved_at=now_iso() if status == "approved" else None,
+                     auto_decided=status in ("approved", "rejected"), **out)
         made.append(clip_id)
         log(f"clip {clip_id} [{status}] {pick.get('hook')!r} ({pick['end'] - pick['start']:.0f}s)")
     Store.update(Store.candidates, cand["id"], status="processed",
@@ -233,7 +252,11 @@ def rerender(clip_id: str) -> dict:
 def _clip_url(p: dict) -> dict:
     cand = scout.add_url(p["url"], rights_level=p.get("rights") or "unverified", title=p.get("title"),
                          campaign_id=p.get("campaign_id"), start=p.get("start"), end=p.get("end"))
-    return {"clips": produce_candidate(cand)}
+    try:
+        return {"clips": produce_candidate(cand)}
+    except Exception as e:
+        Store.update(Store.candidates, cand["id"], status="failed", notes=str(e)[:300])
+        raise
 
 
 def start_job(kind: str, params: dict | None = None) -> dict:
@@ -328,10 +351,30 @@ def reset_stuck() -> None:
             Store.update(Store.clips, c["id"], sending=False)
 
 
+_last_auto_send = [0.0]
+
+
+def auto_send_tick() -> None:
+    """The user's "send approved clips to my TikTok drafts automatically" switch."""
+    cfg = load_config()
+    if not cfg.get("tiktok", {}).get("auto_send") or time.time() - _last_auto_send[0] < 600:
+        return
+    if "video.upload" not in tiktok.granted_scopes():
+        return
+    if not any(c.get("status") == "approved" and not c.get("sending") for c in Store.all(Store.clips)):
+        return
+    p = planner.plan()
+    want = min(tiktok.PENDING_CAP, max(p["open_slots"], 1)) - p["in_drafts"]
+    if want > 0:
+        _last_auto_send[0] = time.time()
+        start_job("send_drafts", {"max": want})
+
+
 def autopilot_loop(stop: threading.Event) -> None:
     while not stop.wait(60):
         try:
             drafts_tick()
+            auto_send_tick()
             started = autopilot_tick()
             if started:
                 log(f"autopilot started: {started}")
