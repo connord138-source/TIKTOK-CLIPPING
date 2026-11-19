@@ -550,3 +550,38 @@ def test_auto_send_tick_only_runs_when_switched_on_and_connected(monkeypatch, fa
     assert started and started[0][0] == "send_drafts" and 1 <= started[0][1]["max"] <= 5
     pipeline.auto_send_tick()
     assert len(started) == 1                                       # waits 10 minutes before trying again
+
+
+# ---------------------------------------------------------------- over real HTTP, as the browser calls it
+def _post(port, path, body):
+    import urllib.request
+    req = urllib.request.Request(f"http://127.0.0.1:{port}{path}", data=json.dumps(body).encode(), method="POST",
+                                 headers={"X-Clipfarm": "1", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=10) as r:
+        return json.load(r)
+
+
+def test_scout_buttons_work_over_http_with_encoded_ids():
+    from http.server import ThreadingHTTPServer
+    from urllib.parse import quote
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), server.Handler)
+    port = httpd.server_address[1]
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    try:
+        for cid in ("yt:JEaW9KnTijQ", "yt:other-vid_2"):
+            Store.upsert(Store.candidates, {"id": cid, "platform": "youtube", "channel": "Some Creator",
+                                            "channel_id": "UC123", "rights": "unverified", "status": "needs_rights"})
+        enc = quote("yt:JEaW9KnTijQ", safe="")              # what encodeURIComponent sends: yt%3AJEaW9KnTijQ
+        assert "%3A" in enc
+        out = _post(port, f"/api/candidates/{enc}", {"rights": "permission", "apply_channel": True})   # Trust channel
+        assert out["rights"] == "permission"
+        assert rights.resolve("youtube", "UC123")[0] == "permission"
+        sibling = Store.get(Store.candidates, "yt:other-vid_2")
+        assert sibling["rights"] == "permission" and sibling["status"] == "new"
+        assert _post(port, f"/api/candidates/{enc}", {"action": "skip"})["status"] == "skipped"       # Skip
+        assert _post(port, f"/api/candidates/{enc}", {"action": "queue"})["status"] == "queued"       # Clip
+    finally:
+        httpd.shutdown()
+        src = core.load_sources()                            # leave the shared test config as it was
+        src["channels"] = [c for c in src["channels"] if c.get("id") != "UC123"]
+        core.save_sources(src)

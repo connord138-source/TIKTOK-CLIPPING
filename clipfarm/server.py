@@ -12,7 +12,7 @@ import threading
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from . import analytics, brain, pipeline, planner, rights, tiktok
 from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, keys_status, load_config,
@@ -335,7 +335,8 @@ class Handler(BaseHTTPRequestHandler):
             if m := re.fullmatch(r"/api/clips/(c\d+)", u.path):
                 return self._json(clip_action(m.group(1), body))
             if m := re.fullmatch(r"/api/candidates/(.+)", u.path):
-                return self._json(candidate_action(m.group(1), body))
+                # ids look like "yt:VIDEOID"; the browser sends the colon percent-encoded
+                return self._json(candidate_action(unquote(m.group(1)), body))
             if u.path == "/api/jobs":
                 return self._json(pipeline.start_job(body["type"], body.get("params")))
             if u.path == "/api/sources/channel":
