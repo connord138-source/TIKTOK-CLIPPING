@@ -11,6 +11,7 @@ in data/secrets/tokens.json (gitignored).
 from __future__ import annotations
 
 import hashlib
+import os
 
 from .core import SECRETS_DIR, Store, _lock, load_config, read_json, save_config, write_json
 
@@ -22,7 +23,7 @@ MAX_PER_DAY = 15  # TikTok's own ceiling for automatic posts per account is "typ
 
 
 def account_id(platform: str, remote_id: str) -> str:
-    return {"tiktok": "tt", "youtube": "yt", "instagram": "ig"}.get(platform, platform[:2]) + "_" + \
+    return {"tiktok": "tt", "youtube": "yt", "instagram": "ig", "uploadpost": "up"}.get(platform, platform[:2]) + "_" + \
         hashlib.sha1(remote_id.encode()).hexdigest()[:8]
 
 
@@ -56,8 +57,17 @@ def all_accounts(platform: str | None = None) -> list[dict]:
     return [a for a in accts if not platform or a.get("platform") == platform]
 
 
+def usable(a: dict) -> bool:
+    """Can clips be delivered to this account right now?"""
+    if not a.get("enabled", True):
+        return False
+    if a.get("via") == "uploadpost":   # a posting-service profile: needs the key and a connected platform
+        return bool(os.environ.get("UPLOADPOST_API_KEY")) and bool(a.get("platforms")) and not a.get("missing")
+    return bool(token(a["id"]))
+
+
 def active(platform: str | None = None) -> list[dict]:
-    return [a for a in all_accounts(platform) if a.get("enabled", True) and token(a["id"])]
+    return [a for a in all_accounts(platform) if usable(a)]
 
 
 def get(aid: str | None) -> dict | None:
@@ -98,7 +108,9 @@ def update(aid: str, patch: dict) -> dict:
         if patch["privacy"] not in PRIVACY + (None, ""):
             raise ValueError("unknown privacy level")
         out["privacy"] = patch["privacy"] or None
-    for flag in ("enabled", "allow_comment", "allow_duet", "allow_stitch"):
+    if "platforms_off" in patch:
+        out["platforms_off"] = [p for p in (patch["platforms_off"] or []) if p in ("tiktok", "instagram", "youtube")]
+    for flag in ("enabled", "allow_comment", "allow_duet", "allow_stitch", "auto_post"):
         if flag in patch:
             out[flag] = bool(patch[flag])
     return upsert({"id": aid, **out})

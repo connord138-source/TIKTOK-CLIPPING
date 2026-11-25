@@ -120,7 +120,7 @@ def _match_unlinked(vids: list[dict]) -> int:
     """Link TikTok videos to clips the user posted without pasting the URL (caption similarity)."""
     clips = Store.all(Store.clips)
     linked = {c.get("tiktok_id") for c in clips if c.get("tiktok_id")}
-    pool = [c for c in clips if not c.get("tiktok_id") and c.get("status") in ("approved", "drafted", "posted")]
+    pool = [c for c in clips if not c.get("tiktok_id") and c.get("status") in ("approved", "drafted", "scheduled", "posted")]
     n = 0
     for v in vids:
         if v["tiktok_id"] in linked or not pool:
@@ -171,7 +171,18 @@ def run_metrics() -> dict:
     """Pull stats for every TikTok account (official API where permitted, public profile otherwise)."""
     cfg = load_config()
     method = cfg.get("analytics", {}).get("method", "auto")
-    accts = accounts.all_accounts("tiktok") or [{"id": None, "handle": cfg.get("account_handle")}]
+    accts = accounts.all_accounts("tiktok") + [
+        {"id": None, "name": a.get("name"), "handle": (a.get("platforms") or {}).get("tiktok", {}).get("handle")}
+        for a in accounts.all_accounts("uploadpost") if (a.get("platforms") or {}).get("tiktok")]
+    uniq, seen = [], set()
+    for a in accts:   # the same TikTok may be connected both ways: read it once
+        h = (a.get("handle") or "").lower()
+        if h and h in seen:
+            continue
+        seen.add(h)
+        uniq.append(a)
+    accts = uniq
+    accts = accts or [{"id": None, "handle": cfg.get("account_handle")}]
     vids, followers, sources, errors = [], [], set(), []
     for a in accts:
         try:

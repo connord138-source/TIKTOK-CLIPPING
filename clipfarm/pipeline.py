@@ -19,7 +19,7 @@ import traceback
 import uuid
 from datetime import datetime, timezone
 
-from . import accounts, analytics, brain, moments, niches, planner, render, rights, scout, tiktok
+from . import accounts, analytics, brain, moments, niches, planner, render, rights, scout, tiktok, uploadpost
 from .core import (DATA_DIR, ROOT, WORK_DIR, Store, _job_ctx, hours_since, load_config, log, mutate,
                    now_iso, read_json)
 
@@ -246,8 +246,12 @@ WORKFLOWS = {
     "send_draft": lambda p: tiktok.send_clip(p["clip_id"]),
     "send_drafts": lambda p: tiktok.send_ready(p.get("max")),
     "sync_drafts": lambda p: tiktok.sync_drafts(),
+    "post_clip": lambda p: uploadpost.post_clip(p["clip_id"]),
+    "post_ready": lambda p: uploadpost.post_ready(p.get("max"), only_auto=not p.get("all")),
+    "sync_posts": lambda p: uploadpost.sync_posts(),
+    "sync_profiles": lambda p: {"profiles": len(uploadpost.sync_profiles())},
 }
-PARALLEL_OK = {"clip_url", "send_draft"}  # several of these may be queued at once
+PARALLEL_OK = {"clip_url", "send_draft", "post_clip"}  # several of these may be queued at once
 
 
 def rerender(clip_id: str) -> dict:
@@ -392,11 +396,35 @@ def auto_send_tick() -> None:
         start_job("send_drafts", {"max": want})
 
 
+_last_post_tick = [0.0, 0.0]   # [last scheduling pass, last status check]
+
+
+def posting_tick() -> None:
+    """Upload-Post profiles: schedule clips for profiles with automatic posting on, and notice
+    when sent clips go live. Runs whether or not autopilot is on."""
+    if not uploadpost.api_key():
+        return
+    now = time.time()
+    if now - _last_post_tick[1] >= 120 and uploadpost._scheduled_clips():
+        _last_post_tick[1] = now
+        res = uploadpost.sync_posts()
+        if res["posted"] or res["failed"]:
+            log(f"upload-post: {res}")
+    if now - _last_post_tick[0] >= 300 and any(a.get("auto_post") for a in accounts.active("uploadpost")):
+        _last_post_tick[0] = now
+        p = planner.plan()
+        waiting = sum(1 for a in p["accounts"] if a.get("via") == "uploadpost" and a.get("auto_post")
+                      for b in a["slots"] if b["state"] == "assigned" and not b.get("queued"))
+        if waiting:
+            start_job("post_ready")
+
+
 def autopilot_loop(stop: threading.Event) -> None:
     while not stop.wait(60):
         try:
             drafts_tick()
             auto_send_tick()
+            posting_tick()
             started = autopilot_tick()
             if started:
                 log(f"autopilot started: {started}")

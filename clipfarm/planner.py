@@ -85,10 +85,13 @@ def performance(cfg: dict, tz) -> dict:
     return out
 
 
+QUEUED = ("drafted", "scheduled")   # delivered, waiting to go live
+
+
 def _views(cfg: dict) -> list[dict]:
     """The accounts to plan for. Before any account is connected, one stand-in keeps the
     dashboard working."""
-    accts = accounts.active("tiktok")
+    accts = accounts.active()
     return accts or [{"id": None, "name": cfg.get("display_name") or cfg.get("account_handle") or "TikTok",
                       "handle": cfg.get("account_handle"), "niches": [], "posts_per_day": None}]
 
@@ -122,7 +125,7 @@ def plan() -> dict:
         st = c.get("status")
         if st == "posted" and local_date(c.get("posted_at"), tz) == today:
             per[owner(c) or first]["posted"].append(c)
-        elif st == "drafted":
+        elif st in QUEUED:
             per[owner(c) or first]["ready"].append(c)
         elif st == "approved":
             (per[owner(c)]["ready"] if owner(c) else floating).append(c)
@@ -142,8 +145,10 @@ def plan() -> dict:
     acct_plans, merged = [], []
     for v in views:
         me = per[v["id"]]
-        # drafted = already sitting in the account's TikTok drafts, so they take the next slots first
-        queue = sorted(me["ready"], key=lambda c: (c.get("status") == "drafted", c.get("score") or 0), reverse=True)
+        # clips already in TikTok drafts or waiting at the posting service take the next slots first
+        rank = {"scheduled": 0, "drafted": 1}
+        queue = sorted(me["ready"], key=lambda c: (rank.get(c.get("status"), 2),
+                                                   (c.get("post") or {}).get("scheduled_for") or "", -(c.get("score") or 0)))
         board = []
         for i, hhmm in enumerate(pick_slots(cad.get("slots", ["08:00", "12:00", "16:00", "19:00", "22:00"]), me["target"])):
             h, m = map(int, hhmm.split(":"))
@@ -156,10 +161,14 @@ def plan() -> dict:
                 clip = queue.pop(0) if queue else None
                 board.append({"time": hhmm, "state": "assigned" if clip else "empty",
                               "clip_id": clip["id"] if clip else None, "due": at <= now_local,
-                              "in_drafts": bool(clip and clip.get("status") == "drafted")})
+                              "in_drafts": bool(clip and clip.get("status") == "drafted"),
+                              "queued": (clip or {}).get("status") if clip and clip.get("status") in QUEUED else None})
         for b in board:
-            b["account_id"], b["account"] = v["id"], v.get("name")
+            b["account_id"], b["account"], b["via"] = v["id"], v.get("name"), v.get("via") or "tiktok_api"
         acct_plans.append({"id": v["id"], "name": v.get("name"), "handle": v.get("handle"), "niches": v.get("niches") or [],
+                           "via": v.get("via") or "tiktok_api", "auto_post": bool(v.get("auto_post")),
+                           "platforms": sorted(v.get("platforms") or {}) or ["tiktok"],
+                           "scheduled": sum(1 for c in me["ready"] if c.get("status") == "scheduled"),
                            "target": me["target"], "posted_today": len(me["posted"]), "ready": len(me["ready"]),
                            "in_drafts": sum(1 for c in me["ready"] if c.get("status") == "drafted"),
                            "open_slots": sum(1 for b in board if b["state"] in ("assigned", "empty")), "slots": board})
@@ -169,7 +178,7 @@ def plan() -> dict:
     target, open_slots, ready_n = total("target"), total("open_slots"), total("ready")
 
     # production need: fill today's open slots + a buffer, discounting by approval rate
-    decided = [c for c in clips if c.get("status") in ("approved", "drafted", "posted", "rejected")]
+    decided = [c for c in clips if c.get("status") in ("approved", "drafted", "scheduled", "posted", "rejected")]
     approval = (sum(1 for c in decided if c["status"] != "rejected") / len(decided)) if len(decided) >= 10 else 0.7
     approval = max(approval, 0.3)
     need_ready = open_slots + math.ceil(target * cad.get("buffer_days", 1.0))

@@ -52,7 +52,7 @@ const runJob = (type, params) => act(() => api("/api/jobs", { type, params }), `
 
 const STATUS = {
   rendered: ["warn", "needs review"], approved: ["good", "ready to post"], posted: ["info", "posted"],
-  drafted: ["accent", "in TikTok drafts"], sending: ["accent", "sending to TikTok"],
+  drafted: ["accent", "in TikTok drafts"], sending: ["accent", "sending"], scheduled: ["info", "scheduled to post"],
   rejected: ["neutral", "rejected"], failed: ["bad", "failed"], rendering: ["accent", "rendering"],
   new: ["neutral", "new"], queued: ["accent", "queued"], processing: ["accent", "processing"],
   processed: ["good", "processed"], skipped: ["neutral", "skipped"], needs_rights: ["warn", "needs your call"],
@@ -62,7 +62,7 @@ const RIGHTS = { campaign: "good", permission: "good", own: "good", official: "i
 const rightsChip = (r) => h("span", { class: `chip ${RIGHTS[r] || "neutral"}`, title: "rights level" }, r || "unverified");
 
 // ---------------------------------------------------------------- state
-const S = { tab: "today", state: null, libFilter: "approved,drafted", scoutFilter: "needs_rights,new,queued", sort: { key: "views", dir: -1 } };
+const S = { tab: "today", state: null, libFilter: "approved,drafted,scheduled", scoutFilter: "needs_rights,new,queued", sort: { key: "views", dir: -1 } };
 
 async function refresh(force = false) {
   try { S.state = await api("/api/state"); } catch (e) { toast("Server unreachable: " + e.message, true); return; }
@@ -106,7 +106,7 @@ function setTab(t) {
 // ---------------------------------------------------------------- Today
 async function viewToday() {
   const st = S.state, p = st.plan, k = st.kpis;
-  const clips = await api("/api/clips?status=approved,drafted,posted");
+  const clips = await api("/api/clips?status=approved,drafted,scheduled,posted");
   const byId = Object.fromEntries(clips.map((c) => [c.id, c]));
   const pct = Math.min(100, Math.round((p.posted_today / Math.max(p.target, 1)) * 100));
 
@@ -122,6 +122,7 @@ async function viewToday() {
     const c = s.clip_id && byId[s.clip_id];
     const label = { posted: ["info", "posted"], missed: ["neutral", "missed"], assigned: ["good", s.due ? "post now" : "assigned"], empty: ["warn", "empty"] }[s.state];
     if (s.in_drafts) { label[0] = "accent"; label[1] = s.due ? "post from drafts" : "in TikTok drafts"; }
+    if (s.queued === "scheduled") { label[0] = "info"; label[1] = s.due ? "publishing" : "scheduled"; }
     return h("div", { class: "slot" + (s.due && s.state === "assigned" ? " due" : "") },
       h("div", { class: "row" }, h("span", { class: "time" }, s.time), h("span", { class: `chip ${label[0]}` }, label[1])),
       c && c.thumb ? h("img", { src: "/" + c.thumb, alt: c.hook || "" }) : null,
@@ -132,6 +133,7 @@ async function viewToday() {
         h("button", { class: "btn sm", onclick: () => copy(c.caption) }, "Copy caption"),
         h("button", { class: "btn sm" + (s.in_drafts ? " primary" : ""), onclick: () => markPosted(c) }, "Posted")) : null,
       c ? draftError(c) : null,
+      c && s.queued === "scheduled" ? h("div", { class: "muted", style: { fontSize: "12px", marginTop: "6px" } }, "Upload-Post will publish this with its caption. Nothing for you to do.") : null,
       c && s.in_drafts ? h("div", { class: "muted", style: { fontSize: "12px", marginTop: "6px" } }, "In your TikTok inbox. Open TikTok, tap the notification, paste the caption, post.") : null);
   }));
 
@@ -162,7 +164,8 @@ async function viewToday() {
     h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)),
       p.accounts.length > 1
         ? p.accounts.map((a) => h("div", { style: { marginBottom: "16px" } },
-            h("h3", { style: { margin: "0 0 8px" } }, a.name || "Account", h("small", {}, `${a.handle ? "@" + a.handle + " · " : ""}posted ${a.posted_today}/${a.target} · ${a.in_drafts} in drafts`)),
+            h("h3", { style: { margin: "0 0 8px" } }, a.name || "Account", h("small", {}, `${a.handle ? "@" + a.handle + " · " : ""}posted ${a.posted_today}/${a.target} · ` +
+              (a.via === "uploadpost" ? `${a.scheduled} scheduled · ${a.auto_post ? "posts automatically" : "automatic posting off"}` : `${a.in_drafts} in drafts`))),
             board(a.slots)))
         : board(p.slots),
       p.unplaced ? h("div", { class: "callout", style: { marginTop: "10px" } }, `${p.unplaced} approved clip(s) belong to a niche that no account takes. Set the account's niches in Connections.`) : null,
@@ -209,13 +212,22 @@ function fullAutoCard() {
       } }, "Turn on full auto")));
 }
 
+const acctOf = (c) => (S.state.plan.accounts || []).find((a) => a.id && a.id === c.account_id);
 function sendBtn(c, cls = "btn sm primary") {
+  if (c.status === "scheduled") {
+    const when = (c.post || {}).scheduled_for;
+    return when ? h("button", { class: cls.replace(" primary", ""), title: "Take it back before it is published",
+      onclick: () => act(() => api(`/api/clips/${c.id}`, { action: "cancel_post" }), `${c.id} taken back`) }, "Cancel") : null;
+  }
   if (c.status !== "approved") return null;
   if (c.sending) return h("button", { class: cls, disabled: true }, "Sending…");
+  const a = acctOf(c);
+  if (a && a.via === "uploadpost") return h("button", { class: cls, title: `Publish now to ${a.platforms.join(", ")} with the caption`,
+    onclick: () => { if (confirm(`Post ${c.id} now to ${a.name} (${a.platforms.join(", ")})? It goes public with its caption.`)) act(() => api(`/api/clips/${c.id}`, { action: "post_now" }), `Posting ${c.id}`); } }, "Post now");
   if (!S.state.tiktok_api.can_upload) return h("button", { class: cls.replace(" primary", ""), title: "One-time setup in the Connections tab", onclick: () => setTab("connections") }, "Connect TikTok to send");
   return h("button", { class: cls, title: "Upload this clip to your TikTok drafts", onclick: () => act(() => api(`/api/clips/${c.id}`, { action: "send_to_drafts" }), `Sending ${c.id} to your TikTok drafts`) }, "Send to TikTok drafts");
 }
-const draftError = (c) => c.draft_error ? h("div", { class: "issues", style: { marginTop: "6px" } }, "Not sent: " + c.draft_error) : null;
+const draftError = (c) => c.draft_error ? h("div", { class: "issues", style: { marginTop: "6px" } }, (c.status === "posted" ? "" : "Not sent: ") + c.draft_error) : null;
 
 function kpi(label, value, sub, pct) {
   return h("div", { class: "card kpi" }, h("div", { class: "label" }, label), h("div", { class: "value" }, value),
@@ -268,7 +280,7 @@ function clipCard(c) {
 // ---------------------------------------------------------------- Library
 async function viewLibrary() {
   const clips = await api("/api/clips?status=" + S.libFilter);
-  const filters = [["approved,drafted", "Ready to post"], ["posted", "Posted"], ["rejected", "Rejected"], ["failed", "Failed"], ["approved,drafted,posted,rejected,failed,rendered", "All"]];
+  const filters = [["approved,drafted,scheduled", "Ready or scheduled"], ["posted", "Posted"], ["rejected", "Rejected"], ["failed", "Failed"], ["approved,drafted,scheduled,posted,rejected,failed,rendered", "All"]];
   const head = h("div", { class: "section-head" }, h("h1", {}, "Clip library"), h("span", { class: "spacer" }),
     filters.map(([v, l]) => h("button", { class: "btn sm" + (S.libFilter === v ? " primary" : ""), onclick: () => { S.libFilter = v; renderTab(true); } }, l)));
   if (!clips.length) return h("div", {}, head, h("div", { class: "empty" }, "No clips here yet."));
@@ -281,6 +293,8 @@ async function viewLibrary() {
       c.status === "failed" ? h("div", { class: "issues" }, c.error || "") : null,
       draftError(c),
       h("div", { class: "caption-box" }, c.caption || ""),
+      c.post && c.post.results ? h("div", { class: "meta" }, Object.entries(c.post.results).map(([pl, r]) =>
+        r.success ? (r.url ? h("a", { href: r.url, target: "_blank", rel: "noopener" }, `${pl} ↗`) : h("span", {}, `${pl} ✓`)) : h("span", { class: "issues" }, `${pl} failed`))) : null,
       c.status === "posted" ? h("div", { class: "meta" }, `${fmt(m.views)} views · ${fmt(m.likes)} likes · ${fmt(m.comments)} comments · ${fmt(m.shares)} shares`,
         c.est_earnings != null ? ` · ${money(c.est_earnings)}` : "", c.tiktok_url ? h("a", { href: c.tiktok_url, target: "_blank", rel: "noopener" }, "TikTok ↗") : null) : null,
       h("div", { class: "actions" },
@@ -690,6 +704,48 @@ async function viewConnections() {
       h("button", { class: "btn primary", onclick: () => (ti.value.trim() && ts.value.trim()) ? saveKeys({ TWITCH_CLIENT_ID: ti.value, TWITCH_CLIENT_SECRET: ts.value }, "Twitch keys saved") : toast("Paste both values", true) }, "Save")),
     h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Register an app at dev.twitch.tv/console to get them."));
 
+  // Upload-Post (automatic posting)
+  const up = cn.uploadpost;
+  const upKey = secret("Upload-Post API key");
+  const upCard = h("div", { class: "card" },
+    h("h2", {}, "Upload-Post", h("small", {}, "posts clips publicly with captions to TikTok, Reels and Shorts")),
+    h("div", { class: "row" }, keyState("UPLOADPOST_API_KEY"),
+      up.configured ? h("button", { class: "btn sm", onclick: () => act(() => api("/api/uploadpost/refresh", {}), "Profiles refreshed") }, "Refresh profiles") : null),
+    h("div", { class: "row", style: { marginTop: "10px" } }, upKey,
+      h("button", { class: "btn primary", onclick: () => upKey.value.trim() ? saveKeys({ UPLOADPOST_API_KEY: upKey.value }, "Upload-Post key saved") : toast("Paste the key first", true) }, "Save"),
+      k.UPLOADPOST_API_KEY.source === "dashboard" ? h("button", { class: "btn danger", onclick: () => saveKeys({ UPLOADPOST_API_KEY: "" }, "Upload-Post key removed") }, "Remove") : null),
+    !up.configured ? h("p", { class: "muted", style: { fontSize: "13px" } }, "Sign up at upload-post.com (Basic plan for TikTok), create a profile under User Management, connect your accounts to it, then generate a key under API Keys and paste it here.") : null,
+    up.configured && !up.accounts.length ? h("div", { class: "callout", style: { marginTop: "10px" } }, "No profiles found. Create one in Upload-Post under User Management, connect your accounts, then click Refresh profiles.") : null,
+    up.accounts.length ? h("div", { class: "table-wrap", style: { marginTop: "12px" } }, h("table", {},
+      h("thead", {}, h("tr", {}, ["Profile", "Posts to", "Niches", "Posts a day", "Post automatically", "On"].map((x) => h("th", {}, x)))),
+      h("tbody", {}, up.accounts.map((a) => {
+        const patch = (body, ok) => act(() => api(`/api/accounts/${a.id}`, body), ok || "Profile updated");
+        const off = a.platforms_off || [];
+        const plats = Object.entries(a.platforms || {}).map(([pl, info]) => h("label", { style: { display: "inline-flex", gap: "4px", marginRight: "10px", fontSize: "13px" }, title: info.reauth ? "Upload-Post says this account needs reconnecting" : "" },
+          h("input", { type: "checkbox", checked: !off.includes(pl), onchange: (e) => patch({ platforms_off: e.target.checked ? off.filter((x) => x !== pl) : [...off, pl] }) }),
+          `${pl}${info.handle ? " @" + info.handle : ""}`, info.reauth ? h("span", { class: "chip warn" }, "reconnect") : null));
+        const nicheBoxes = S.state.niches.map((n) => h("label", { style: { display: "inline-flex", gap: "4px", marginRight: "10px", fontSize: "13px" } },
+          h("input", { type: "checkbox", checked: !(a.niches || []).length || a.niches.includes(n.id), onchange: (e) => {
+            const all = S.state.niches.map((x) => x.id);
+            let cur = (a.niches || []).length ? [...a.niches] : all;
+            cur = e.target.checked ? [...new Set([...cur, n.id])] : cur.filter((x) => x !== n.id);
+            if (!cur.length) { e.target.checked = true; return toast("A profile needs at least one niche", true); }
+            patch({ niches: cur.length === all.length ? [] : cur });
+          } }), n.name));
+        return h("tr", {},
+          h("td", {}, h("strong", {}, a.name || a.profile), a.missing ? h("span", { class: "chip bad", style: { marginLeft: "6px" } }, "gone from Upload-Post") : null),
+          h("td", {}, plats.length ? plats : h("span", { class: "muted" }, "nothing connected")),
+          h("td", {}, nicheBoxes),
+          h("td", {}, h("input", { type: "number", min: 1, max: 15, value: a.posts_per_day || "", placeholder: "auto", style: { width: "80px" }, "aria-label": "Posts a day",
+            onchange: (e) => patch({ posts_per_day: e.target.value ? +e.target.value : null }) })),
+          h("td", {}, h("label", { class: "switch" }, h("input", { type: "checkbox", checked: !!a.auto_post, onchange: (e) => {
+            if (e.target.checked && !confirm(`Turn on automatic posting for ${a.name || a.profile}?\n\nApproved clips assigned to this profile will be published PUBLICLY with their captions at each slot time, without you doing anything.\n\nYou can turn it off at any time, and cancel a scheduled clip from the Today tab.`)) { e.target.checked = false; return; }
+            patch({ auto_post: e.target.checked }, e.target.checked ? "Automatic posting is on" : "Automatic posting is off");
+          } }), a.auto_post ? "on" : "off")),
+          h("td", {}, h("input", { type: "checkbox", checked: a.enabled !== false, "aria-label": "Use this profile", onchange: (e) => patch({ enabled: e.target.checked }) })));
+      })))) : null,
+    up.accounts.length ? h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Each profile posts one clip to all its ticked platforms. TikTok allows about 15 automatic posts per account per day. If the same TikTok account is also connected in the TikTok box above, untick On there so clips aren't planned twice.") : null);
+
   // Phone page
   const ph = cn.phone;
   let qrImg = null;
@@ -716,7 +772,7 @@ async function viewConnections() {
 
   return h("div", { class: "grid" }, h("div", { class: "section-head" }, h("h1", {}, "Connections"),
     h("span", { class: "muted" }, "Keys are stored only on this computer (data/secrets, never committed).")),
-    tiktokCard, phoneCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
+    upCard, tiktokCard, phoneCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
 }
 
 // ---------------------------------------------------------------- boot

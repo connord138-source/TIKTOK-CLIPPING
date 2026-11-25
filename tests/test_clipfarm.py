@@ -815,3 +815,197 @@ def test_more_posts_than_named_slots_are_spread_through_the_day():
     slots = ["07:30", "11:30", "14:30", "17:30", "20:00", "22:30"]
     out = planner.pick_slots(slots, 15)
     assert len(out) == 15 and out[0] == "07:30" and out[-1] == "22:30" and out == sorted(out) and len(set(out)) == 15
+
+
+# ---------------------------------------------------------------- Upload-Post (posting service)
+from clipfarm import uploadpost  # noqa: E402
+
+
+class FakeUploadPost:
+    def __init__(self):
+        self.uploads, self.deleted, self.auth = [], [], []
+        self.profiles = [{"username": "main", "display_name": "Main page", "social_accounts": {
+            "tiktok": {"handle": "chat.clip.that", "display_name": "CHAT", "reauth_required": False},
+            "youtube": {"handle": "ChatClipThat", "display_name": "Chat Clip That"}, "instagram": ""}}]
+        self.upload_status = None          # set to an int to make uploads fail
+        self.job = {"status": "pending", "results": []}
+        fake = self
+
+        class H(BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def _send(self, code, obj):
+                raw = json.dumps(obj).encode()
+                self.send_response(code)
+                self.send_header("Content-Length", str(len(raw)))
+                self.end_headers()
+                self.wfile.write(raw)
+
+            def _auth(self):
+                fake.auth.append(self.headers.get("Authorization"))
+                return self.headers.get("Authorization") == "Apikey good-key"
+
+            def do_GET(self):  # noqa: N802
+                if not self._auth():
+                    return self._send(401, {"message": "Invalid or expired token"})
+                if self.path == "/api/uploadposts/users":
+                    return self._send(200, {"success": True, "profiles": fake.profiles})
+                if self.path.startswith("/api/uploadposts/status"):
+                    return self._send(200, fake.job)
+                return self._send(404, {})
+
+            def do_POST(self):  # noqa: N802
+                body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+                if not self._auth():
+                    return self._send(401, {"message": "Invalid or expired token"})
+                if fake.upload_status:
+                    return self._send(fake.upload_status, {"message": "TikTok uploads are not available on the Free plan"})
+                fake.uploads.append({"body": body, "idem": self.headers.get("Idempotency-Key"), "ctype": self.headers.get("Content-Type")})
+                if b'name="scheduled_date"' in body:
+                    return self._send(202, {"success": True, "job_id": f"job{len(fake.uploads)}"})
+                return self._send(200, {"success": True, "request_id": f"req{len(fake.uploads)}", "message": "Upload initiated successfully in background."})
+
+            def do_DELETE(self):  # noqa: N802
+                self._auth()
+                fake.deleted.append(self.path)
+                return self._send(200, {"success": True})
+
+        self.httpd = HTTPServer(("127.0.0.1", 0), H)
+        self.port = self.httpd.server_address[1]
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+
+
+def _field(body: bytes, name: str) -> list[str]:
+    import re as _re
+    return [m.decode() for m in _re.findall(rb'name="' + name.encode().replace(b"[", rb"\[").replace(b"]", rb"\]") + rb'"\r\n\r\n(.*?)\r\n--', body, _re.S)]
+
+
+@pytest.fixture
+def fake_up(monkeypatch, clean_config, farm_root):
+    fake = FakeUploadPost()
+    monkeypatch.setattr(uploadpost, "API", f"http://127.0.0.1:{fake.port}")
+    monkeypatch.setattr(uploadpost.time, "sleep", lambda s: None)
+    monkeypatch.setenv("UPLOADPOST_API_KEY", "good-key")
+    from clipfarm import accounts
+    accounts.TOKENS_FILE.unlink(missing_ok=True)
+    yield fake
+    fake.httpd.shutdown()
+
+
+def test_upload_post_profiles_become_accounts_and_keep_their_settings(fake_up):
+    from clipfarm import accounts
+    accts = uploadpost.sync_profiles()
+    assert len(accts) == 1
+    a = accts[0]
+    assert a["via"] == "uploadpost" and a["profile"] == "main" and a["name"] == "Main page" and a["handle"] == "chat.clip.that"
+    assert sorted(a["platforms"]) == ["tiktok", "youtube"]              # instagram is not connected
+    assert a["auto_post"] is False                                      # nothing posts until switched on
+    assert accounts.usable(a) and [x["id"] for x in accounts.active()] == [a["id"]]
+    accounts.update(a["id"], {"auto_post": True, "posts_per_day": 12, "niches": ["gta6"]})
+    fake_up.profiles[0]["social_accounts"]["instagram"] = {"handle": "chatclipthat"}
+    again = uploadpost.sync_profiles()[0]
+    assert again["auto_post"] is True and again["posts_per_day"] == 12 and "instagram" in again["platforms"]
+    fake_up.profiles.clear()
+    gone = uploadpost.sync_profiles()[0]
+    assert gone["missing"] is True and not accounts.usable(gone)
+    assert fake_up.auth[0] == "Apikey good-key"
+
+
+def test_upload_post_bad_key_gives_a_plain_message(fake_up, monkeypatch):
+    monkeypatch.setenv("UPLOADPOST_API_KEY", "wrong")
+    with pytest.raises(uploadpost.UploadPostError, match="rejected the API key"):
+        uploadpost.sync_profiles()
+
+
+def test_clip_is_scheduled_with_caption_then_marked_posted_with_links(fake_up, farm_root):
+    from clipfarm import accounts
+    acct = uploadpost.sync_profiles()[0]
+    f = _approved_clip(farm_root)
+    Store.update(Store.clips, "c0001", hook="Gator ate the getaway car", caption="Gator ate the getaway car — via xqc\n\n#gta6 #gtavi",
+                 hashtags=["#gta6", "#gtavi"], niche="gta6")
+    p = planner.plan()
+    assert p["accounts"][0]["via"] == "uploadpost" and Store.get(Store.clips, "c0001")["account_id"] == acct["id"]
+
+    when = datetime.now(timezone.utc) + timedelta(hours=2)
+    out = uploadpost.post_clip("c0001", when)
+    up = fake_up.uploads[-1]
+    body = up["body"]
+    assert up["ctype"].startswith("multipart/form-data; boundary=") and up["idem"] == f"c0001-{acct['id']}-1"
+    assert _field(body, "user") == ["main"] and _field(body, "platform[]") == ["tiktok", "youtube"]
+    assert _field(body, "title") == ["Gator ate the getaway car — via xqc\n\n#gta6 #gtavi"]
+    assert _field(body, "youtube_title") == ["Gator ate the getaway car"] and _field(body, "privacyStatus") == ["public"]
+    assert _field(body, "post_mode") == ["DIRECT_POST"] and _field(body, "privacy_level") == ["PUBLIC_TO_EVERYONE"]
+    assert _field(body, "is_aigc") == ["false"] and _field(body, "categoryId") == ["20"] and _field(body, "tags[]") == ["gta6", "gtavi"]
+    assert _field(body, "scheduled_date") == [when.strftime("%Y-%m-%dT%H:%M:%SZ")] and not _field(body, "media_type")
+    assert f.read_bytes() in body and b'filename="c0001.mp4"' in body
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "scheduled" and clip["post"]["job_id"] == "job1" and out["scheduled_for"]
+    slot = next(b for b in planner.plan()["slots"] if b.get("clip_id") == "c0001")
+    assert slot["queued"] == "scheduled" and planner.plan()["accounts"][0]["scheduled"] == 1
+
+    assert uploadpost.sync_posts() == {"posted": 0, "failed": 0}          # not time yet: no status call needed
+    Store.update(Store.clips, "c0001", post={**clip["post"], "scheduled_for": "2026-01-01T00:00:00Z"})
+    assert uploadpost.sync_posts() == {"posted": 0, "failed": 0}          # still pending at the service
+    fake_up.job = {"status": "completed", "results": [
+        {"platform": "tiktok", "success": True, "url": "https://www.tiktok.com/@chat.clip.that/video/7301234567890123456"},
+        {"platform": "youtube", "success": False, "message": "quota exceeded"}]}
+    assert uploadpost.sync_posts() == {"posted": 1, "failed": 0}
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "posted" and clip["tiktok_id"] == "7301234567890123456" and clip["posted_at"]
+    assert "youtube: quota exceeded" in clip["draft_error"] and clip["post"]["results"]["tiktok"]["success"]
+
+
+def test_post_now_failure_paths_and_cancel(fake_up, farm_root):
+    acct = uploadpost.sync_profiles()[0]
+    _approved_clip(farm_root)
+    planner.plan()
+    fake_up.upload_status = 403
+    with pytest.raises(uploadpost.UploadPostError, match="Basic plan"):
+        uploadpost.post_clip("c0001")
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "approved" and "Basic plan" in clip["draft_error"] and clip["post_attempts"] == 1
+    fake_up.upload_status = None
+
+    uploadpost.post_clip("c0001")                                          # now, not scheduled
+    body = fake_up.uploads[-1]["body"]
+    assert _field(body, "async_upload") == ["true"] and not _field(body, "scheduled_date")
+    assert fake_up.uploads[-1]["idem"] == f"c0001-{acct['id']}-2"          # a retry is a new request
+    assert Store.get(Store.clips, "c0001")["post"]["request_id"] == "req1"
+    with pytest.raises(uploadpost.UploadPostError, match="already being published"):
+        uploadpost.cancel("c0001")
+    fake_up.job = {"status": "completed", "results": [{"platform": "tiktok", "success": False, "message": "video too short"},
+                                                       {"platform": "youtube", "success": False, "message": "bad file"}]}
+    assert uploadpost.sync_posts() == {"posted": 0, "failed": 1}
+    clip = Store.get(Store.clips, "c0001")
+    assert clip["status"] == "approved" and "tiktok: video too short" in clip["draft_error"]
+
+    uploadpost.post_clip("c0001", datetime.now(timezone.utc) + timedelta(hours=3))
+    assert Store.get(Store.clips, "c0001")["status"] == "scheduled"
+    assert server.clip_action("c0001", {"action": "cancel_post"})["status"] == "approved"
+    assert fake_up.deleted == ["/api/uploadposts/schedule/job2"]   # the refused upload never became a job
+
+
+def test_automatic_posting_only_for_profiles_switched_on(fake_up, farm_root, monkeypatch):
+    from clipfarm import accounts
+    acct = uploadpost.sync_profiles()[0]
+    for i in (1, 2):
+        _approved_clip(farm_root, cid=f"c000{i}")
+    fixed = datetime.now(planner._tz(core.load_config())).replace(hour=6, minute=0)   # morning: every slot is still ahead
+
+    class FakeDT(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return fixed.astimezone(tz) if tz else fixed.replace(tzinfo=None)
+    monkeypatch.setattr(planner, "datetime", FakeDT)
+    monkeypatch.setattr(uploadpost, "datetime", FakeDT)
+    assert uploadpost.post_ready() == {"sent": [], "errors": []} and not fake_up.uploads      # switch is off
+    with pytest.raises(ValueError, match="Upload-Post profile: use Post now"):
+        server.clip_action("c0001", {"action": "send_to_drafts"})
+    accounts.update(acct["id"], {"auto_post": True})
+    out = uploadpost.post_ready()
+    assert sorted(out["sent"]) == ["c0001", "c0002"] and len(fake_up.uploads) == 2
+    times = sorted(_field(u["body"], "scheduled_date")[0] for u in fake_up.uploads)
+    assert times[0] != times[1]                                            # each clip gets its own slot time
+    assert uploadpost.post_ready() == {"sent": [], "errors": []}           # already scheduled: nothing sent twice
+    assert all(c["status"] == "scheduled" for c in Store.all(Store.clips))

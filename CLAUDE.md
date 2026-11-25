@@ -17,18 +17,19 @@ user's control room, and Claude sessions operate it via the CLI and the agents i
 - Clip statuses: `rendering → rendered → approved → drafted → posted` (or `rejected` / `failed`)
 - `clipfarm/niches.py`: what gets clipped (searches, relevance words, hashtags, a brief for
   Claude). GTA 6 is the default; more are added in the dashboard's Niches tab.
-- `clipfarm/accounts.py`: the profiles clips go to (several TikTok accounts supported), each
-  with its own login, niches and posts per day. `planner.plan()` plans per account.
+- `clipfarm/accounts.py`: where clips go, each with its own niches and posts per day.
+  Two kinds: a TikTok login through our own app (drafts only), and an Upload-Post profile
+  (`via: "uploadpost"`, posts to TikTok + Reels + Shorts). `planner.plan()` plans per account.
+- `clipfarm/uploadpost.py`: profiles sync, scheduling clips at slot times with captions,
+  status polling, cancel. Clip status `scheduled` = handed to Upload-Post, not live yet.
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
-1. **Posting.** The user dropped the never-post rule on 2026-11-25: they want automatic
-   posting once clips and captions are dialed in. Nothing posts automatically yet, because no
-   route exists: TikTok will not approve a personal uploader app (its guidelines list "a
-   utility tool to help upload contents to the account(s) you or your team manages" as not
-   acceptable), so `clipfarm/tiktok.py` stays on the inbox (draft) endpoint. Do not add
-   TikTok's direct-post endpoint there: from this app it can only ever post privately. Public
-   automatic posting has to go through a posting service (see CAPABILITY-NOTES). When that is
-   built, it must be a per-account switch the user turns on, off by default.
+1. **Posting.** The user dropped the never-post rule on 2026-11-25 and chose Upload-Post as
+   the posting service. Public posting goes only through `clipfarm/uploadpost.py`, and only
+   for a profile whose "Post automatically" switch the user turned on (off by default), or
+   when the user clicks "Post now". Never flip that switch for them. `clipfarm/tiktok.py`
+   stays on TikTok's inbox (draft) endpoint: do not add TikTok's direct-post endpoint there,
+   because TikTok will not approve a personal uploader app and it could only ever post privately.
 2. **Rights gate.** Only `campaign | permission | own` sources auto-render, unless the user has
    turned on `produce.include_unverified` ("Clip trending videos from any creator") in the
    dashboard. That switch is theirs: never flip it, and never set a channel to
@@ -67,9 +68,10 @@ Wi-Fi. `serve` listens on the network for that page only: anything else from ano
 and every POST, is refused. Keep it that way.
 
 Scale goal (2026-11-25): 200-300 clips a week across several accounts and platforms, not only
-GTA. Built so far: niches, multiple TikTok accounts (drafts, 5 unposted per account). Not
-built: automatic public posting and Shorts/Reels, both waiting on the user choosing a posting
-service (recommended: Upload-Post).
+GTA. Built: niches, multiple accounts, and Upload-Post posting (TikTok, Reels, Shorts).
+The Upload-Post code was written from its docs and tested against a local stand-in only: the
+first real upload with the user's API key is the real test (response field names for links
+and statuses are the likeliest thing to need adjusting).
 
 Open feedback from the user (2026-11-25): clips were picking boring moments (visual picking
 added in response, not yet confirmed better) and word captions "need work" (specifics not

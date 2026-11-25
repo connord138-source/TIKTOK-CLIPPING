@@ -55,6 +55,9 @@ per account, posted by hand. Audited Direct Post is capped at about 15 posts per
 | Blotato | $49-97/mo | partly documented | TikTok 3-25, YouTube 10-25, Instagram 50 |
 | Ayrshare | $299/mo | multipart / presigned | TikTok 15 |
 
+**Chosen 2026-11-25: Upload-Post.** Built in `clipfarm/uploadpost.py` from its docs; passes
+tests against a local stand-in; **not yet run against the real service** (needs the user's key).
+
 Recommended: Upload-Post Basic (one call from the local file covers TikTok, Reels and Shorts).
 Risks: a small vendor whose audit claim is self-reported; a shared TikTok app; the same
 TikTok guideline about copied content applies to the accounts whichever service posts.

@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from . import accounts, analytics, brain, niches, phone, pipeline, planner, rights, tiktok
+from . import accounts, analytics, brain, niches, phone, pipeline, planner, rights, tiktok, uploadpost
 from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, keys_status, load_config,
                    load_sources, log, now_iso, read_json, save_config, save_keys, save_sources)
 
@@ -110,7 +110,8 @@ def drafts_view() -> dict:
 def connections_view() -> dict:
     return {"keys": keys_status(), "tiktok": tiktok.status_summary(_server["port"]),
             "auth_message": _server["auth_message"], "brain": brain.available(),
-            "phone": {**phone.info(_server["port"]), "listening_on_network": _server["lan"]}}
+            "phone": {**phone.info(_server["port"]), "listening_on_network": _server["lan"]},
+            "uploadpost": uploadpost.summary()}
 
 
 def clip_action(cid: str, body: dict) -> dict:
@@ -122,11 +123,25 @@ def clip_action(cid: str, body: dict) -> dict:
         return Store.update(Store.clips, cid, status="approved", approved_at=now_iso())
     if action == "reject":
         return Store.update(Store.clips, cid, status="rejected", reject_reason=body.get("reason"))
+    if action == "post_now":  # publish through the posting service, straight away
+        if clip.get("status") != "approved":
+            raise ValueError("approve the clip first")
+        if clip.get("sending"):
+            return clip
+        if (accounts.get(clip.get("account_id")) or {}).get("via") != "uploadpost":
+            raise ValueError("this clip is not assigned to an Upload-Post profile")
+        updated = Store.update(Store.clips, cid, sending=True, draft_error=None)
+        pipeline.start_job("post_clip", {"clip_id": cid})
+        return updated
+    if action == "cancel_post":
+        return uploadpost.cancel(cid)
     if action == "send_to_drafts":  # one-click: upload to the user's TikTok inbox via TikTok's API
         if clip.get("status") != "approved":
             raise ValueError("approve the clip first")
         if clip.get("sending"):
             return clip
+        if (accounts.get(clip.get("account_id")) or {}).get("via") == "uploadpost":
+            raise ValueError("this clip belongs to an Upload-Post profile: use Post now")
         if not tiktok.status_summary(_server["port"])["can_upload"]:
             raise ValueError("connect TikTok first (Connections tab)")
         updated = Store.update(Store.clips, cid, sending=True, draft_error=None)
@@ -372,6 +387,16 @@ class Handler(BaseHTTPRequestHandler):
             if u.path == "/api/connections":
                 save_keys(body.get("keys") or {})
                 brain._client = None  # pick up a new Claude key on the next call
+                if (body.get("keys") or {}).get("UPLOADPOST_API_KEY"):
+                    try:
+                        uploadpost.sync_profiles()   # check the key and list the profiles straight away
+                    except uploadpost.UploadPostError as e:
+                        if e.status == 401:
+                            save_keys({"UPLOADPOST_API_KEY": ""})   # don't keep a key the service rejects
+                        raise
+                return self._json(connections_view())
+            if u.path == "/api/uploadpost/refresh":
+                uploadpost.sync_profiles()
                 return self._json(connections_view())
             if u.path == "/api/tiktok/disconnect":
                 tiktok.disconnect(body["id"])
@@ -394,7 +419,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": "not found"}, 404)
         except KeyError as e:
             return self._json({"error": f"not found: {e}"}, 404)
-        except (ValueError, json.JSONDecodeError) as e:
+        except (ValueError, json.JSONDecodeError, uploadpost.UploadPostError, tiktok.TikTokError) as e:
             return self._json({"error": str(e)}, 400)
         except Exception as e:  # noqa: BLE001
             return self._json({"error": f"{type(e).__name__}: {e}"}, 500)

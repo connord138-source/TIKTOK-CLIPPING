@@ -229,7 +229,7 @@ def ensure_dirs() -> None:
 # the rest of the code keeps reading os.environ. Values are never sent back to the browser.
 KEYS_FILE = SECRETS_DIR / "keys.json"
 KEY_NAMES = ["ANTHROPIC_API_KEY", "TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET",
-             "TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET"]
+             "TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET", "UPLOADPOST_API_KEY"]
 
 
 def load_keys() -> None:

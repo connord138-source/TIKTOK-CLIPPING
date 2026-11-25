@@ -206,6 +206,23 @@ have no permission from (copyright complaints and strikes are your risk), and cl
 your drafts without you watching them first. Each of the four switches can be turned off on
 its own in **Autopilot & activity**.
 
+### B4d. Automatic public posting with Upload-Post
+TikTok won't let your own app post publicly, so public posting goes through Upload-Post, a
+paid service (Basic plan, $24 a month, needed for TikTok).
+1. Sign up at https://www.upload-post.com and choose the **Basic** plan.
+2. In **User Management**, create a profile (for example `main`) and connect your TikTok,
+   Instagram and YouTube accounts to it. One profile holds one account per platform.
+3. In **API Keys**, click **Generate New API Key** and copy it.
+4. In the dashboard → **Connections** → **Upload-Post** → paste the key → **Save**. Your
+   profiles appear in a table.
+5. Per profile, choose which platforms it posts to, its niches and posts a day (up to 15).
+6. Test one clip by hand first: **Today** tab → **Post now** on a slot. It is published
+   publicly with its caption.
+7. When you're happy with the clips, switch on **Post automatically** for the profile.
+   Approved clips are then scheduled at each slot time and published without you.
+
+A scheduled clip can be taken back with **Cancel** on the Today tab until it goes live.
+
 ### B5. Turn on Autopilot
 Once you're happy with the clips, flip **Autopilot** on (top bar). It searches every 2 hours,
 makes clips when the queue runs low, and pulls your TikTok stats every 6 hours. It still never posts.
