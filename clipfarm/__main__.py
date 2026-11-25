@@ -1,6 +1,6 @@
 """clipfarm CLI — the same workflows the dashboard/autopilot run, for terminals and Claude agents.
 
-  python -m clipfarm serve [--port 8787] [--host 127.0.0.1] [--no-autopilot]
+  python -m clipfarm serve [--port 8787] [--host 0.0.0.0] [--no-autopilot]
   python -m clipfarm status                 # plan for today + queue + KPIs (JSON)
   python -m clipfarm scout                  # discover + score GTA 6 sources
   python -m clipfarm produce [--n 4]        # render clips the queue needs (or exactly n)
@@ -65,7 +65,9 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="clipfarm", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("serve")
-    s.add_argument("--host", default="127.0.0.1")
+    s.add_argument("--host", default="0.0.0.0",
+                   help="0.0.0.0 lets your phone reach the phone page (everything else stays local); "
+                        "127.0.0.1 turns that off")
     s.add_argument("--port", type=int, default=8787)
     s.add_argument("--no-autopilot", action="store_true")
     sub.add_parser("status")

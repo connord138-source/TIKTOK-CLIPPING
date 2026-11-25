@@ -585,3 +585,96 @@ def test_scout_buttons_work_over_http_with_encoded_ids():
         src = core.load_sources()                            # leave the shared test config as it was
         src["channels"] = [c for c in src["channels"] if c.get("id") != "UC123"]
         core.save_sources(src)
+
+
+# ---------------------------------------------------------------- visual picking + source ranking
+def test_pick_moments_sends_frames_and_stays_text_only_without_them(monkeypatch, tmp_path):
+    sheet = tmp_path / "w0.jpg"
+    sheet.write_bytes(b"\xff\xd8fakejpeg")
+    pick = {"window": 1, "start": 200, "end": 228, "score": 80, "hook": "h", "caption": "c", "hashtags": [], "reason": "r"}
+    fm = _fake_brain(monkeypatch, {"picks": [pick]})
+    wins = [{"start": 100, "end": 130, "text": "calm"}, {"start": 200, "end": 230, "text": "chase"}]
+    out = brain.pick_moments({"title": "t"}, wins, 2, (18, 45), [sheet, None])
+    assert out[0]["start"] == 200
+    content = fm.kwargs["messages"][0]["content"]
+    kinds = [b["type"] for b in content]
+    assert kinds == ["text", "text", "image", "text"]                 # image follows only the window that has one
+    assert content[2]["source"]["media_type"] == "image/jpeg" and "SEE" in content[0]["text"]
+    brain.pick_moments({"title": "t"}, wins, 2, (18, 45), [None, None])
+    assert isinstance(fm.kwargs["messages"][0]["content"], str)       # no frames: plain text request
+
+
+@needs_ffmpeg
+def test_window_previews_make_one_sheet_per_window(tmp_path):
+    src = tmp_path / "v.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=size=640x360:rate=30:duration=40",
+                    "-c:v", "libx264", "-preset", "ultrafast", str(src)], check=True)
+    sheets = moments.window_previews({"id": "url:pv", "url": str(src)}, [{"start": 2, "end": 20}, {"start": 20, "end": 38}])
+    assert all(s and s.is_file() for s in sheets) and sheets[0] != sheets[1]
+    assert render.probe(sheets[0])["width"] == 768                    # 2x2 frames of 384 px
+
+
+def test_scout_prefers_highlights_over_marathons_and_slow_walkthroughs():
+    from clipfarm.scout import score_candidate
+    base = {"platform": "youtube", "views": 500000, "age_hours": 10, "relevant": True, "rights": "unverified", "duration": 900}
+    plain = score_candidate(dict(base, title="GTA 6 gameplay"))
+    assert score_candidate(dict(base, title="GTA 6 funny moments and police chase")) > plain
+    assert score_candidate(dict(base, title="GTA 6 Gameplay Walkthrough Part 1 FULL GAME")) < plain
+    assert score_candidate(dict(base, title="GTA 6 gameplay", duration=24 * 3600)) < plain - 30
+
+
+# ---------------------------------------------------------------- phone page
+def test_phone_page_gate_and_content(monkeypatch):
+    cfg = core.load_config()
+    monkeypatch.setattr("clipfarm.phone.load_config", lambda: cfg)
+    from clipfarm import phone
+    key = phone.token()
+    assert phone.is_local("127.0.0.1") and not phone.is_local("192.168.1.20")
+    assert not phone.lan_allowed("/phone", key)                        # switched off by default
+    cfg["phone"] = {"enabled": True}
+    assert phone.lan_allowed("/phone", key) and phone.lan_allowed("/media/clips/c0001.mp4", key)
+    assert not phone.lan_allowed("/phone", "wrong") and not phone.lan_allowed("/phone", None)
+    for path in ("/", "/api/state", "/api/connections", "/static/app.js", "/media/work/x.mp4", "/media/clips/../x.mp4", "/auth/tiktok"):
+        assert not phone.lan_allowed(path, key), path
+    Store.upsert(Store.clips, {"id": "c0001", "status": "drafted", "hook": "<b>Gator</b> ate it", "duration": 30,
+                               "caption": "He did <script>x</script>\n\n#gta6", "thumb": "media/clips/c0001.jpg", "file": "media/clips/c0001.mp4"})
+    Store.upsert(Store.clips, {"id": "c0002", "status": "rendered", "hook": "not approved", "caption": "hidden"})
+    page = phone.render_page(key)
+    assert "&lt;b&gt;Gator&lt;/b&gt; ate it" in page and "<script>x</script>" not in page
+    assert "#gta6" in page and "in your TikTok drafts" in page and "not approved" not in page
+    assert f"/media/clips/c0001.mp4?k={key}" in page
+
+
+def test_other_devices_reach_only_the_phone_page_over_http(monkeypatch):
+    from http.server import ThreadingHTTPServer
+    import urllib.error
+    import urllib.request
+    from clipfarm import phone
+    ip = phone.lan_ip()
+    if not ip:
+        pytest.skip("no network interface besides loopback")
+    cfg = core.load_config()
+    cfg["phone"] = {"enabled": True}
+    monkeypatch.setattr("clipfarm.phone.load_config", lambda: cfg)
+    httpd = ThreadingHTTPServer(("0.0.0.0", 0), server.Handler)
+    port = httpd.server_address[1]
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+
+    def code(url, **kw):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, **kw), timeout=10) as r:
+                return r.status
+        except urllib.error.HTTPError as e:
+            return e.code
+    try:
+        lan, key = f"http://{ip}:{port}", phone.token()
+        assert code(f"{lan}/phone?k={key}") == 200
+        assert code(f"{lan}/phone?k=nope") == 403 and code(f"{lan}/phone") == 403
+        assert code(f"{lan}/") == 403 and code(f"{lan}/api/state?k={key}") == 403 and code(f"{lan}/api/connections?k={key}") == 403
+        assert code(f"{lan}/api/config?k={key}", data=b'{"phone":{"enabled":false}}', method="POST",
+                    headers={"X-Clipfarm": "1"}) == 403                # the network can never change settings
+        assert code(f"http://127.0.0.1:{port}/api/state") == 200       # this computer still has everything
+        cfg["phone"] = {"enabled": False}
+        assert code(f"{lan}/phone?k={key}") == 403
+    finally:
+        httpd.shutdown()

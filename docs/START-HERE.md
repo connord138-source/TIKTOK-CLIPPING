@@ -168,6 +168,19 @@ that case submit the app for review on TikTok's site, or keep using Download.
 
 TikTok allows 5 unposted drafts per 24 hours, so post or delete drafts before sending more.
 
+### B4a-3. Captions on your phone
+TikTok drafts arrive without a caption. To get it onto your phone in one tap:
+1. Dashboard → **Connections** → **Captions on your phone** → switch on
+   **Let my phone open the captions page**.
+2. With your phone on the same Wi-Fi as the PC, point the phone's camera at the QR code and
+   tap the link.
+3. Add that page to your home screen.
+4. Each day: open the page, tap **Copy caption**, switch to TikTok, open the draft, paste, post.
+
+If the page won't load on the phone, Windows is blocking it: when the farm starts, Windows
+asks whether to allow Python on your network, and it needs to be allowed for private networks.
+Only the captions page is visible to the phone; the rest of the dashboard stays on the PC.
+
 ### B4b. Fallback: send drafts through Claude and Higgsfield instead
 1. Install the **Claude desktop app** on this computer and sign in with the same account.
 2. Open the **Code** tab and choose the folder `C:\Users\<you>\TIKTOK-CLIPPING`.

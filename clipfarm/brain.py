@@ -79,7 +79,14 @@ What performs: a moment that makes sense with zero context in the first 2 second
 menus, loading, slow driving, sponsor reads, intros/outros, talking about the video itself,
 moments that need the previous 5 minutes to understand.
 
-Hooks: <= 7 words, curiosity or stakes, no clickbait lies, no emojis spam (0-1 emoji).
+Be picky. A viewer swipes away in two seconds, so a clip needs a visible payoff: a chase
+escalating, a crash, an explosion, a shootout, a stunt, something absurd or funny, a strong
+reaction, a reveal. Ordinary travel from A to B, exploring quietly, shopping, customising or
+talking over calm footage is boring even when the video is popular. If only one window is
+good, return one. If none are, return none: another video will be tried instead.
+
+Hooks: <= 7 words, curiosity or stakes, no clickbait lies, no emojis spam (0-1 emoji). When you
+have frames, the hook must describe what is actually visible in the window you picked.
 Captions: 1 short line + 3-6 hashtags; always include #gta6. Credit the creator in the caption
 as "via <channel>". Never invent events that are not in the transcript.
 
@@ -116,8 +123,16 @@ _MOMENTS_SCHEMA = {
 }
 
 
-def pick_moments(source: dict, windows: list[dict], max_picks: int, length: tuple[int, int]) -> list[dict] | None:
-    """windows: [{start,end,text,heuristic}] -> picks with refined bounds + packaging."""
+def _image_block(path: Path) -> dict:
+    import base64
+    return {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg",
+                                        "data": base64.standard_b64encode(Path(path).read_bytes()).decode()}}
+
+
+def pick_moments(source: dict, windows: list[dict], max_picks: int, length: tuple[int, int],
+                 previews: list | None = None) -> list[dict] | None:
+    """windows: [{start,end,text,heuristic}] -> picks with refined bounds + packaging.
+    previews: optional list (same order) of 2x2 frame sheets, one per window, or None."""
     if not windows:
         return None
     lines = [f"SOURCE: {source.get('title')!r} by {source.get('channel')} "
@@ -125,11 +140,20 @@ def pick_moments(source: dict, windows: list[dict], max_picks: int, length: tupl
              f"Pick up to {max_picks} clips, each {length[0]}-{length[1]}s. You may move start/end "
              "within ±8s of the window to land on clean sentence boundaries. Return an empty list "
              "if nothing would work as a standalone TikTok.", ""]
+    has_frames = bool(previews) and any(previews)
+    if has_frames:
+        lines.insert(2, "Each window may be followed by an image: four frames from that window in reading "
+                        "order (start to end). Judge mainly from what you can SEE happening. Do not pick a "
+                        "window whose frames show calm driving or walking, menus, maps, loading screens, a "
+                        "face talking to camera with no gameplay, or four near-identical frames.")
+    content: list = [{"type": "text", "text": "\n".join(lines)}]
     for i, w in enumerate(windows):
-        lines.append(f"[window {i}] {w['start']:.1f}s-{w['end']:.1f}s heuristic={w.get('heuristic', 0):.0f}")
-        lines.append(w.get("text") or "(no transcript - judge from title/position only)")
-        lines.append("")
-    out = _ask(SYSTEM_EDITOR, "\n".join(lines), _MOMENTS_SCHEMA)
+        content.append({"type": "text", "text":
+                        f"[window {i}] {w['start']:.1f}s-{w['end']:.1f}s heuristic={w.get('heuristic', 0):.0f}\n"
+                        + (w.get("text") or "(no transcript - judge from the frames, title and position)")})
+        if has_frames and i < len(previews) and previews[i]:
+            content.append(_image_block(previews[i]))
+    out = _ask(SYSTEM_EDITOR, content if has_frames else "\n\n".join(c["text"] for c in content), _MOMENTS_SCHEMA)
     if not out:
         return None
     picks = []
@@ -175,7 +199,10 @@ Approve only if all of these hold:
 - no nudity or sexual content (set nsfw true if there is any);
 - the hook text is readable and does not obviously contradict what the frames show.
 
-quality is 0-100: how likely this clip is to hold a viewer who has no context."""
+quality is 0-100: how likely this clip is to hold a viewer who has no context. Use the range:
+90+ a clear payoff anyone would rewatch; 70-89 real action or a real reaction throughout;
+40-69 gameplay where little happens (calm driving, walking, looking around, talking over quiet
+footage); below 40 broken, static or off-topic. Boring is a reason to score under 70."""
 
 _REVIEW_SCHEMA = {
     "type": "object",
@@ -194,10 +221,8 @@ def review_clip(grid: Path, hook: str, source_title: str) -> dict | None:
     """Look at the clip's 6-frame contact sheet. None if the brain is unavailable."""
     if not available() or not grid or not Path(grid).is_file():
         return None
-    import base64
-    img = base64.standard_b64encode(Path(grid).read_bytes()).decode()
     content = [
-        {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": img}},
+        _image_block(grid),
         {"type": "text", "text": f"Hook on the clip: {hook!r}\nSource video title: {source_title!r}\n"
                                  "Give your verdict."},
     ]

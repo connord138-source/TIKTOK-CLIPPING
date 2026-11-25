@@ -48,6 +48,13 @@ def fetch_source(cand: dict, start: float, end: float, pad: float = 1.0) -> tupl
         hits = [p for p in glob.glob(str(work / pattern)) if not p.endswith((".part", ".ytdl"))]
         if not hits:
             raise RuntimeError("download failed: " + (proc.stderr.strip().splitlines() or ["?"])[-1][:300])
+    if not whole:
+        # A section can start a few seconds early (at the previous keyframe). Its end is exact, so
+        # work the real start out from the file's length; otherwise captions run late by that much.
+        actual, wanted = probe(Path(hits[0]))["duration"], e - s
+        if 0.3 < actual - wanted < 15:
+            log(f"sync {cand['id']}: section is {actual - wanted:.1f}s longer than asked; shifting captions to match")
+            base = e - actual
     return Path(hits[0]), base
 
 

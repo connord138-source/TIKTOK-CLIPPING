@@ -45,11 +45,23 @@ user's control room, and Claude sessions operate it via the CLI and the agents i
 **GTA 6 launch surge (2026-11-19 → 12-03), 5 posts/day.** The user runs the farm on their
 Windows PC (Python 3.14). Done there: Claude key saved, TikTok connected with `video.upload`
 through the https forwarding page (`docs/tiktok-callback/` on GitHub Pages; TikTok's portal
-refuses local redirect addresses). Not yet proven on their PC: a real YouTube download,
-render, and a real draft upload. Cloud sessions can scout/plan/analyse; rendering YouTube
-sources needs the user's machine (googlevideo blocked + datacenter bot-checks).
-Sources with no commentary are handled by audio analysis (`moments.audio_energy`), and each
-rendered clip gets a visual check by Claude (`brain.review_clip`).
+refuses local redirect addresses). Proven on their PC as of 2026-11-25: YouTube download,
+render, and real uploads arriving in TikTok drafts. Cloud sessions can scout/plan/analyse;
+rendering YouTube sources needs the user's machine (googlevideo blocked + datacenter bot-checks).
+
+How moments are chosen: candidate windows come from captions, replay data or audio loudness
+(`moments.audio_energy` for no-commentary gameplay); Claude then sees four frames from each
+window (`moments.window_previews` → `brain.pick_moments`) and picks or rejects; each rendered
+clip gets a final visual check (`brain.review_clip`, auto-approve needs quality ≥ 70).
+
+Captions cannot travel with a TikTok draft (the inbox API takes only the video). The phone
+page (`clipfarm/phone.py`, switch + QR in Connections) shows them on the user's phone over
+Wi-Fi. `serve` listens on the network for that page only: anything else from another device,
+and every POST, is refused. Keep it that way.
+
+Open feedback from the user (2026-11-25): clips were picking boring moments (visual picking
+added in response, not yet confirmed better) and word captions "need work" (specifics not
+yet known: ask for an example before changing caption rendering).
 
 ## Tool crib (Higgsfield MCP: optional now)
 - TikTok drafts (`/drafts` runs this): `tiktok_accounts` (account is connected and active) →

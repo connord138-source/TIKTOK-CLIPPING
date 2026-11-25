@@ -123,7 +123,7 @@ def produce_candidate(cand: dict) -> list[str]:
             status = "rejected"  # brand safety: never queue sexual content, whatever the mode
         elif auto.get("enabled") and out["qc"]["ok"] and rights.auto_render_allowed(cand.get("rights", "unverified")):
             if review:
-                ok = review["approve"] and review["quality"] >= auto.get("min_quality", 60)
+                ok = review["approve"] and review["quality"] >= auto.get("min_quality", 70)
             else:
                 ok = (pick.get("score") or 0) >= auto.get("min_score", 80)
             status = "approved" if ok else ("rejected" if review else "rendered")

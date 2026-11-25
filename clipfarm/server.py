@@ -14,12 +14,12 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from . import analytics, brain, pipeline, planner, rights, tiktok
+from . import analytics, brain, phone, pipeline, planner, rights, tiktok
 from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, keys_status, load_config,
                    load_sources, log, now_iso, read_json, save_config, save_keys, save_sources)
 
 WEB = Path(__file__).resolve().parent.parent / "web"  # code-relative (data root may differ)
-_server = {"port": 8787, "auth_message": None}  # port the dashboard runs on; last TikTok login result
+_server = {"port": 8787, "auth_message": None, "lan": False}  # port the dashboard runs on; last TikTok login result
 
 # Explicit types: the Windows registry can map .js/.css to text/plain, which breaks the page.
 MIME = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -27,7 +27,7 @@ MIME = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
         ".png": "image/png", ".json": "application/json"}
 
 # Settings the UI may change. Everything else is edited in config/*.json by hand or by Claude.
-EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style", "tiktok"}
+EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style", "tiktok", "phone"}
 
 
 def _kpis(clips: list[dict]) -> dict:
@@ -108,7 +108,8 @@ def drafts_view() -> dict:
 
 def connections_view() -> dict:
     return {"keys": keys_status(), "tiktok": tiktok.status_summary(_server["port"]),
-            "auth_message": _server["auth_message"], "brain": brain.available()}
+            "auth_message": _server["auth_message"], "brain": brain.available(),
+            "phone": {**phone.info(_server["port"]), "listening_on_network": _server["lan"]}}
 
 
 def clip_action(cid: str, body: dict) -> dict:
@@ -267,10 +268,27 @@ class Handler(BaseHTTPRequestHandler):
         return p if str(p).startswith(str(base.resolve())) else None
 
     # ---------------------------------------------------------------- routes
+    def _html(self, text: str, status=200):
+        raw = text.encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(raw)))
+        self.send_header("Cache-Control", "no-store")
+        try:
+            self.end_headers()
+            self.wfile.write(raw)
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            pass
+
     def do_GET(self):  # noqa: N802
         u = urlparse(self.path)
         q = {k: v[0] for k, v in parse_qs(u.query).items()}
+        # Other devices on the network (the user's phone) get the phone page and nothing else.
+        if not phone.is_local(self.client_address[0]) and not phone.lan_allowed(u.path, q.get("k")):
+            return self._html("<h1>Not available</h1><p>Open this from the QR code on the Clipfarm dashboard.</p>", 403)
         try:
+            if u.path == "/phone":
+                return self._html(phone.render_page(q.get("k") or phone.token()))
             if u.path in ("/", "/index.html"):
                 return self._file(WEB / "index.html")
             if u.path.startswith("/static/"):
@@ -323,6 +341,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": f"{type(e).__name__}: {e}"}, 500)
 
     def do_POST(self):  # noqa: N802
+        if not phone.is_local(self.client_address[0]):   # the network can never change anything
+            return self._json({"error": "this computer only"}, 403)
         # Custom header blocks cross-site form posts / CSRF against the local server.
         if self.headers.get("X-Clipfarm") != "1":
             return self._json({"error": "missing X-Clipfarm header"}, 403)
@@ -368,16 +388,19 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": f"{type(e).__name__}: {e}"}, 500)
 
 
-def serve(host: str = "127.0.0.1", port: int = 8787, autopilot: bool = True) -> None:
+def serve(host: str = "0.0.0.0", port: int = 8787, autopilot: bool = True) -> None:
     ensure_dirs()
     _server["port"] = port
+    _server["lan"] = host not in ("127.0.0.1", "localhost", "::1")
     pipeline.reset_stuck()
     httpd = ThreadingHTTPServer((host, port), Handler)
     stop = threading.Event()
     if autopilot:
         threading.Thread(target=pipeline.autopilot_loop, args=(stop,), daemon=True, name="autopilot").start()
     ap = "ON" if load_config().get("autopilot", {}).get("enabled") else "OFF (toggle in dashboard)"
-    log(f"clipfarm dashboard: http://{host}:{port}   autopilot: {ap}")
+    log(f"clipfarm dashboard: http://127.0.0.1:{port}   autopilot: {ap}")
+    if _server["lan"] and phone.enabled() and phone.lan_ip():
+        log(f"phone page is on: scan the QR code in the Connections tab (http://{phone.lan_ip()}:{port}/phone)")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

@@ -32,7 +32,7 @@ Implemented from TikTok's docs: desktop Login Kit with PKCE (hex SHA-256 challen
 |---|---|
 | Automated tests against a local stand-in for the API | pass (login, single and chunked upload, errors, posted sync) |
 | Real TikTok init endpoint with a bad token | answers `access_token_invalid` in the expected shape |
-| Real login + real upload with the user's TikTok app | **not tested** (needs the user's app) |
+| Real login + real upload with the user's TikTok app | **works** (user confirmed 2026-11-25: clips arrive in TikTok drafts from a sandbox app). Captions do not arrive, as documented |
 | TikTok portal accepts `http://127.0.0.1:8787/...` as a Desktop redirect URI | **no** (2026-11-18: "localhost is not supported", despite the docs). Workaround: Web platform + the https forwarding page `docs/tiktok-callback/` on GitHub Pages, set in Connections as the redirect address |
 | Does a sandbox (unreviewed) app get `video.upload` for inbox uploads? | **unknown**: docs say the app "must be approved for the video.upload scope" and don't say whether sandbox target users are exempt |
 

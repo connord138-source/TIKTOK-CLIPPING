@@ -154,6 +154,45 @@ def energy_windows(rms: list[float], total: float, length: int, top: int, min_ga
     return chosen
 
 
+# ---------------------------------------------------------------- previews (what Claude looks at)
+def _preview_sheet(cand: dict, idx: int, start: float, end: float) -> Path | None:
+    """A 2x2 sheet of four frames spread across one candidate window. None if it can't be made."""
+    work = WORK_DIR / cand["id"].replace(":", "_") / "previews"
+    work.mkdir(parents=True, exist_ok=True)
+    sheet = work / f"w{idx}_{int(start)}.jpg"
+    if sheet.exists():
+        return sheet
+    dur = max(end - start, 4.0)
+    url = cand["url"]
+    try:
+        if re.match(r"https?://", url):
+            tag = f"p{idx}_{int(start)}"
+            hits = [h for h in glob.glob(str(work / f"{tag}.*")) if not h.endswith((".part", ".ytdl", ".jpg"))]
+            if not hits:
+                run(ytdlp_cmd() + ["-f", "bv*[height<=360]/b[height<=360]/wv*/w", "--download-sections",
+                                   f"*{start:.1f}-{end:.1f}", "-o", str(work / f"{tag}.%(ext)s"), url], timeout=180)
+                hits = [h for h in glob.glob(str(work / f"{tag}.*")) if not h.endswith((".part", ".ytdl", ".jpg"))]
+            if not hits:
+                return None
+            src, seek = Path(hits[0]), []
+        else:
+            src, seek = Path(url.strip().strip('"')).expanduser(), ["-ss", f"{start:.2f}", "-t", f"{dur:.2f}"]
+        run(["ffmpeg", "-y", "-loglevel", "error", *seek, "-i", str(src), "-an", "-vf",
+             f"fps=4/{dur:.2f},scale=384:216:force_original_aspect_ratio=decrease,pad=384:216:(ow-iw)/2:(oh-ih)/2,tile=2x2",
+             "-frames:v", "1", "-q:v", "5", str(sheet)], timeout=120)
+        if src.parent == work:
+            src.unlink(missing_ok=True)   # keep only the small sheet
+    except Exception as e:  # noqa: BLE001 - previews are a bonus; never block a clip on them
+        log(f"preview {cand['id']} window {idx}: {e}")
+    return sheet if sheet.exists() and sheet.stat().st_size > 500 else None
+
+
+def window_previews(cand: dict, windows: list[dict]) -> list[Path | None]:
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        return list(pool.map(lambda iw: _preview_sheet(cand, iw[0], iw[1]["start"], iw[1]["end"]), enumerate(windows)))
+
+
 # ---------------------------------------------------------------- scoring
 def _count(text: str, terms: list[str]) -> int:
     return sum(len(re.findall(r"(?<!\w)" + re.escape(t) + r"(?!\w)", text)) for t in terms)
@@ -246,7 +285,8 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
         windows = [{"start": 0.0, "end": float(min(total or hi, hi)), "heuristic": 50,
                     "text": window_text(words, 0, hi)}]
     else:
-        top = rc.get("windows_to_brain", 6)
+        visual = brain.available() and cfg.get("produce", {}).get("visual_pick", True)
+        top = max(rc.get("windows_to_brain", 6), 8) if visual else rc.get("windows_to_brain", 6)
         if words or cand.get("heatmap"):
             windows = candidate_windows(words, cand.get("heatmap") or [], total, target, top=top)
         else:  # gameplay with no commentary: find the action from the audio instead
@@ -256,7 +296,11 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
                 log(f"moments {cand['id']}: no usable signal (no speech, no replay data, audio analysis empty)")
                 return []
 
-    picks = brain.pick_moments(cand, windows, max_clips, (lo, hi))
+    previews = None
+    if brain.available() and cfg.get("produce", {}).get("visual_pick", True) and len(windows) > 1:
+        previews = window_previews(cand, windows)   # Claude sees frames from every candidate moment
+        log(f"moments {cand['id']}: {sum(1 for p in previews if p)}/{len(windows)} candidate moments have preview frames")
+    picks = brain.pick_moments(cand, windows, max_clips, (lo, hi), previews)
     if picks is not None:
         for p in picks:
             p["source"] = "brain"

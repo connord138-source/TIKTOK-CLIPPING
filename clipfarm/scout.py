@@ -37,6 +37,10 @@ def _ts_iso(ts) -> str | None:
     return datetime.fromtimestamp(int(ts), tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+PREFER = r"funny|moments|highlights?|best of|reacts?|reaction|rage|chase|glitch|bug|easter egg|secret|insane|crazy|fails?|wins?|stunts?|chaos|5 stars?"
+AVOID = r"walkthrough|full game|longplay|no commentary|free roam|exploration|\bpart \d+|\b(4k|8k)\b.*(ultra|hdr)|ambien(t|ce)|relaxing|\bintro\b|all cutscenes"
+
+
 def _unsafe(text: str, cfg: dict) -> bool:
     return bool(re.search(cfg.get("scout", {}).get("unsafe_regex", DEFAULT_UNSAFE), text or "", re.I))
 
@@ -54,8 +58,18 @@ def score_candidate(c: dict) -> float:
           "unverified": 0, "blocked": -100}.get(c.get("rights"), 0)
     if c.get("unsafe"):
         s -= 200
-    if c.get("platform") == "youtube" and (c.get("duration") or 0) < 120:
+    dur = c.get("duration") or 0
+    if c.get("platform") == "youtube" and dur and dur < 120:
         s -= 15  # short uploads rarely contain a fresh, clippable moment
+    if dur > 3 * 3600:
+        s -= 40  # day-long streams: slow to process and mostly dead air
+    elif dur > 90 * 60:
+        s -= 12
+    title = c.get("title") or ""
+    if re.search(PREFER, title, re.I):
+        s += 12  # already-curated or eventful footage clips far better
+    if re.search(AVOID, title, re.I):
+        s -= 20  # slow, uneventful formats
     return round(s, 1)
 
 

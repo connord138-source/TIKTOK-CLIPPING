@@ -625,9 +625,33 @@ async function viewConnections() {
       h("button", { class: "btn primary", onclick: () => (ti.value.trim() && ts.value.trim()) ? saveKeys({ TWITCH_CLIENT_ID: ti.value, TWITCH_CLIENT_SECRET: ts.value }, "Twitch keys saved") : toast("Paste both values", true) }, "Save")),
     h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Register an app at dev.twitch.tv/console to get them."));
 
+  // Phone page
+  const ph = cn.phone;
+  let qrImg = null;
+  if (ph.enabled && ph.url && typeof qrcode === "function") {
+    const qr = qrcode(0, "M"); qr.addData(ph.url); qr.make();
+    qrImg = h("img", { src: qr.createDataURL(6, 12), alt: "QR code that opens the captions page on your phone", width: 220, height: 220, style: { borderRadius: "8px", background: "#fff" } });
+  }
+  const phoneCard = h("div", { class: "card" },
+    h("h2", {}, "Captions on your phone", h("small", {}, "TikTok drafts arrive without a caption; this puts it one tap away")),
+    h("label", { class: "switch" }, h("input", { type: "checkbox", checked: !!ph.enabled,
+      onchange: (e) => act(() => api("/api/config", { phone: { enabled: e.target.checked } }), e.target.checked ? "Phone page is on" : "Phone page is off") }),
+      "Let my phone open the captions page"),
+    !ph.enabled ? h("p", { class: "muted", style: { fontSize: "13px" } }, "Turn this on, then scan the QR code that appears with your phone's camera.") : null,
+    ph.enabled && !ph.listening_on_network ? h("div", { class: "callout", style: { marginTop: "10px" } }, "The farm was started in local-only mode. Stop it (Ctrl+C) and start it again with: python -m clipfarm serve") : null,
+    ph.enabled && !ph.lan_ip ? h("div", { class: "callout", style: { marginTop: "10px" } }, "This computer doesn't seem to be on a network, so there is no address for your phone to open.") : null,
+    ph.enabled && qrImg ? h("div", { class: "row", style: { marginTop: "12px", alignItems: "flex-start" } }, qrImg,
+      h("ol", { style: { margin: 0, paddingLeft: "20px", flex: "1", minWidth: "240px" } },
+        h("li", {}, "Connect your phone to the same Wi-Fi as this computer."),
+        h("li", {}, "Open the phone's camera and point it at this code. Tap the link that appears."),
+        h("li", {}, "Add the page to your home screen so it is one tap away next time."),
+        h("li", {}, "If the page won't load: Windows asked whether to allow Python on your network when the farm started. It has to be allowed for private networks."),
+        h("li", { class: "muted" }, "Only this captions page is visible to your phone. The rest of the dashboard stays on this computer."))) : null,
+    ph.enabled && ph.url ? h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Or type this into the phone's browser: ", h("code", {}, ph.url)) : null);
+
   return h("div", { class: "grid" }, h("div", { class: "section-head" }, h("h1", {}, "Connections"),
     h("span", { class: "muted" }, "Keys are stored only on this computer (data/secrets, never committed).")),
-    tiktokCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
+    tiktokCard, phoneCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
 }
 
 // ---------------------------------------------------------------- boot
