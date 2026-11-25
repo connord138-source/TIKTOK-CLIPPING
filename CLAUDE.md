@@ -15,13 +15,20 @@ user's control room, and Claude sessions operate it via the CLI and the agents i
 - Dashboard does the rest: Connections tab holds keys (stored in `data/secrets/`, gitignored)
   and the TikTok login; **Send to TikTok drafts** uploads approved clips via TikTok's API
 - Clip statuses: `rendering → rendered → approved → drafted → posted` (or `rejected` / `failed`)
+- `clipfarm/niches.py`: what gets clipped (searches, relevance words, hashtags, a brief for
+  Claude). GTA 6 is the default; more are added in the dashboard's Niches tab.
+- `clipfarm/accounts.py`: the profiles clips go to (several TikTok accounts supported), each
+  with its own login, niches and posts per day. `planner.plan()` plans per account.
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
-1. **Never post to TikTok.** Clips are delivered as files or TikTok drafts; the user posts.
-   `publish_mode` governs this. Autopilot never posts. The dashboard uploads only through
-   TikTok's inbox (draft) endpoint in `clipfarm/tiktok.py`; never add the direct-post endpoint.
-   With Higgsfield, the mode is always `UPLOAD_TO_DRAFT`, never `DIRECT_POST`, and the user
-   submits the publish form themselves.
+1. **Posting.** The user dropped the never-post rule on 2026-11-25: they want automatic
+   posting once clips and captions are dialed in. Nothing posts automatically yet, because no
+   route exists: TikTok will not approve a personal uploader app (its guidelines list "a
+   utility tool to help upload contents to the account(s) you or your team manages" as not
+   acceptable), so `clipfarm/tiktok.py` stays on the inbox (draft) endpoint. Do not add
+   TikTok's direct-post endpoint there: from this app it can only ever post privately. Public
+   automatic posting has to go through a posting service (see CAPABILITY-NOTES). When that is
+   built, it must be a per-account switch the user turns on, off by default.
 2. **Rights gate.** Only `campaign | permission | own` sources auto-render, unless the user has
    turned on `produce.include_unverified` ("Clip trending videos from any creator") in the
    dashboard. That switch is theirs: never flip it, and never set a channel to
@@ -58,6 +65,11 @@ Captions cannot travel with a TikTok draft (the inbox API takes only the video).
 page (`clipfarm/phone.py`, switch + QR in Connections) shows them on the user's phone over
 Wi-Fi. `serve` listens on the network for that page only: anything else from another device,
 and every POST, is refused. Keep it that way.
+
+Scale goal (2026-11-25): 200-300 clips a week across several accounts and platforms, not only
+GTA. Built so far: niches, multiple TikTok accounts (drafts, 5 unposted per account). Not
+built: automatic public posting and Shorts/Reels, both waiting on the user choosing a posting
+service (recommended: Upload-Post).
 
 Open feedback from the user (2026-11-25): clips were picking boring moments (visual picking
 added in response, not yet confirmed better) and word captions "need work" (specifics not

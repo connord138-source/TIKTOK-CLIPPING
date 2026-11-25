@@ -8,7 +8,7 @@ import json
 import re
 from pathlib import Path
 
-from . import brain
+from . import brain, niches
 from .core import WORK_DIR, load_config, log, run, ytdlp_cmd
 
 EXCITE = ["no way", "oh my god", "omg", "what the", "bro", "let's go", "lets go", "holy", "wait",
@@ -209,12 +209,13 @@ def heatmap_value(heatmap: list, start: float, end: float) -> float | None:
     return sum(vals) / len(vals) if vals else 0.0
 
 
-def score_window(words: list[dict], heatmap: list, start: float, end: float, total: float) -> float:
+def score_window(words: list[dict], heatmap: list, start: float, end: float, total: float,
+                 keywords: list[str] | None = None) -> float:
     text = window_text(words, start, end).lower()
     dur = max(end - start, 1)
     n_words = len(text.split())
     s = min(n_words / dur, 4.0) * 4                      # speech energy (max 16)
-    kw = (_count(text, EXCITE) * 3 + _count(text, GTA) * 1.5 + _count(text, LAUGH) * 4
+    kw = (_count(text, EXCITE) * 3 + _count(text, GTA if keywords is None else keywords) * 1.5 + _count(text, LAUGH) * 4
           + text.count("****") * 2)                      # bleeped profanity = heated moment
     s += min(kw, 60)                                     # capped: keyword spam can't outvote replays
     s -= _count(text, DEAD) * 12
@@ -243,7 +244,7 @@ def _snap(words: list[dict], t: float, direction: int, slack: float = 3.0) -> fl
 
 
 def candidate_windows(words: list[dict], heatmap: list, total: float, length: int,
-                      top: int, min_gap: float = 45) -> list[dict]:
+                      top: int, min_gap: float = 45, keywords: list[str] | None = None) -> list[dict]:
     if not total:
         total = (words[-1]["e"] if words else 0) or (heatmap[-1][1] if heatmap else 0)
     if total <= length:
@@ -252,7 +253,7 @@ def candidate_windows(words: list[dict], heatmap: list, total: float, length: in
     scored = []
     t = 0.0
     while t + length <= total:
-        scored.append((score_window(words, heatmap, t, t + length, total), t))
+        scored.append((score_window(words, heatmap, t, t + length, total, keywords), t))
         t += 5.0
     scored.sort(reverse=True)
     chosen: list[dict] = []
@@ -277,6 +278,7 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
     target = rc.get("clip_target_seconds", 30)
     max_clips = cfg.get("produce", {}).get("max_clips_per_source", 2)
     total = float(cand.get("duration") or 0)
+    niche = niches.get(cand.get("niche"))
 
     if cand.get("forced_window"):
         s, e = cand["forced_window"]
@@ -288,7 +290,8 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
         visual = brain.available() and cfg.get("produce", {}).get("visual_pick", True)
         top = max(rc.get("windows_to_brain", 6), 8) if visual else rc.get("windows_to_brain", 6)
         if words or cand.get("heatmap"):
-            windows = candidate_windows(words, cand.get("heatmap") or [], total, target, top=top)
+            windows = candidate_windows(words, cand.get("heatmap") or [], total, target, top=top,
+                                        keywords=niche.get("keywords") or [])
         else:  # gameplay with no commentary: find the action from the audio instead
             log(f"moments {cand['id']}: no speech or replay data; analysing the audio for action")
             windows = energy_windows(audio_energy(cand), total, target, top=top)
@@ -300,7 +303,7 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
     if brain.available() and cfg.get("produce", {}).get("visual_pick", True) and len(windows) > 1:
         previews = window_previews(cand, windows)   # Claude sees frames from every candidate moment
         log(f"moments {cand['id']}: {sum(1 for p in previews if p)}/{len(windows)} candidate moments have preview frames")
-    picks = brain.pick_moments(cand, windows, max_clips, (lo, hi), previews)
+    picks = brain.pick_moments(cand, windows, max_clips, (lo, hi), previews, niche)
     if picks is not None:
         for p in picks:
             p["source"] = "brain"
@@ -313,14 +316,15 @@ def find_moments(cand: dict, words: list[dict]) -> list[dict]:
         if w["heuristic"] < min_h and not cand.get("forced_window") and cand.get("platform") != "twitch":
             continue
         out.append({"start": w["start"], "end": w["end"], "score": int(min(w["heuristic"], 100)),
-                    "hook": heuristic_hook(cand, w.get("text", "")),
+                    "hook": heuristic_hook(cand, w.get("text", ""), niche["name"]),
                     "caption": f"{(cand.get('title') or '')[:80]} — via {cand.get('channel') or 'source'}",
                     "hashtags": [], "reason": "heuristic window", "source": "heuristic"})
     return out
 
 
-def heuristic_hook(cand: dict, text: str) -> str:
+def heuristic_hook(cand: dict, text: str, page: str = "GTA 6") -> str:
     title = re.sub(r"[\[\(].*?[\]\)]|\|.*$", "", cand.get("title") or "").strip()
     title = re.sub(r"(?i)\bgta\s*(6|vi)\b[:\-– ]*", "", title).strip()
+    title = re.sub(r"(?i)^" + re.escape(page) + r"[:\-– ]*", "", title).strip()
     words = title.split()[:7]
-    return ("GTA 6: " + " ".join(words)) if words else "GTA 6 moment you missed"
+    return (f"{page}: " + " ".join(words)) if words else f"{page} moment you missed"

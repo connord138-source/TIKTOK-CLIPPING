@@ -85,7 +85,7 @@ function renderChrome() {
 }
 
 // ---------------------------------------------------------------- tabs
-const TABS = { today: viewToday, review: viewReview, library: viewLibrary, scout: viewScout, analytics: viewAnalytics, sources: viewSources, activity: viewActivity, connections: viewConnections };
+const TABS = { today: viewToday, review: viewReview, library: viewLibrary, scout: viewScout, analytics: viewAnalytics, sources: viewSources, activity: viewActivity, connections: viewConnections, niches: viewNiches };
 async function renderTab(force = false) {
   const view = $("#view");
   if (!force) {  // background refresh: never wipe typing, edits not yet saved, or a playing video
@@ -118,7 +118,7 @@ async function viewToday() {
     kpi("Est. campaign earnings", money(k.earnings), "after platform fee"),
   );
 
-  const slotBoard = h("div", { class: "slots" }, p.slots.map((s) => {
+  const board = (slots) => h("div", { class: "slots" }, slots.map((s) => {
     const c = s.clip_id && byId[s.clip_id];
     const label = { posted: ["info", "posted"], missed: ["neutral", "missed"], assigned: ["good", s.due ? "post now" : "assigned"], empty: ["warn", "empty"] }[s.state];
     if (s.in_drafts) { label[0] = "accent"; label[1] = s.due ? "post from drafts" : "in TikTok drafts"; }
@@ -159,7 +159,13 @@ async function viewToday() {
       st.config.cadence.auto_adjust.apply ? "Auto-apply is ON: the advisor changes today's target." : "Auto-apply is OFF (Autopilot tab) — suggestions only."));
 
   return h("div", { class: "grid" }, fullAutoCard(), tiles,
-    h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)), slotBoard,
+    h("div", { class: "card" }, h("h2", {}, `Today's slots`, h("small", {}, `${p.date} · ${p.timezone}`)),
+      p.accounts.length > 1
+        ? p.accounts.map((a) => h("div", { style: { marginBottom: "16px" } },
+            h("h3", { style: { margin: "0 0 8px" } }, a.name || "Account", h("small", {}, `${a.handle ? "@" + a.handle + " · " : ""}posted ${a.posted_today}/${a.target} · ${a.in_drafts} in drafts`)),
+            board(a.slots)))
+        : board(p.slots),
+      p.unplaced ? h("div", { class: "callout", style: { marginTop: "10px" } }, `${p.unplaced} approved clip(s) belong to a niche that no account takes. Set the account's niches in Connections.`) : null,
       h("div", { class: "row", style: { marginTop: "12px" } },
         st.tiktok_api.can_upload
           ? [h("button", { class: "btn", onclick: () => runJob("send_drafts") }, "Send all ready clips to TikTok drafts"),
@@ -183,7 +189,7 @@ function fullAutoCard() {
   ].filter(Boolean);
   if (on) return h("div", { class: "card" },
     h("h2", {}, "Full auto is on ", h("span", { class: "chip good" }, "running")),
-    h("p", {}, "Every 2 hours it looks for trending GTA 6 videos, cuts clips, has Claude check each one, and sends up to 5 a day to your TikTok drafts."),
+    h("p", {}, "Every 2 hours it looks for trending videos in your niches, cuts clips, has Claude check each one, and sends them to each account's TikTok drafts (up to 5 unposted per account)."),
     h("p", {}, h("strong", {}, "Your part: "), "open TikTok, tap the inbox notification, paste the caption, post."),
     notes.map((n) => h("div", { class: "callout", style: { marginBottom: "8px" } }, n)),
     h("div", { class: "row" },
@@ -191,13 +197,13 @@ function fullAutoCard() {
       h("button", { class: "btn danger", onclick: () => act(() => setAuto(false), "Full auto is off") }, "Turn off")));
   return h("div", { class: "card" },
     h("h2", {}, "Do it all for me", some ? h("small", {}, "partly on: see Autopilot & activity") : null),
-    h("p", {}, "One switch: the farm finds trending GTA 6 videos, cuts clips, has Claude check them, approves the good ones and sends them to your TikTok drafts. You only post them in TikTok."),
+    h("p", {}, "One switch: the farm finds trending videos in your niches, cuts clips, has Claude check them, approves the good ones and sends them to your TikTok drafts. You only post them in TikTok."),
     h("div", { class: "row" },
       h("button", { class: "btn primary", onclick: () => {
         const ok = confirm("Turn on full auto?\n\n" +
-          "• It clips trending GTA 6 videos from ANY creator, including ones you have no permission from. Copyright complaints and strikes on your TikTok account are your risk.\n" +
+          "• It clips trending videos from ANY creator, including ones you have no permission from. Copyright complaints and strikes on your TikTok accounts are your risk.\n" +
           "• Clips are approved by Claude's check, without you watching them first.\n" +
-          "• Up to 5 clips a day are sent to your TikTok drafts.\n" +
+          "• Clips are sent to your TikTok drafts, up to 5 unposted per account.\n" +
           "• Nothing is ever posted for you. You post from TikTok.\n\nYou can turn it off at any time.");
         if (ok) act(() => setAuto(true).then(() => api("/api/jobs", { type: "cycle" })), "Full auto is on. First round started.");
       } }, "Turn on full auto")));
@@ -304,11 +310,12 @@ async function viewScout() {
   const end = h("input", { type: "number", placeholder: "end s", style: { width: "90px" } });
   const rsel = h("select", { "aria-label": "Rights for this link" }, [["unverified", "no permission yet (my call)"], ["campaign", "campaign"], ["permission", "permission"], ["own", "my own footage"], ["official", "official"]].map(([v, l]) => h("option", { value: v }, l)));
   const csel = h("select", {}, h("option", { value: "" }, "no campaign"), campaigns.map((c) => h("option", { value: c.id }, c.name)));
+  const nsel = st.niches.length > 1 ? h("select", { "aria-label": "Niche" }, h("option", { value: "" }, "niche: work it out"), st.niches.map((n) => h("option", { value: n.id }, n.name))) : null;
   const manual = h("div", { class: "card" }, h("h2", {}, "Clip a link you found", h("small", {}, "paste any YouTube or Twitch video, a campaign source link, or a file path")),
-    h("div", { class: "row" }, url, start, end, rsel, csel,
+    h("div", { class: "row" }, url, start, end, rsel, csel, nsel,
       h("button", { class: "btn primary", onclick: () => {
         if (!url.value) return toast("Paste a URL", true);
-        runJob("clip_url", { url: url.value, start: start.value ? +start.value : null, end: end.value ? +end.value : null, rights: rsel.value, campaign_id: csel.value || null });
+        runJob("clip_url", { url: url.value, start: start.value ? +start.value : null, end: end.value ? +end.value : null, rights: rsel.value, campaign_id: csel.value || null, niche: nsel ? nsel.value || null : null });
       } }, "Clip it")),
     h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Leave start/end blank and the farm finds the best 1–2 moments itself. Clips land in Review; a link you paste is clipped whatever its rights label, so that call is yours."));
 
@@ -550,6 +557,40 @@ async function viewActivity() {
   return h("div", { class: "grid" }, auto, settings, jobList);
 }
 
+// ---------------------------------------------------------------- Niches
+async function viewNiches() {
+  const list = await api("/api/niches");
+  const form = (n, isNew) => {
+    const f = {
+      name: h("input", { type: "text", value: n.name || "", placeholder: "e.g. Podcast clips" }),
+      brief: h("textarea", { placeholder: "What this page is about, what works and what flops. Claude reads this when choosing moments and writing hooks." }, n.brief || ""),
+      queries: h("textarea", { placeholder: "One YouTube search per line" }, (n.queries || []).join("\n")),
+      relevance: h("input", { type: "text", value: n.relevance || "", placeholder: "Words a video title must contain, separated by commas" }),
+      hashtags: h("input", { type: "text", value: (n.hashtags || []).join(" "), placeholder: "#first #second (the first is always used)" }),
+      twitch: h("input", { type: "text", value: n.twitch_game || "", placeholder: "Twitch category (optional)" }),
+    };
+    const body = () => ({ id: n.id, name: f.name.value, brief: f.brief.value, queries: f.queries.value, relevance: f.relevance.value,
+      hashtags: f.hashtags.value.split(/[\s,]+/).filter(Boolean), twitch_game: f.twitch.value, keywords: n.keywords || [], enabled: n.enabled !== false });
+    return h("div", { class: "card" },
+      h("div", { class: "row" }, h("h2", { style: { margin: 0 } }, isNew ? "Add a niche" : n.name),
+        isNew ? null : h("label", { class: "switch" }, h("input", { type: "checkbox", checked: n.enabled !== false,
+          onchange: (e) => act(() => api("/api/niches", { ...body(), enabled: e.target.checked }), e.target.checked ? "Niche on" : "Niche paused") }), "Active")),
+      h("div", { class: "form-grid", style: { marginTop: "12px", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" } },
+        h("label", {}, "Name", f.name), h("label", {}, "Relevance words", f.relevance),
+        h("label", {}, "Hashtags", f.hashtags), h("label", {}, "Twitch category", f.twitch)),
+      h("div", { class: "grid two", style: { marginTop: "10px" } },
+        h("label", { class: "muted", style: { fontSize: "12px" } }, "Searches", f.queries),
+        h("label", { class: "muted", style: { fontSize: "12px" } }, "Brief for Claude", f.brief)),
+      h("div", { class: "row", style: { marginTop: "12px" } },
+        h("button", { class: "btn primary", onclick: () => act(() => api("/api/niches", body()), isNew ? "Niche added" : "Niche saved") }, isNew ? "Add niche" : "Save"),
+        !isNew && list.length > 1 ? h("button", { class: "btn danger", onclick: () => { if (confirm(`Delete the niche ${n.name}? Clips already made are kept.`)) act(() => api("/api/niches/delete", { id: n.id }), "Niche deleted"); } }, "Delete") : null));
+  };
+  return h("div", { class: "grid" },
+    h("div", { class: "section-head" }, h("h1", {}, "Niches"),
+      h("span", { class: "muted" }, "Each niche is searched separately. Choose which account posts which niche in Connections.")),
+    list.map((n) => form(n, false)), form({}, true));
+}
+
 // ---------------------------------------------------------------- Connections
 async function viewConnections() {
   const cn = await api("/api/connections");
@@ -574,6 +615,30 @@ async function viewConnections() {
     cn.auth_message ? h("div", { class: "callout" + (cn.auth_message.ok ? " good" : ""), style: { marginTop: "10px" } }, cn.auth_message.text) : null,
     t.connected && !t.can_upload ? h("div", { class: "callout", style: { marginTop: "10px" } },
       "TikTok logged you in but did not grant video.upload. Add the Content Posting API product to your TikTok app, then connect again.") : null,
+    t.accounts.length ? h("div", { class: "table-wrap", style: { marginTop: "12px" } }, h("table", {},
+      h("thead", {}, h("tr", {}, ["Account", "@handle", "Niches", "Posts a day", "Unposted drafts", "On", ""].map((x) => h("th", {}, x)))),
+      h("tbody", {}, t.accounts.map((a) => {
+        const patch = (body, ok) => act(() => api(`/api/accounts/${a.id}`, body), ok || "Account updated");
+        const handle = h("input", { type: "text", value: a.handle || "", placeholder: "handle", style: { width: "150px" }, "aria-label": "TikTok handle",
+          onchange: (e) => patch({ handle: e.target.value }, "Handle saved") });
+        const perDay = h("input", { type: "number", min: 1, max: 15, value: a.posts_per_day || "", placeholder: "auto", style: { width: "80px" }, "aria-label": "Posts a day",
+          onchange: (e) => patch({ posts_per_day: e.target.value ? +e.target.value : null }) });
+        const nicheBoxes = S.state.niches.map((n) => h("label", { style: { display: "inline-flex", gap: "4px", marginRight: "10px", fontSize: "13px" } },
+          h("input", { type: "checkbox", checked: !a.niches.length || a.niches.includes(n.id), onchange: (e) => {
+            const all = S.state.niches.map((x) => x.id);
+            let cur = a.niches.length ? [...a.niches] : all;
+            cur = e.target.checked ? [...new Set([...cur, n.id])] : cur.filter((x) => x !== n.id);
+            if (!cur.length) { e.target.checked = true; return toast("An account needs at least one niche", true); }
+            patch({ niches: cur.length === all.length ? [] : cur });
+          } }), n.name));
+        return h("tr", {},
+          h("td", {}, h("strong", {}, a.name || "TikTok"), " ", a.connected ? (a.can_upload ? null : h("span", { class: "chip warn" }, "no upload permission")) : h("span", { class: "chip bad" }, "login lost")),
+          h("td", {}, handle), h("td", {}, nicheBoxes), h("td", {}, perDay),
+          h("td", {}, `${a.pending_24h} of ${t.pending_cap_per_account}`),
+          h("td", {}, h("input", { type: "checkbox", checked: a.enabled !== false, "aria-label": "Use this account", onchange: (e) => patch({ enabled: e.target.checked }) })),
+          h("td", {}, h("button", { class: "btn sm danger", onclick: () => { if (confirm(`Disconnect ${a.name || "this account"}? Its clips stay in the library.`)) act(() => api("/api/tiktok/disconnect", { id: a.id }), "Account disconnected"); } }, "Disconnect")));
+      })))) : null,
+    t.accounts.length ? h("p", { class: "muted", style: { fontSize: "12px" } }, "Posts a day: leave empty to follow the schedule in Autopilot & activity. To add another account, click Connect another TikTok account below and choose a different account on TikTok's screen. Each account must also be a target user in your TikTok app's Sandbox settings.") : null,
     h("ol", { style: { paddingLeft: "20px", margin: "12px 0 0" } },
       step(1, "Create a TikTok developer app at ", h("a", { href: "https://developers.tiktok.com/apps", target: "_blank", rel: "noopener" }, "developers.tiktok.com"),
         ". Add the products ", h("strong", {}, "Login Kit"), " and ", h("strong", {}, "Content Posting API"), "."),
@@ -594,14 +659,14 @@ async function viewConnections() {
             if (!ck.value.trim() || !cs.value.trim()) return toast("Paste both the client key and the client secret", true);
             saveKeys({ TIKTOK_CLIENT_KEY: ck.value, TIKTOK_CLIENT_SECRET: cs.value }, "TikTok app keys saved");
           } }, "Save"))),
-      step(5, t.configured ? h("a", { class: "btn primary", href: "/auth/tiktok" }, t.connected ? "Reconnect TikTok" : "Connect TikTok")
+      step(5, t.configured ? h("a", { class: "btn primary", href: "/auth/tiktok" }, t.accounts.length ? "Connect another TikTok account" : "Connect TikTok")
           : h("button", { class: "btn", disabled: true }, "Connect TikTok"),
         t.configured ? " Log in with the TikTok account you post from." : " Save the keys first.")),
     h("div", { class: "row", style: { marginTop: "8px" } },
       h("label", { class: "switch" }, h("input", { type: "checkbox", checked: !!(S.state.config.tiktok || {}).request_stats_scopes,
         onchange: (e) => act(() => api("/api/config", { tiktok: { request_stats_scopes: e.target.checked } }), "Saved. Reconnect TikTok to apply.") }),
         "Also ask for stats permissions (follower count in Analytics)"),
-      t.connected ? h("button", { class: "btn sm danger", onclick: () => act(() => api("/api/tiktok/disconnect", {}), "TikTok disconnected") }, "Disconnect") : null),
+      null),
     h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } },
       "Clips only ever go to your TikTok inbox as drafts. You add the caption and post in the TikTok app. TikTok allows 5 unposted drafts per 24 hours."));
 

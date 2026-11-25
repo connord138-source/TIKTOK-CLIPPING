@@ -18,7 +18,7 @@ import time
 import urllib.parse
 import urllib.request
 
-from . import rights, tiktok
+from . import accounts, rights, tiktok
 from .core import Store, load_config, log, mutate, now_iso, read_json, run_json, write_json, ytdlp_cmd
 
 
@@ -48,8 +48,8 @@ def _api(method: str, path: str, token: str, body: dict | None = None) -> dict:
         return json.load(r)
 
 
-def pull_display_api() -> tuple[list[dict], dict]:
-    token = tiktok.access_token()
+def pull_display_api(aid: str) -> tuple[list[dict], dict]:
+    token = tiktok.access_token(aid)
     fields = "id,create_time,share_url,video_description,title,duration,view_count,like_count,comment_count,share_count"
     vids, cursor = [], None
     for _ in range(10):
@@ -168,16 +168,32 @@ def record(vids: list[dict], account: dict, source: str) -> dict:
 
 
 def run_metrics() -> dict:
+    """Pull stats for every TikTok account (official API where permitted, public profile otherwise)."""
     cfg = load_config()
     method = cfg.get("analytics", {}).get("method", "auto")
-    if method in ("auto", "display_api") and "video.list" in tiktok.granted_scopes():
-        vids, acct = pull_display_api()
-        return record(vids, acct, "display_api")
-    handle = cfg.get("account_handle")
-    if not handle:
-        raise RuntimeError("config account_handle missing")
-    vids, acct = pull_public(handle)
-    return record(vids, acct, "public")
+    accts = accounts.all_accounts("tiktok") or [{"id": None, "handle": cfg.get("account_handle")}]
+    vids, followers, sources, errors = [], [], set(), []
+    for a in accts:
+        try:
+            if a.get("id") and method in ("auto", "display_api") and "video.list" in tiktok.granted_scopes(a["id"]):
+                v, info = pull_display_api(a["id"])
+                sources.add("display_api")
+            elif a.get("handle"):
+                v, info = pull_public(a["handle"])
+                sources.add("public")
+            else:
+                continue
+        except Exception as e:  # noqa: BLE001 - one account failing must not hide the others
+            errors.append(f"{a.get('name') or a.get('handle')}: {e}")
+            log(f"analytics: {errors[-1]}")
+            continue
+        vids += v
+        if info.get("followers") is not None:
+            followers.append(info["followers"])
+    if not sources:
+        raise RuntimeError(errors[0] if errors else "no TikTok handle to read stats from: add the @handle to the account in Connections")
+    out = record(vids, {"followers": sum(followers) if followers else None}, "+".join(sorted(sources)))
+    return {**out, "errors": errors} if errors else out
 
 
 def import_csv(text: str) -> dict:

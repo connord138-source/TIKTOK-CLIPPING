@@ -256,6 +256,8 @@ class FakeTikTok:
         self.received = b""
         self.ranges, self.inits, self.token_calls = [], [], []
         self.init_error = None
+        self.open_id = "u1"
+        self.bearer, self.bearer_of = [], {}
         self.status = "SEND_TO_USER_INBOX"
         self.post_ids = []
         fake = self
@@ -276,10 +278,13 @@ class FakeTikTok:
                 if self.path.endswith("/oauth/token/"):
                     f = {k: v[0] for k, v in parse_qs(body.decode()).items()}
                     fake.token_calls.append(f)
-                    return self._send(200, {"access_token": f"at{len(fake.token_calls)}", "expires_in": 7200,
+                    at = f"at{len(fake.token_calls)}"
+                    fake.bearer_of[fake.open_id] = "Bearer " + at
+                    return self._send(200, {"access_token": at, "expires_in": 7200,
                                             "refresh_token": f"rt{len(fake.token_calls)}", "refresh_expires_in": 15552000,
-                                            "open_id": "u1", "scope": "user.info.basic,video.upload", "token_type": "Bearer"})
+                                            "open_id": fake.open_id, "scope": "user.info.basic,video.upload", "token_type": "Bearer"})
                 assert self.headers["Authorization"].startswith("Bearer at")
+                fake.bearer.append(self.headers["Authorization"])
                 if self.path.endswith("/inbox/video/init/"):
                     if fake.init_error:
                         return self._send(403, {"data": {}, "error": {"code": fake.init_error, "message": "x", "log_id": "l"}})
@@ -289,6 +294,12 @@ class FakeTikTok:
                                             "error": {"code": "ok", "message": "", "log_id": "l"}})
                 if self.path.endswith("/status/fetch/"):
                     return self._send(200, {"data": {"status": fake.status, "publicaly_available_post_id": fake.post_ids},
+                                            "error": {"code": "ok", "message": "", "log_id": "l"}})
+                return self._send(404, {})
+
+            def do_GET(self):  # noqa: N802
+                if "/user/info/" in self.path:
+                    return self._send(200, {"data": {"user": {"open_id": fake.open_id, "display_name": f"Name of {fake.open_id}"}},
                                             "error": {"code": "ok", "message": "", "log_id": "l"}})
                 return self._send(404, {})
 
@@ -318,11 +329,18 @@ def fake_tiktok(monkeypatch, farm_root):
     monkeypatch.setattr(tiktok.time, "sleep", lambda s: None)
     monkeypatch.setenv("TIKTOK_CLIENT_KEY", "ck")
     monkeypatch.setenv("TIKTOK_CLIENT_SECRET", "cs")
-    tiktok.TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tiktok.TOKEN_FILE.unlink(missing_ok=True)
+    from clipfarm import accounts
+    accounts.TOKENS_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    def wipe():
+        accounts.TOKENS_FILE.unlink(missing_ok=True)
+        cfg = core.load_config()
+        cfg.pop("accounts", None)
+        core.save_config(cfg)
+    wipe()
     yield fake
     fake.httpd.shutdown()
-    tiktok.TOKEN_FILE.unlink(missing_ok=True)
+    wipe()
 
 
 def _approved_clip(farm_root, cid="c0001", size=3000):
@@ -351,11 +369,15 @@ def test_tiktok_login_uses_desktop_pkce_and_saves_rotating_tokens(fake_tiktok):
     assert hashlib.sha256(sent["code_verifier"].encode()).hexdigest() == q["code_challenge"]  # hex, per TikTok
     assert tiktok.status_summary(8787)["can_upload"] is True
     # expired access token -> refresh, and the rotated refresh token is the one kept
-    tok = tiktok.token()
+    from clipfarm import accounts
+    acct = accounts.all_accounts("tiktok")[0]
+    assert acct["platform"] == "tiktok" and acct["mode"] == "drafts" and acct["handle"] == "chat.clip.that"
+    tok = accounts.token(acct["id"])
     tok["obtained_at"] -= 7200
-    core.write_json(tiktok.TOKEN_FILE, tok)
-    assert tiktok.access_token() == "at2"
-    assert fake_tiktok.token_calls[-1]["refresh_token"] == "rt1" and tiktok.token()["refresh_token"] == "rt2"
+    accounts.set_token(acct["id"], tok)
+    assert tiktok.access_token(acct["id"]) == "at2"
+    assert fake_tiktok.token_calls[-1]["refresh_token"] == "rt1"
+    assert accounts.token(acct["id"])["refresh_token"] == "rt2" and accounts.token(acct["id"])["open_id"] == "u1"
 
 
 def test_chunk_plan_follows_tiktok_rules():
@@ -476,7 +498,7 @@ def test_silent_gameplay_link_still_makes_a_clip_and_full_auto_approves_it(tmp_p
     monkeypatch.setattr(moments, "whisper_words", lambda media: [])
     seen = {}
 
-    def fake_review(grid, hook, title):
+    def fake_review(grid, hook, title, niche=None):
         seen["grid_exists"] = grid.is_file()
         return {"approve": True, "quality": 82, "nsfw": False, "reason": "Clear action."}
     monkeypatch.setattr(brain, "review_clip", fake_review)
@@ -678,3 +700,118 @@ def test_other_devices_reach_only_the_phone_page_over_http(monkeypatch):
         assert code(f"{lan}/phone?k={key}") == 403
     finally:
         httpd.shutdown()
+
+
+# ---------------------------------------------------------------- niches
+@pytest.fixture
+def clean_config():
+    """Snapshot config/account.json (in the throwaway test root) and restore it afterwards."""
+    before = json.dumps(core.load_config())
+    yield
+    core.save_config(json.loads(before))
+
+
+def test_default_niche_is_gta_and_new_niches_get_their_own_searches_and_tags(clean_config):
+    from clipfarm import niches
+    first = niches.all_niches()
+    assert [n["id"] for n in first] == ["gta6"] and "GTA 6 police chase" in first[0]["queries"]
+    assert niches.is_relevant(first[0], "Lucia robs a bank in Vice City") and not niches.is_relevant(first[0], "Minecraft speedrun")
+    with pytest.raises(ValueError, match="at least one search"):
+        niches.upsert({"name": "Empty"})
+    pod = niches.upsert({"name": "Podcast clips", "brief": "Funny and heated podcast moments.", "queries": "podcast funny moments\njoe rogan clip",
+                         "relevance": "podcast, rogan, interview", "hashtags": "podcast, #Clips"})
+    assert pod["id"] == "podcast-clips" and pod["queries"] == ["podcast funny moments", "joe rogan clip"]
+    assert pod["hashtags"] == ["#podcast", "#clips"]
+    assert [n["id"] for n in niches.all_niches()] == ["gta6", "podcast-clips"]     # the default was kept
+    assert niches.match("Joe Rogan interview gets heated")["id"] == "podcast-clips"
+    assert niches.match("GTA 6 police chase")["id"] == "gta6" and niches.match("cooking pasta") is None
+    assert not niches.is_relevant(pod, "broadcasting live")                         # whole words only
+    # captions and Claude's brief follow the clip's niche
+    cap, tags = pipeline._compose_caption({"caption": "He lost it", "hashtags": ["funny"]}, {"niche": "podcast-clips"}, core.load_config())
+    assert tags[:3] == ["#funny", "#podcast", "#clips"] and "#gta6" not in cap
+    assert "Podcast clips" in brain.editor_system(pod) and "always include #podcast" in brain.editor_system(pod)
+    assert "GTA 6" in brain.editor_system(None) and "Podcast clips" in brain.reviewer_system(pod)
+    niches.remove("podcast-clips")
+    with pytest.raises(ValueError, match="at least one"):
+        niches.remove("gta6")
+
+
+def test_scout_searches_each_niche_and_tags_what_it_finds(monkeypatch, clean_config):
+    from clipfarm import niches, scout
+    niches.upsert({"name": "Podcast clips", "queries": ["podcast funny moments"], "relevance": "podcast"})
+    searched = []
+
+    def fake_run_json(cmd, timeout=180):
+        url = cmd[-1]
+        searched.append(url)
+        vid = "podvid00001" if "podcast" in url else "gtavid00001"
+        title = "Podcast gets heated" if "podcast" in url else "GTA 6 police chase goes wrong"
+        return {"entries": [{"id": vid, "title": title, "view_count": 5000, "duration": 600}]}
+    monkeypatch.setattr(scout, "run_json", fake_run_json)
+    monkeypatch.setattr(scout, "youtube_meta", lambda url: {"channel": "Chan", "channel_id": "UCx", "published_at": now_iso(), "duration": 600})
+    monkeypatch.setattr(scout, "scout_twitch", lambda cfg: [])
+    scout.run_scout({"podcast-clips": ["podcast trend query"]})
+    cands = {c["id"]: c for c in Store.all(Store.candidates)}
+    assert cands["yt:gtavid00001"]["niche"] == "gta6" and cands["yt:gtavid00001"]["relevant"]
+    assert cands["yt:podvid00001"]["niche"] == "podcast-clips" and cands["yt:podvid00001"]["relevant"]
+    assert any("podcast+trend+query" in u for u in searched)
+
+
+# ---------------------------------------------------------------- several accounts
+def _login(fake, open_id):
+    fake.open_id = open_id
+    return tiktok.finish_login("c", parse_qs(urlparse(tiktok.authorize_url(8787)).query)["state"][0], 8787)
+
+
+def test_two_accounts_split_clips_by_niche_and_each_gets_its_own_drafts(fake_tiktok, farm_root, clean_config):
+    from clipfarm import accounts
+    a = _login(fake_tiktok, "user-a")
+    b = _login(fake_tiktok, "user-b")
+    assert a["id"] != b["id"] and len(accounts.all_accounts("tiktok")) == 2
+    assert _login(fake_tiktok, "user-a")["id"] == a["id"] and len(accounts.all_accounts("tiktok")) == 2   # re-login, no duplicate
+    accounts.update(a["id"], {"niches": ["gta6"], "posts_per_day": 3, "handle": "@gta.page"})
+    accounts.update(b["id"], {"niches": ["podcast-clips"], "posts_per_day": 20})
+    assert accounts.get(a["id"])["handle"] == "gta.page" and accounts.get(b["id"])["posts_per_day"] == 15   # capped
+    for i, niche in enumerate(["gta6", "gta6", "podcast-clips", "cooking"]):
+        _approved_clip(farm_root, cid=f"c000{i + 1}")
+        Store.update(Store.clips, f"c000{i + 1}", niche=niche)
+    p = planner.plan()
+    by = {x["id"]: x for x in p["accounts"]}
+    assert by[a["id"]]["target"] == 3 and by[b["id"]]["target"] == 15 and p["target"] == 18
+    assert by[a["id"]]["ready"] == 2 and by[b["id"]]["ready"] == 1 and p["unplaced"] == 1    # nobody takes "cooking"
+    owner = {c["id"]: c.get("account_id") for c in Store.all(Store.clips)}
+    assert owner["c0001"] == owner["c0002"] == a["id"] and owner["c0003"] == b["id"] and not owner["c0004"]
+    assert all(s.get("account") for s in p["slots"]) and len(by[b["id"]]["slots"]) == 15
+
+    out = tiktok.send_clip("c0003")
+    assert out["account"] == b["id"]
+    assert tiktok.pending_count(b["id"]) == 1 and tiktok.pending_count(a["id"]) == 0
+    assert fake_tiktok.bearer[-1] != fake_tiktok.bearer_of["user-a"]                         # sent with B's login
+    st = tiktok.status_summary(8787)
+    assert len(st["accounts"]) == 2 and st["can_upload"] and st["pending_cap"] == 10
+
+    tiktok.disconnect(b["id"])
+    assert [x["id"] for x in accounts.all_accounts("tiktok")] == [a["id"]] and accounts.token(b["id"]) is None
+
+
+def test_old_single_login_becomes_the_first_account(farm_root, clean_config):
+    from clipfarm import accounts
+    accounts.TOKENS_FILE.unlink(missing_ok=True)
+    accounts.LEGACY_TIKTOK_TOKEN.parent.mkdir(parents=True, exist_ok=True)
+    core.write_json(accounts.LEGACY_TIKTOK_TOKEN, {"access_token": "at", "refresh_token": "rt", "open_id": "legacy-user",
+                                                   "scope": "user.info.basic,video.upload", "obtained_at": 9e9, "expires_in": 7200})
+    Store.upsert(Store.clips, {"id": "c0001", "status": "drafted", "draft": {"via": "tiktok_api", "publish_id": "p1", "sent_at": now_iso()}})
+    try:
+        accts = accounts.all_accounts("tiktok")
+        assert len(accts) == 1 and accts[0]["handle"] == "chat.clip.that" and accts[0]["mode"] == "drafts"
+        assert not accounts.LEGACY_TIKTOK_TOKEN.exists() and accounts.token(accts[0]["id"])["open_id"] == "legacy-user"
+        assert Store.get(Store.clips, "c0001")["account_id"] == accts[0]["id"]
+        assert tiktok.pending_count(accts[0]["id"]) == 1 and tiktok.status_summary(8787)["can_upload"]
+    finally:
+        accounts.TOKENS_FILE.unlink(missing_ok=True)
+
+
+def test_more_posts_than_named_slots_are_spread_through_the_day():
+    slots = ["07:30", "11:30", "14:30", "17:30", "20:00", "22:30"]
+    out = planner.pick_slots(slots, 15)
+    assert len(out) == 15 and out[0] == "07:30" and out[-1] == "22:30" and out == sorted(out) and len(set(out)) == 15

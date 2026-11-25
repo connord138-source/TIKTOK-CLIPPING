@@ -25,11 +25,11 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from .core import ROOT, SECRETS_DIR, Store, hours_since, load_config, log, now_iso, read_json, write_json
+from . import accounts
+from .core import ROOT, Store, hours_since, load_config, log, now_iso
 
 API = "https://open.tiktokapis.com/v2/"
 AUTHORIZE = "https://www.tiktok.com/v2/auth/authorize/"
-TOKEN_FILE = SECRETS_DIR / "tiktok_token.json"
 BASE_SCOPES = ["user.info.basic", "video.upload"]          # what drafts need
 STATS_SCOPES = ["user.info.stats", "video.list"]           # optional: analytics via the API
 SINGLE_PUT_MAX = 64_000_000                                 # larger files must be chunked
@@ -114,6 +114,7 @@ def authorize_url(port: int) -> str:
     _pending_auth.clear()
     if uri.startswith("https://"):   # TikTok "Web" login: no PKCE in its spec
         _pending_auth[state] = ""
+        params["disable_auto_auth"] = 1   # always show TikTok's screen, so another account can be chosen
     else:                            # TikTok "Desktop" login: PKCE required
         verifier, challenge = pkce_pair()
         _pending_auth[state] = verifier
@@ -121,7 +122,7 @@ def authorize_url(port: int) -> str:
     return AUTHORIZE + "?" + urllib.parse.urlencode(params)
 
 
-def _token_request(fields: dict) -> dict:
+def _token_request(fields: dict, aid: str | None = None) -> dict:
     body = urllib.parse.urlencode({"client_key": client_key() or "",
                                    "client_secret": os.environ.get("TIKTOK_CLIENT_SECRET", ""), **fields}).encode()
     status, _, raw = _http("POST", API + "oauth/token/", {"Content-Type": "application/x-www-form-urlencoded"}, body, 30)
@@ -129,54 +130,85 @@ def _token_request(fields: dict) -> dict:
     if "access_token" not in tok:
         raise TikTokError(tok.get("error") or f"http_{status}", tok.get("error_description") or "login failed")
     tok["obtained_at"] = time.time()
-    write_json(TOKEN_FILE, tok)  # refresh tokens rotate: always keep the newest
+    if aid:
+        tok.setdefault("open_id", (accounts.token(aid) or {}).get("open_id"))
+        accounts.set_token(aid, tok)  # refresh tokens rotate: always keep the newest
     return tok
 
 
 def finish_login(code: str, state: str, port: int) -> dict:
+    """Completes a login and adds (or refreshes) that TikTok account. Returns the account."""
     if state not in _pending_auth or not code:
         raise TikTokError("state_mismatch", "start again from Connections > Connect TikTok")
     verifier = _pending_auth.pop(state)
     fields = {"code": code, "grant_type": "authorization_code", "redirect_uri": redirect_uri(port)}
     if verifier:
         fields["code_verifier"] = verifier
-    return _token_request(fields)
+    tok = _token_request(fields)
+    if not tok.get("open_id"):
+        raise TikTokError("no_open_id", "TikTok did not say which account logged in")
+    aid = accounts.account_id("tiktok", tok["open_id"])
+    accounts.set_token(aid, tok)
+    existing = accounts.get(aid)
+    name = (existing or {}).get("name")
+    try:
+        status, _, raw = _http("GET", API + "user/info/?fields=open_id,display_name",
+                               {"Authorization": f"Bearer {tok['access_token']}"}, None, 30)
+        name = (_json_body(raw).get("data") or {}).get("user", {}).get("display_name") or name
+    except Exception:  # noqa: BLE001 - the name is cosmetic
+        pass
+    first = not accounts.all_accounts("tiktok")
+    acct = {"id": aid, "platform": "tiktok", "name": name or "TikTok account"}
+    if not existing and first:
+        acct["handle"] = load_config().get("account_handle") or ""
+    return accounts.upsert(acct)
 
 
-def disconnect() -> None:
-    TOKEN_FILE.unlink(missing_ok=True)
+def disconnect(aid: str) -> None:
+    accounts.remove(aid)
 
 
-def token() -> dict | None:
-    return read_json(TOKEN_FILE, None)
+def token(aid: str | None = None) -> dict | None:
+    """The login for one account; with no id, the first connected TikTok account's."""
+    if aid:
+        return accounts.token(aid)
+    first = next(iter(accounts.active("tiktok")), None)
+    return accounts.token(first["id"]) if first else None
 
 
-def granted_scopes() -> list[str]:
-    return [s for s in ((token() or {}).get("scope") or "").split(",") if s]
+def granted_scopes(aid: str | None = None) -> list[str]:
+    return [s for s in ((token(aid) or {}).get("scope") or "").split(",") if s]
 
 
-def access_token() -> str:
-    tok = token()
+def access_token(aid: str) -> str:
+    tok = accounts.token(aid)
     if not tok:
         raise TikTokError("access_token_invalid")
     if time.time() > tok["obtained_at"] + tok.get("expires_in", 7200) - 300:
-        tok = _token_request({"grant_type": "refresh_token", "refresh_token": tok["refresh_token"]})
+        tok = _token_request({"grant_type": "refresh_token", "refresh_token": tok["refresh_token"]}, aid)
     return tok["access_token"]
 
 
+def account_status(a: dict) -> dict:
+    granted = granted_scopes(a["id"])
+    return {**a, "connected": bool(accounts.token(a["id"])), "can_upload": "video.upload" in granted,
+            "can_read_stats": "video.list" in granted, "pending_24h": pending_count(a["id"])}
+
+
 def status_summary(port: int) -> dict:
-    tok = token()
-    granted = granted_scopes()
+    accts = [account_status(a) for a in accounts.all_accounts("tiktok")]
+    live = [a for a in accts if a["connected"] and a.get("enabled", True)]
     return {"configured": bool(client_key() and os.environ.get("TIKTOK_CLIENT_SECRET")),
-            "connected": bool(tok), "scopes": granted, "can_upload": "video.upload" in granted,
-            "can_read_stats": "video.list" in granted, "redirect_uri": redirect_uri(port),
+            "accounts": accts, "connected": bool(live), "can_upload": any(a["can_upload"] for a in live),
+            "can_read_stats": any(a["can_read_stats"] for a in live), "redirect_uri": redirect_uri(port),
             "default_redirect_uri": default_redirect_uri(port),
-            "pending_24h": pending_count(), "pending_cap": PENDING_CAP}
+            "pending_24h": sum(a["pending_24h"] for a in live), "pending_cap": PENDING_CAP * max(len(live), 1),
+            "pending_cap_per_account": PENDING_CAP}
 
 
 # ---------------------------------------------------------------- API calls
-def _api(path: str, body: dict) -> dict:
-    status, _, raw = _http("POST", API + path, {"Authorization": f"Bearer {access_token()}",
+def _api(path: str, body: dict, aid: str) -> dict:
+    status, _, raw = _http("POST", API + path, {"Authorization": f"Bearer {access_token(aid)}",
                                                  "Content-Type": "application/json; charset=UTF-8"},
                            json.dumps(body).encode(), 60)
     d = _json_body(raw)
@@ -211,23 +243,41 @@ def upload_file(upload_url: str, path: Path, size: int, chunk_size: int, count: 
                 time.sleep(2 * (attempt + 1))
 
 
-def fetch_status(publish_id: str) -> dict:
-    return _api("post/publish/status/fetch/", {"publish_id": publish_id})
+def fetch_status(publish_id: str, aid: str) -> dict:
+    return _api("post/publish/status/fetch/", {"publish_id": publish_id}, aid)
 
 
 # ---------------------------------------------------------------- farm integration
-def _api_drafts() -> list[dict]:
+def _api_drafts(aid: str | None = None) -> list[dict]:
     return [c for c in Store.all(Store.clips)
-            if c.get("status") == "drafted" and (c.get("draft") or {}).get("via") == "tiktok_api"]
+            if c.get("status") == "drafted" and (c.get("draft") or {}).get("via") == "tiktok_api"
+            and (aid is None or c.get("account_id") == aid)]
 
 
-def pending_count() -> int:
-    """Our own count of unposted API drafts sent in the last 24h (TikTok caps these at 5)."""
-    return sum(1 for c in _api_drafts() if (hours_since((c.get("draft") or {}).get("sent_at")) or 99) < 24)
+def pending_count(aid: str | None = None) -> int:
+    """Our own count of unposted API drafts sent in the last 24h (TikTok caps these at 5 per account)."""
+    return sum(1 for c in _api_drafts(aid) if (hours_since((c.get("draft") or {}).get("sent_at")) or 99) < 24)
+
+
+def _uploaders() -> list[dict]:
+    return [a for a in accounts.active("tiktok") if "video.upload" in granted_scopes(a["id"])]
+
+
+def _account_for(clip: dict) -> dict:
+    """The account a clip is sent to: the one the planner assigned, else the best fit now."""
+    ups = _uploaders()
+    if not ups:
+        raise TikTokError("access_token_invalid")
+    if clip.get("account_id"):
+        a = next((x for x in ups if x["id"] == clip["account_id"]), None)
+        if a:
+            return a
+    fits = [a for a in ups if accounts.takes(a, clip)] or ups
+    return min(fits, key=lambda a: pending_count(a["id"]))
 
 
 def send_clip(clip_id: str) -> dict:
-    """Upload one approved clip to the user's TikTok inbox. Marks it `drafted` on success;
+    """Upload one approved clip to its account's TikTok inbox. Marks it `drafted` on success;
     on failure it stays `approved` with `draft_error` set."""
     with _send_lock:
         clip = Store.get(Store.clips, clip_id)
@@ -239,17 +289,19 @@ def send_clip(clip_id: str) -> dict:
             path = (ROOT / (clip.get("file") or "")).resolve()
             if not clip.get("file") or not path.is_file():
                 raise TikTokError("file_missing", f"clip file not found: {path}")
+            acct = _account_for(clip)
+            aid = acct["id"]
             size = path.stat().st_size
             chunk_size, count = chunk_plan(size)
             data = _api("post/publish/inbox/video/init/", {"source_info": {
-                "source": "FILE_UPLOAD", "video_size": size, "chunk_size": chunk_size, "total_chunk_count": count}})
+                "source": "FILE_UPLOAD", "video_size": size, "chunk_size": chunk_size, "total_chunk_count": count}}, aid)
             publish_id = data["publish_id"]
-            log(f"tiktok: uploading {clip_id} ({size / 1e6:.1f} MB, {count} chunk(s))")
+            log(f"tiktok: uploading {clip_id} to {acct.get('name')} ({size / 1e6:.1f} MB, {count} chunk(s))")
             upload_file(data["upload_url"], path, size, chunk_size, count)
             state = "PROCESSING_UPLOAD"
             for _ in range(20):  # status endpoint: 30 requests/min
                 time.sleep(3)
-                st = fetch_status(publish_id)
+                st = fetch_status(publish_id, aid)
                 state = st.get("status") or state
                 if state == "FAILED":
                     raise TikTokError(st.get("fail_reason") or "failed", "TikTok rejected the video")
@@ -260,53 +312,61 @@ def send_clip(clip_id: str) -> dict:
             log(f"tiktok: {clip_id} not sent: {e}")
             raise
         draft = {"via": "tiktok_api", "publish_id": publish_id, "state": state, "sent_at": now_iso()}
-        Store.update(Store.clips, clip_id, status="drafted", sending=False, draft=draft, draft_error=None)
-        log(f"tiktok: {clip_id} is in your TikTok inbox ({state})")
-        return {"clip": clip_id, **draft}
+        Store.update(Store.clips, clip_id, status="drafted", sending=False, draft=draft, draft_error=None,
+                     account_id=aid)
+        log(f"tiktok: {clip_id} is in the TikTok inbox of {acct.get('name')} ({state})")
+        return {"clip": clip_id, "account": aid, **draft}
 
 
 def send_ready(max_clips: int | None = None) -> dict:
-    """Send approved clips in slot order, up to the room left under TikTok's pending cap."""
+    """Send approved clips to each account in slot order, up to that account's open slots and
+    the room left under TikTok's cap of 5 unposted drafts per account."""
     from . import planner
     p = planner.plan()
-    slot_of = {b["clip_id"]: b["time"] for b in p["slots"] if b.get("clip_id")}
-    approved = sorted((c for c in Store.all(Store.clips) if c.get("status") == "approved"),
-                      key=lambda c: (slot_of.get(c["id"], "99:99"), -(c.get("score") or 0)))
-    room = max(0, PENDING_CAP - pending_count())
-    want = min(len(approved), room, max_clips if max_clips is not None else max(p["open_slots"], 1))
-    sent, errors = [], []
-    for i, c in enumerate(approved[:want]):
-        if i:
-            time.sleep(10)  # keep well under 6 inits/min
-        try:
-            sent.append(send_clip(c["id"])["clip"])
-        except Exception as e:  # noqa: BLE001
-            errors.append({"clip": c["id"], "error": str(e)})
-            if isinstance(e, TikTokError) and e.code in ERRORS:
-                break  # account-level problem: the rest would fail the same way
-    return {"sent": sent, "errors": errors, "room_left": max(0, PENDING_CAP - pending_count())}
+    sent, errors, n = [], [], 0
+    for ap in p["accounts"]:
+        aid = ap["id"]
+        if not aid or not any(a["id"] == aid for a in _uploaders()):
+            continue
+        queue = [b["clip_id"] for b in ap["slots"] if b["state"] == "assigned" and not b.get("in_drafts")]
+        room = max(0, PENDING_CAP - pending_count(aid))
+        for cid in queue[:room]:
+            if max_clips is not None and n >= max_clips:
+                break
+            if n:
+                time.sleep(10)  # keep well under 6 inits/min
+            n += 1
+            try:
+                sent.append(send_clip(cid)["clip"])
+            except Exception as e:  # noqa: BLE001
+                errors.append({"clip": cid, "error": str(e)})
+                if isinstance(e, TikTokError) and e.code in ERRORS:
+                    break  # account-level problem: the rest for this account would fail the same way
+    return {"sent": sent, "errors": errors}
 
 
 def sync_drafts() -> dict:
     """Refresh API drafts: mark clips posted once the user publishes them from TikTok."""
-    cfg = load_config()
     posted = failed = 0
+    dead: set = set()
     for c in _api_drafts():
         d = c.get("draft") or {}
-        if not d.get("publish_id"):
+        aid = c.get("account_id")
+        if not d.get("publish_id") or not aid or aid in dead or not accounts.token(aid):
             continue
         try:
-            st = fetch_status(d["publish_id"])
+            st = fetch_status(d["publish_id"], aid)
         except TikTokError as e:
             log(f"tiktok sync {c['id']}: {e}")
             if e.code in ("access_token_invalid", "rate_limit_exceeded"):
-                break
+                dead.add(aid)
             continue
         state = st.get("status")
         if state == "PUBLISH_COMPLETE":
             ids = st.get("publicaly_available_post_id") or []  # (sic) TikTok's spelling
             tid = str(ids[0]) if ids else None
-            url = f"https://www.tiktok.com/@{cfg.get('account_handle')}/video/{tid}" if tid else None
+            handle = (accounts.get(aid) or {}).get("handle")
+            url = f"https://www.tiktok.com/@{handle}/video/{tid}" if tid and handle else None
             Store.update(Store.clips, c["id"], status="posted", posted_at=now_iso(), tiktok_id=tid,
                          tiktok_url=url, draft={**d, "state": state})
             posted += 1

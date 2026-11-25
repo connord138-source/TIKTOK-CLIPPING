@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from . import analytics, brain, phone, pipeline, planner, rights, tiktok
+from . import accounts, analytics, brain, niches, phone, pipeline, planner, rights, tiktok
 from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, keys_status, load_config,
                    load_sources, log, now_iso, read_json, save_config, save_keys, save_sources)
 
@@ -58,7 +58,8 @@ def state() -> dict:
                        "new": sum(1 for c in cands if c.get("status") == "new")},
         "autopilot": cfg.get("autopilot", {}), "brain": brain.available(),
         "tiktok_api": tiktok.status_summary(_server["port"]),
-        "trend_queries": read_json(pipeline.TRENDS, {}).get("queries", []),
+        "niches": [{"id": n["id"], "name": n["name"], "enabled": n.get("enabled", True)} for n in niches.all_niches()],
+        "trend_queries": [q for qs in pipeline.trend_queries().values() for q in qs],
         "jobs_running": [j["type"] for j in pipeline.list_jobs() if j["status"] == "running"],
         "config": {k: cfg.get(k) for k in EDITABLE},
     }
@@ -321,6 +322,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(pipeline.list_jobs())
             if u.path == "/api/connections":
                 return self._json(connections_view())
+            if u.path == "/api/niches":
+                return self._json(niches.all_niches())
             if u.path == "/auth/tiktok":
                 try:
                     return self._redirect(tiktok.authorize_url(_server["port"]))
@@ -331,8 +334,8 @@ class Handler(BaseHTTPRequestHandler):
                 try:
                     if q.get("error"):
                         raise tiktok.TikTokError(q["error"], q.get("error_description", ""))
-                    tiktok.finish_login(q.get("code", ""), q.get("state", ""), _server["port"])
-                    _server["auth_message"] = {"ok": True, "text": "TikTok connected."}
+                    acct = tiktok.finish_login(q.get("code", ""), q.get("state", ""), _server["port"])
+                    _server["auth_message"] = {"ok": True, "text": f"TikTok account connected: {acct.get('name')}."}
                 except tiktok.TikTokError as e:
                     _server["auth_message"] = {"ok": False, "text": str(e)}
                 return self._redirect("/#connections")
@@ -371,9 +374,18 @@ class Handler(BaseHTTPRequestHandler):
                 brain._client = None  # pick up a new Claude key on the next call
                 return self._json(connections_view())
             if u.path == "/api/tiktok/disconnect":
-                tiktok.disconnect()
+                tiktok.disconnect(body["id"])
                 _server["auth_message"] = None
                 return self._json(connections_view())
+            if m := re.fullmatch(r"/api/accounts/([a-z]{2}_[0-9a-f]{8})", u.path):
+                accounts.update(m.group(1), body)
+                return self._json(connections_view())
+            if u.path == "/api/niches":
+                niches.upsert(body)
+                return self._json(niches.all_niches())
+            if u.path == "/api/niches/delete":
+                niches.remove(body["id"])
+                return self._json(niches.all_niches())
             if u.path == "/api/config":
                 patch = {k: v for k, v in body.items() if k in EDITABLE}
                 cfg = deep_merge(load_config(), patch)

@@ -17,7 +17,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
-from . import rights
+from . import niches, rights
 from .core import Store, hours_since, load_config, load_sources, log, now_iso, run_json, ytdlp_cmd
 
 YT_FILTERS = {"today": "EgQIAhAB", "week": "EgQIAxAB", "any": "EgIQAQ%3D%3D"}
@@ -26,9 +26,8 @@ DEFAULT_RELEVANCE = r"gta\s*(6|vi)\b|gta6|gtavi|grand theft auto (6|vi)|vice cit
 DEFAULT_UNSAFE = r"nud(e|ity)|naked|\bnsfw\b|18\+|strip ?club|\bsex|onlyfans|\bporn"
 
 
-def _relevant(text: str, cfg: dict) -> bool:
-    pattern = cfg.get("scout", {}).get("relevance_regex", DEFAULT_RELEVANCE)
-    return bool(re.search(pattern, text or "", re.I))
+def _relevant(text: str, niche: dict) -> bool:
+    return niches.is_relevant(niche, text)
 
 
 def _ts_iso(ts) -> str | None:
@@ -117,12 +116,12 @@ def youtube_meta(url: str) -> dict:
     }
 
 
-def scout_youtube(cfg: dict, extra_queries: list[str] | None = None) -> list[dict]:
+def scout_youtube(cfg: dict, niche: dict, extra_queries: list[str] | None = None) -> list[dict]:
     sc = cfg.get("scout", {})
     window = sc.get("youtube_window", "today")
     per_query = sc.get("youtube_results_per_query", 15)
     enrich_top = sc.get("youtube_enrich_top", 12)
-    queries = list(dict.fromkeys(sc.get("queries", []) + (extra_queries or [])))
+    queries = list(dict.fromkeys(list(niche.get("queries") or []) + (extra_queries or [])))
     known = {c["id"]: c for c in Store.all(Store.candidates)}
     flat: dict[str, dict] = {}
     for q in queries:
@@ -143,7 +142,7 @@ def scout_youtube(cfg: dict, extra_queries: list[str] | None = None) -> list[dic
                              "title": e.get("title"), "views": e.get("view_count") or 0,
                              "duration": e.get("duration"), "query": q,
                              "thumbnail": f"https://i.ytimg.com/vi/{e['id']}/mqdefault.jpg",
-                             "relevant": _relevant(e.get("title", ""), cfg)}
+                             "niche": niche["id"], "relevant": _relevant(e.get("title", ""), niche)}
     # enrich the most promising unseen ones (full metadata is ~2-4s each)
     ranked = sorted(flat.values(), key=lambda c: (c["relevant"], c["views"]), reverse=True)
     out = []
@@ -167,7 +166,7 @@ def scout_youtube(cfg: dict, extra_queries: list[str] | None = None) -> list[dic
         if c.get("live_status") in ("is_live", "is_upcoming"):
             continue
         c["age_hours"] = round(hours_since(c.get("published_at")) or default_age, 1)
-        c["relevant"] = _relevant(f"{c.get('title')} {c.get('channel')}", cfg)
+        c["relevant"] = _relevant(f"{c.get('title')} {c.get('channel')}", niche)
         c["unsafe"] = _unsafe(c.get("title", ""), cfg)
         c["rights"], c["campaign_id"] = rights.resolve("youtube", c.get("channel_id"), c.get("channel"))
         out.append(c)
@@ -192,12 +191,14 @@ def _helix(path: str, token: str) -> dict:
         return json.load(r)
 
 
-def _twitch_clip(cfg, *, clip_id, url, title, channel, views, duration, created_at, game_ok, thumbnail=None):
+def _twitch_clip(cfg, *, clip_id, url, title, channel, views, duration, created_at, niche, thumbnail=None):
+    """niche: the niche this clip belongs to, or None when its title matches none of them."""
     c = {"id": f"tw:{clip_id}", "platform": "twitch", "url": url, "title": title, "thumbnail": thumbnail,
+         "niche": (niche or niches.get(None))["id"],
          "channel": channel, "channel_id": (channel or "").lower(), "views": views,
          "duration": duration, "published_at": created_at,
          "age_hours": round(hours_since(created_at) or 24, 1),
-         "relevant": game_ok or _relevant(title, cfg), "unsafe": _unsafe(title, cfg)}
+         "relevant": bool(niche), "unsafe": _unsafe(title, cfg)}
     c["rights"], c["campaign_id"] = rights.resolve("twitch", channel)
     return c
 
@@ -211,9 +212,11 @@ def scout_twitch(cfg: dict) -> list[dict]:
     except Exception as e:  # noqa: BLE001
         token = None
         log(f"twitch helix auth failed: {e}")
-    if token:
+    for niche in (niches.enabled() if token else []):
+        game = niche.get("twitch_game")
+        if not game:
+            continue
         try:
-            game = sc.get("twitch_game_name", "Grand Theft Auto VI")
             games = _helix("games?name=" + urllib.parse.quote(game), token).get("data", [])
             if games:
                 since = (datetime.now(timezone.utc) - timedelta(hours=sc.get("twitch_window_hours", 24)))
@@ -223,7 +226,7 @@ def scout_twitch(cfg: dict) -> list[dict]:
                     out.append(_twitch_clip(cfg, clip_id=cl["id"], url=cl["url"], title=cl["title"],
                                             channel=cl["broadcaster_name"], views=cl["view_count"],
                                             duration=cl["duration"], created_at=cl["created_at"],
-                                            game_ok=True, thumbnail=cl.get("thumbnail_url")))
+                                            niche=niche, thumbnail=cl.get("thumbnail_url")))
             else:
                 log(f"twitch: game '{game}' not found on Helix")
         except Exception as e:  # noqa: BLE001
@@ -241,16 +244,19 @@ def scout_twitch(cfg: dict) -> list[dict]:
             log(f"scout twitch {login}: {e}")
             continue
         for e in d.get("entries") or []:
-            out.append(_twitch_clip(cfg, clip_id=e["id"], url=e["url"], title=e.get("title", ""),
+            title = e.get("title", "")
+            niche = niches.get(ch["niche"]) if ch.get("niche") else niches.match(title)
+            out.append(_twitch_clip(cfg, clip_id=e["id"], url=e["url"], title=title,
                                     channel=login, views=e.get("view_count") or 0,
                                     duration=e.get("duration"), created_at=_ts_iso(e.get("timestamp")),
-                                    game_ok=bool(ch.get("gta_only")), thumbnail=e.get("thumbnail")))
+                                    niche=niche, thumbnail=e.get("thumbnail")))
     return out
 
 
 # ---------------------------------------------------------------- manual
 def add_url(url: str, *, rights_level: str = "own", title: str | None = None,
-            campaign_id: str | None = None, start: float | None = None, end: float | None = None) -> dict:
+            campaign_id: str | None = None, start: float | None = None, end: float | None = None,
+            niche: str | None = None) -> dict:
     cfg = load_config()
     platform = "youtube" if "youtu" in url else "twitch" if "twitch.tv" in url else "url"
     meta: dict = {}
@@ -261,6 +267,7 @@ def add_url(url: str, *, rights_level: str = "own", title: str | None = None,
         cid = "yt:" + (re.search(r"(?:v=|youtu\.be/|shorts/)([\w-]{11})", url) or [None, cid])[1]
     c = {"id": cid, "platform": platform, "url": url, "title": title or meta.get("title") or url,
          "relevant": True, "rights": rights_level, "rights_override": rights_level,
+         "niche": niche or (niches.match(title or meta.get("title") or "") or niches.get(None))["id"],
          "campaign_id": campaign_id, "manual": True, "age_hours": 1, "views": meta.get("views", 0),
          **{k: v for k, v in meta.items() if k not in ("title",)}}
     if start is not None and end is not None:
@@ -271,11 +278,13 @@ def add_url(url: str, *, rights_level: str = "own", title: str | None = None,
 
 
 # ---------------------------------------------------------------- entry
-def run_scout(extra_queries: list[str] | None = None) -> dict:
+def run_scout(extra_queries: dict | None = None) -> dict:
+    """extra_queries: {niche_id: [trend queries]}"""
     cfg = load_config()
     found = []
     if cfg.get("scout", {}).get("youtube", True):
-        found += scout_youtube(cfg, extra_queries)
+        for niche in niches.enabled():
+            found += scout_youtube(cfg, niche, (extra_queries or {}).get(niche["id"]))
     if cfg.get("scout", {}).get("twitch", True):
         found += scout_twitch(cfg)
     new, total = _merge(found)

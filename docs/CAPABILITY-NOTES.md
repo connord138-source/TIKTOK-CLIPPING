@@ -36,6 +36,43 @@ Implemented from TikTok's docs: desktop Login Kit with PKCE (hex SHA-256 challen
 | TikTok portal accepts `http://127.0.0.1:8787/...` as a Desktop redirect URI | **no** (2026-11-18: "localhost is not supported", despite the docs). Workaround: Web platform + the https forwarding page `docs/tiktok-callback/` on GitHub Pages, set in Connections as the redirect address |
 | Does a sandbox (unreviewed) app get `video.upload` for inbox uploads? | **unknown**: docs say the app "must be approved for the video.upload scope" and don't say whether sandbox target users are exempt |
 
+### Automatic public posting (researched 2026-11-25)
+**TikTok with our own app: not possible.** Direct Post from an unaudited app is private-only
+(`SELF_ONLY`, account set to private, 5 accounts per 24h), and TikTok's Content Sharing
+Guidelines list as not acceptable "a utility tool to help upload contents to the account(s)
+you or your team manages" and "an app that copies arbitrary contents from other platforms to
+TikTok". They also require the user to pick privacy and interaction settings by hand for each
+post. A personal clip farm will not pass the audit, so our app stays on drafts: 5 unposted
+per account, posted by hand. Audited Direct Post is capped at about 15 posts per account per day.
+
+**Posting services** (their TikTok app is already audited; all vendor-reported, none verified by us):
+| Service | Cost for ~9 accounts | Local file upload | Stated daily caps per account |
+|---|---|---|---|
+| Upload-Post | Basic $24/mo, 5 profiles (one account per platform each), unlimited uploads | multipart, up to 4 GB | TikTok 15, Instagram 50, YouTube 30 |
+| Zernio (ex-Late) | about $42/mo, unlimited posts | presigned upload | not published |
+| bundle.social | Pro $100/mo, 10,000 posts | multipart | TikTok 10, Instagram 50, YouTube 10 |
+| Post for Me | from $10/mo per 1,000 posts | signed URL | none documented |
+| Blotato | $49-97/mo | partly documented | TikTok 3-25, YouTube 10-25, Instagram 50 |
+| Ayrshare | $299/mo | multipart / presigned | TikTok 15 |
+
+Recommended: Upload-Post Basic (one call from the local file covers TikTok, Reels and Shorts).
+Risks: a small vendor whose audit claim is self-reported; a shared TikTok app; the same
+TikTok guideline about copied content applies to the accounts whichever service posts.
+
+**Native alternatives:** YouTube's current docs say uploads from unverified projects are no
+longer forced private, with about 100 uploads a day per project (re-check before relying on
+it). Instagram allows posting to your own professional accounts without app review, 50-100
+posts per 24h, but the video must be at a public URL unless the app uses Facebook Login for
+Business.
+
+Sources: https://developers.tiktok.com/doc/content-sharing-guidelines ·
+https://developers.tiktok.com/doc/content-posting-api-reference-direct-post ·
+https://docs.upload-post.com/api/upload-video · https://docs.upload-post.com/resources/pricing-and-limits ·
+https://zernio.com/pricing · https://bundle.social/pricing.md · https://www.postforme.dev/pricing ·
+https://www.blotato.com/pricing.md · https://www.ayrshare.com/pricing.md ·
+https://developers.google.com/youtube/v3/docs/videos/insert ·
+https://developers.facebook.com/documentation/instagram-platform/content-publishing.md
+
 Conclusion: cloud sessions can scout, plan, analyse and run agents; **rendering YouTube sources
 needs the user's machine** (or a policy that allows `*.googlevideo.com` — wildcard hosts are a
 Settings decision, not something a session can add).

@@ -69,32 +69,38 @@ def _ask(system: str, prompt, schema: dict, max_tokens: int = 8000) -> dict | No
         return None
 
 
-SYSTEM_EDITOR = """You are the head editor of a TikTok clip page about GTA 6 (Grand Theft Auto VI),
-which launched November 19, 2026. You choose which moments from source videos become 15-45s
-vertical clips, and write the on-screen hook and the post caption.
+DEFAULT_NICHE = {"id": "gta6", "name": "GTA 6", "hashtags": ["#gta6"],
+                 "brief": "Clips from GTA 6 (Grand Theft Auto VI): chases, crashes, glitches, reactions, discoveries."}
 
-What performs: a moment that makes sense with zero context in the first 2 seconds; chaos
-(police chases, crashes, physics, NPC weirdness, glitches), streamer reactions, discoveries
-(easter eggs, secrets, details), comparisons to GTA 5, and big emotional beats. What flops:
-menus, loading, slow driving, sponsor reads, intros/outros, talking about the video itself,
-moments that need the previous 5 minutes to understand.
 
-Be picky. A viewer swipes away in two seconds, so a clip needs a visible payoff: a chase
-escalating, a crash, an explosion, a shootout, a stunt, something absurd or funny, a strong
-reaction, a reveal. Ordinary travel from A to B, exploring quietly, shopping, customising or
-talking over calm footage is boring even when the video is popular. If only one window is
-good, return one. If none are, return none: another video will be tried instead.
+def editor_system(niche: dict | None) -> str:
+    n = niche or DEFAULT_NICHE
+    tag = (n.get("hashtags") or ["#fyp"])[0]
+    return f"""You are the head editor of a short-video clip page. You choose which moments from
+source videos become 15-45s vertical clips, and write the on-screen hook and the post caption.
+
+THIS PAGE: {n["name"]}. {n.get("brief") or ""}
+
+Universal rules: a moment must make sense with zero context in the first 2 seconds. Skip
+sponsor reads, intros and outros, talking about the video itself, and anything that needs the
+previous five minutes to understand.
+
+Be picky. A viewer swipes away in two seconds, so a clip needs a visible or audible payoff:
+something escalating, a failure or a win, a strong reaction, a reveal, something absurd or
+funny, a line people will quote. Calm, routine or slow footage is boring even when the video
+is popular. If only one window is good, return one. If none are, return none: another video
+will be tried instead.
 
 Hooks: <= 7 words, curiosity or stakes, no clickbait lies, no emojis spam (0-1 emoji). When you
 have frames, the hook must describe what is actually visible in the window you picked.
-Captions: 1 short line + 3-6 hashtags; always include #gta6. Credit the creator in the caption
+Captions: 1 short line + 3-6 hashtags; always include {tag}. Credit the creator in the caption
 as "via <channel>". Never invent events that are not in the transcript.
 
-Some sources are pure gameplay with no commentary. Their windows carry no transcript, only a
-note about audio activity (loud bursts usually mean gunfire, crashes, sirens, explosions).
-For those, prefer the windows with the most activity, and write the hook and caption from what
-the video's title promises. Keep them general ("GTA 6 free roam is unreal") rather than
-claiming a specific event you cannot see."""
+Some sources have no commentary. Their windows carry no transcript, only a note about audio
+activity (loud bursts usually mean action). For those, prefer the windows with the most
+activity, and write the hook and caption from what the video's title promises. Keep them
+general rather than claiming a specific event you cannot see."""
+
 
 _MOMENTS_SCHEMA = {
     "type": "object",
@@ -130,7 +136,7 @@ def _image_block(path: Path) -> dict:
 
 
 def pick_moments(source: dict, windows: list[dict], max_picks: int, length: tuple[int, int],
-                 previews: list | None = None) -> list[dict] | None:
+                 previews: list | None = None, niche: dict | None = None) -> list[dict] | None:
     """windows: [{start,end,text,heuristic}] -> picks with refined bounds + packaging.
     previews: optional list (same order) of 2x2 frame sheets, one per window, or None."""
     if not windows:
@@ -153,7 +159,7 @@ def pick_moments(source: dict, windows: list[dict], max_picks: int, length: tupl
                         + (w.get("text") or "(no transcript - judge from the frames, title and position)")})
         if has_frames and i < len(previews) and previews[i]:
             content.append(_image_block(previews[i]))
-    out = _ask(SYSTEM_EDITOR, content if has_frames else "\n\n".join(c["text"] for c in content), _MOMENTS_SCHEMA)
+    out = _ask(editor_system(niche), content if has_frames else "\n\n".join(c["text"] for c in content), _MOMENTS_SCHEMA)
     if not out:
         return None
     picks = []
@@ -176,33 +182,39 @@ _QUERIES_SCHEMA = {
 }
 
 
-def suggest_queries(top_titles: list[str], winning_hooks: list[str], n: int = 5) -> list[str] | None:
-    prompt = (f"Recent high-velocity GTA 6 uploads:\n- " + "\n- ".join(top_titles[:40]) +
+def suggest_queries(top_titles: list[str], winning_hooks: list[str], n: int = 5,
+                    niche: dict | None = None) -> list[str] | None:
+    name = (niche or DEFAULT_NICHE)["name"]
+    prompt = (f"Recent high-velocity uploads for the page {name!r}:\n- " + "\n- ".join(top_titles[:40]) +
               "\n\nOur best-performing clip hooks:\n- " + ("\n- ".join(winning_hooks[:15]) or "(none yet)") +
-              f"\n\nPropose {n} short YouTube search queries (2-5 words, each starting with 'GTA 6') "
-              "that would surface FRESH clippable footage about the topics trending right now "
-              "(specific discoveries, glitches, missions, places, characters, streamer moments).")
-    out = _ask(SYSTEM_EDITOR, prompt, _QUERIES_SCHEMA, max_tokens=2000)
+              f"\n\nPropose {n} short YouTube search queries (2-5 words, each unmistakably about "
+              f"{name}) that would surface FRESH clippable footage about what is trending right now "
+              "(specific events, moments, people, places, controversies, discoveries).")
+    out = _ask(editor_system(niche), prompt, _QUERIES_SCHEMA, max_tokens=2000)
     return [q.strip() for q in out["queries"] if q.strip()][:n] if out else None
 
 
-SYSTEM_REVIEWER = """You are the final quality check for a TikTok clip page about GTA 6. You are shown
-one image: six frames taken evenly through a finished vertical clip (left to right, top to
-bottom). A hook banner sits near the top and there may be word captions lower down.
+def reviewer_system(niche: dict | None) -> str:
+    n = niche or DEFAULT_NICHE
+    return f"""You are the final quality check for a short-video clip page: {n["name"]}.
+{n.get("brief") or ""}
+
+You are shown one image: six frames taken evenly through a finished vertical clip (left to
+right, top to bottom). A hook banner sits near the top and there may be word captions lower down.
 
 Approve only if all of these hold:
-- it is clearly video-game footage that could be GTA 6 (or a streamer reacting to it), not
-  something unrelated;
-- something visibly happens across the frames (movement, action, a change of scene). Reject
-  menus, loading screens, maps, a static or frozen image, black frames, or a talking-head
-  intro/outro;
+- the footage clearly belongs on this page, not something unrelated;
+- something visibly happens across the frames (movement, action, a change of scene, a person
+  reacting). Reject menus, loading screens, a static or frozen image, black frames, or an
+  intro/outro card;
 - no nudity or sexual content (set nsfw true if there is any);
 - the hook text is readable and does not obviously contradict what the frames show.
 
 quality is 0-100: how likely this clip is to hold a viewer who has no context. Use the range:
 90+ a clear payoff anyone would rewatch; 70-89 real action or a real reaction throughout;
-40-69 gameplay where little happens (calm driving, walking, looking around, talking over quiet
-footage); below 40 broken, static or off-topic. Boring is a reason to score under 70."""
+40-69 footage where little happens; below 40 broken, static or off-topic. Boring is a reason
+to score under 70."""
+
 
 _REVIEW_SCHEMA = {
     "type": "object",
@@ -217,7 +229,7 @@ _REVIEW_SCHEMA = {
 }
 
 
-def review_clip(grid: Path, hook: str, source_title: str) -> dict | None:
+def review_clip(grid: Path, hook: str, source_title: str, niche: dict | None = None) -> dict | None:
     """Look at the clip's 6-frame contact sheet. None if the brain is unavailable."""
     if not available() or not grid or not Path(grid).is_file():
         return None
@@ -226,4 +238,4 @@ def review_clip(grid: Path, hook: str, source_title: str) -> dict | None:
         {"type": "text", "text": f"Hook on the clip: {hook!r}\nSource video title: {source_title!r}\n"
                                  "Give your verdict."},
     ]
-    return _ask(SYSTEM_REVIEWER, content, _REVIEW_SCHEMA, max_tokens=4000)
+    return _ask(reviewer_system(niche), content, _REVIEW_SCHEMA, max_tokens=4000)

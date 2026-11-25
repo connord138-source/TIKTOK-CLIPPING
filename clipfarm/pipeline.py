@@ -19,7 +19,7 @@ import traceback
 import uuid
 from datetime import datetime, timezone
 
-from . import analytics, brain, moments, planner, render, rights, scout, tiktok
+from . import accounts, analytics, brain, moments, niches, planner, render, rights, scout, tiktok
 from .core import (DATA_DIR, ROOT, WORK_DIR, Store, _job_ctx, hours_since, load_config, log, mutate,
                    now_iso, read_json)
 
@@ -42,7 +42,8 @@ def select_candidates(n: int) -> list[dict]:
     cfg = load_config()
     pc = cfg.get("produce", {})
     min_score = pc.get("min_candidate_score", 40)
-    cap = cfg.get("cadence", {}).get("max_per_creator_per_day", 2)
+    # at higher volume one creator may fill more of the day, but never more than a fifth of it
+    cap = max(cfg.get("cadence", {}).get("max_per_creator_per_day", 2), -(-planner.plan()["target"] // 5))
     counts = _creator_counts_today()
     cands = Store.all(Store.candidates)
     queued = [c for c in cands if c.get("status") == "queued"]
@@ -67,7 +68,7 @@ def select_candidates(n: int) -> list[dict]:
 
 
 def _compose_caption(pick: dict, cand: dict, cfg: dict) -> tuple[str, list[str]]:
-    core = cfg.get("style", {}).get("hashtags_core", ["#gta6", "#gtavi", "#gta", "#gaming", "#fyp"])
+    core = niches.get(cand.get("niche")).get("hashtags") or ["#fyp"]
     tags = []
     for t in list(pick.get("hashtags") or []) + core:
         t = "#" + t.lstrip("#").replace(" ", "").lower()
@@ -118,7 +119,8 @@ def produce_candidate(cand: dict) -> list[str]:
         status = "rendered"
         review = None
         if cfg.get("produce", {}).get("visual_check", True) and out.get("grid"):
-            review = brain.review_clip(ROOT / out["grid"], pick.get("hook", ""), cand.get("title") or "")
+            review = brain.review_clip(ROOT / out["grid"], pick.get("hook", ""), cand.get("title") or "",
+                                       niches.get(cand.get("niche")))
         if review and review.get("nsfw"):
             status = "rejected"  # brand safety: never queue sexual content, whatever the mode
         elif auto.get("enabled") and out["qc"]["ok"] and rights.auto_render_allowed(cand.get("rights", "unverified")):
@@ -128,6 +130,7 @@ def produce_candidate(cand: dict) -> list[str]:
                 ok = (pick.get("score") or 0) >= auto.get("min_score", 80)
             status = "approved" if ok else ("rejected" if review else "rendered")
         Store.update(Store.clips, clip_id, status=status, platform=cand.get("platform"),
+                     niche=niches.get(cand.get("niche"))["id"],
                      source_url=cand["url"], source_title=cand.get("title"), channel=cand.get("channel"),
                      rights=cand.get("rights"), campaign_id=cand.get("campaign_id"),
                      start=pick["start"], end=pick["end"], duration=round(pick["end"] - pick["start"], 1),
@@ -168,26 +171,43 @@ def run_produce(max_renders: int | None = None) -> dict:
 
 
 # ---------------------------------------------------------------- trends + scout
-def refresh_trend_queries(force: bool = False) -> list[str]:
+def _trends() -> dict:
+    """{niche_id: {"queries": [...], "updated_at": iso}} (older files held one flat entry)."""
     t = read_json(TRENDS, {})
+    if "queries" in t:
+        t = {"gta6": {"queries": t.get("queries", []), "updated_at": t.get("updated_at")}}
+    return {k: v for k, v in t.items() if isinstance(v, dict)}
+
+
+def trend_queries() -> dict:
+    return {k: v.get("queries", []) for k, v in _trends().items()}
+
+
+def refresh_trend_queries(force: bool = False) -> dict:
     hrs = load_config().get("scout", {}).get("trend_refresh_hours", 6)
-    if not force and t.get("updated_at") and (hours_since(t["updated_at"]) or 99) < hrs:
-        return t.get("queries", [])
     cands = sorted(Store.all(Store.candidates), key=lambda c: c.get("velocity") or 0, reverse=True)
-    titles = [c.get("title") or "" for c in cands if (hours_since(c.get("published_at")) or 99) < 48][:40]
-    hooks = [c.get("hook") or "" for c in sorted(Store.all(Store.clips),
-             key=lambda c: (c.get("metrics") or {}).get("views") or 0, reverse=True)[:15]]
-    qs = brain.suggest_queries(titles, hooks) if titles else None
-    if qs:
-        with mutate(TRENDS, {}) as tr:
-            tr.update(queries=qs, updated_at=now_iso())
-        log(f"trend queries: {qs}")
-        return qs
-    return t.get("queries", [])
+    clips = sorted(Store.all(Store.clips), key=lambda c: (c.get("metrics") or {}).get("views") or 0, reverse=True)
+    for niche in niches.enabled():
+        nid = niche["id"]
+        cur = _trends().get(nid, {})
+        if not force and cur.get("updated_at") and (hours_since(cur["updated_at"]) or 99) < hrs:
+            continue
+        mine = lambda x: (x.get("niche") or "gta6") == nid  # noqa: E731
+        titles = [c.get("title") or "" for c in cands if mine(c) and (hours_since(c.get("published_at")) or 99) < 48][:40]
+        hooks = [c.get("hook") or "" for c in clips if mine(c)][:15]
+        qs = brain.suggest_queries(titles, hooks, niche=niche) if titles else None
+        if qs:
+            t = _trends()
+            t[nid] = {"queries": qs, "updated_at": now_iso()}
+            with mutate(TRENDS, {}) as tr:
+                tr.clear()
+                tr.update(t)
+            log(f"trend queries [{niche['name']}]: {qs}")
+    return trend_queries()
 
 
 def run_scout() -> dict:
-    res = scout.run_scout(extra_queries=read_json(TRENDS, {}).get("queries", []))
+    res = scout.run_scout(extra_queries=trend_queries())
     res["trend_queries"] = refresh_trend_queries()
     return res
 
@@ -251,7 +271,8 @@ def rerender(clip_id: str) -> dict:
 
 def _clip_url(p: dict) -> dict:
     cand = scout.add_url(p["url"], rights_level=p.get("rights") or "unverified", title=p.get("title"),
-                         campaign_id=p.get("campaign_id"), start=p.get("start"), end=p.get("end"))
+                         campaign_id=p.get("campaign_id"), start=p.get("start"), end=p.get("end"),
+                         niche=p.get("niche") or None)
     try:
         return {"clips": produce_candidate(cand)}
     except Exception as e:
@@ -336,7 +357,7 @@ _last_draft_sync = [0.0]
 
 def drafts_tick() -> None:
     """Runs whether or not autopilot is on: notice when the user posts a draft from TikTok."""
-    if time.time() - _last_draft_sync[0] < 300 or not tiktok.token() or not tiktok._api_drafts():
+    if time.time() - _last_draft_sync[0] < 300 or not accounts.active("tiktok") or not tiktok._api_drafts():
         return
     _last_draft_sync[0] = time.time()
     res = tiktok.sync_drafts()
@@ -359,12 +380,13 @@ def auto_send_tick() -> None:
     cfg = load_config()
     if not cfg.get("tiktok", {}).get("auto_send") or time.time() - _last_auto_send[0] < 600:
         return
-    if "video.upload" not in tiktok.granted_scopes():
+    if not tiktok._uploaders():
         return
     if not any(c.get("status") == "approved" and not c.get("sending") for c in Store.all(Store.clips)):
         return
     p = planner.plan()
-    want = min(tiktok.PENDING_CAP, max(p["open_slots"], 1)) - p["in_drafts"]
+    want = sum(1 for a in p["accounts"] if a["id"] for b in a["slots"]
+               if b["state"] == "assigned" and not b.get("in_drafts"))
     if want > 0:
         _last_auto_send[0] = time.time()
         start_job("send_drafts", {"max": want})
