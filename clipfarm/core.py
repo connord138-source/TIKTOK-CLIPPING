@@ -229,7 +229,8 @@ def ensure_dirs() -> None:
 # the rest of the code keeps reading os.environ. Values are never sent back to the browser.
 KEYS_FILE = SECRETS_DIR / "keys.json"
 KEY_NAMES = ["ANTHROPIC_API_KEY", "TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET",
-             "TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET", "UPLOADPOST_API_KEY"]
+             "TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET", "UPLOADPOST_API_KEY",
+             "NOTIFY_EMAIL", "NOTIFY_EMAIL_PASSWORD"]
 
 
 def load_keys() -> None:
@@ -257,7 +258,14 @@ def save_keys(patch: dict) -> None:
 
 def keys_status() -> dict:
     saved = read_json(KEYS_FILE, {})
+    def hint(name: str) -> str | None:
+        value = os.environ.get(name, "")
+        if name == "NOTIFY_EMAIL":
+            return value or None            # the user's own address, shown only in their own dashboard
+        if name == "NOTIFY_EMAIL_PASSWORD":
+            return None                     # a short password: show nothing of it
+        return ("…" + value[-4:]) if len(value) >= 12 else None
     return {name: {"set": bool(os.environ.get(name)),
                    "source": "dashboard" if saved.get(name) else ("environment" if os.environ.get(name) else None),
-                   "hint": ("…" + os.environ[name][-4:]) if len(os.environ.get(name, "")) >= 12 else None}
+                   "hint": hint(name)}
             for name in KEY_NAMES}

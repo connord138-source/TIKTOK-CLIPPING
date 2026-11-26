@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from . import accounts, analytics, brain, niches, phone, pipeline, planner, rights, tiktok, uploadpost
+from . import accounts, analytics, brain, niches, notify, phone, pipeline, planner, rights, tiktok, uploadpost
 from .core import (MEDIA_DIR, ROOT, Store, deep_merge, ensure_dirs, keys_status, load_config,
                    load_sources, log, now_iso, read_json, save_config, save_keys, save_sources)
 
@@ -27,7 +27,7 @@ MIME = {".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
         ".png": "image/png", ".json": "application/json"}
 
 # Settings the UI may change. Everything else is edited in config/*.json by hand or by Claude.
-EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style", "tiktok", "phone"}
+EDITABLE = {"autopilot", "cadence", "produce", "scout", "render", "analytics", "brain", "style", "tiktok", "phone", "notify"}
 
 
 def _kpis(clips: list[dict]) -> dict:
@@ -111,7 +111,7 @@ def connections_view() -> dict:
     return {"keys": keys_status(), "tiktok": tiktok.status_summary(_server["port"]),
             "auth_message": _server["auth_message"], "brain": brain.available(),
             "phone": {**phone.info(_server["port"]), "listening_on_network": _server["lan"]},
-            "uploadpost": uploadpost.summary()}
+            "uploadpost": uploadpost.summary(), "notify": notify.status()}
 
 
 def clip_action(cid: str, body: dict) -> dict:
@@ -395,6 +395,9 @@ class Handler(BaseHTTPRequestHandler):
                             save_keys({"UPLOADPOST_API_KEY": ""})   # don't keep a key the service rejects
                         raise
                 return self._json(connections_view())
+            if u.path == "/api/notify/test":
+                notify.send_test()
+                return self._json(connections_view())
             if u.path == "/api/uploadpost/refresh":
                 uploadpost.sync_profiles()
                 return self._json(connections_view())
@@ -419,7 +422,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json({"error": "not found"}, 404)
         except KeyError as e:
             return self._json({"error": f"not found: {e}"}, 404)
-        except (ValueError, json.JSONDecodeError, uploadpost.UploadPostError, tiktok.TikTokError) as e:
+        except (ValueError, json.JSONDecodeError, uploadpost.UploadPostError, tiktok.TikTokError, notify.NotifyError) as e:
             return self._json({"error": str(e)}, 400)
         except Exception as e:  # noqa: BLE001
             return self._json({"error": f"{type(e).__name__}: {e}"}, 500)

@@ -223,6 +223,19 @@ paid service (Basic plan, $24 a month, needed for TikTok).
 
 A scheduled clip can be taken back with **Cancel** on the Today tab until it goes live.
 
+### B4e. Get an email when clips are ready
+1. Turn on 2-Step Verification for your Google account if it isn't on already
+   (https://myaccount.google.com/security).
+2. Go to https://myaccount.google.com/apppasswords, create an app password named
+   `Clip Farm`, and copy the 16 letters Google shows you.
+3. Dashboard → **Connections** → **Email me when clips are ready** → type your Gmail
+   address, paste the app password, click **Save**.
+4. Click **Send test email** and check your inbox for "[Clip Farm] Test email".
+5. Switch on **Send the email**.
+
+After each run that makes clips you get one email whose subject starts with
+`[Clip Farm] Clips ready`, listing how many clips, and each clip's niche and account.
+
 ### B5. Turn on Autopilot
 Once you're happy with the clips, flip **Autopilot** on (top bar). It searches every 2 hours,
 makes clips when the queue runs low, and pulls your TikTok stats every 6 hours. It still never posts.

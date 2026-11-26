@@ -746,6 +746,32 @@ async function viewConnections() {
       })))) : null,
     up.accounts.length ? h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } }, "Each profile posts one clip to all its ticked platforms. TikTok allows about 15 automatic posts per account per day. If the same TikTok account is also connected in the TikTok box above, untick On there so clips aren't planned twice.") : null);
 
+  // "Clips ready" email
+  const nt = cn.notify;
+  const mailAddr = h("input", { type: "text", placeholder: "your Gmail address", autocomplete: "off", style: { flex: "1", minWidth: "220px" } });
+  const mailPass = secret("Gmail app password (16 letters)");
+  const mailCard = h("div", { class: "card" },
+    h("h2", {}, "Email me when clips are ready", h("small", {}, "one email per run, from your own Gmail to itself")),
+    h("label", { class: "switch" }, h("input", { type: "checkbox", checked: !!nt.enabled,
+      onchange: (e) => act(() => api("/api/config", { notify: { email: { enabled: e.target.checked } } }), e.target.checked ? "Clips-ready email is on" : "Clips-ready email is off") }),
+      "Send the email"),
+    h("div", { class: "row", style: { marginTop: "10px" } }, keyState("NOTIFY_EMAIL"),
+      nt.configured ? null : h("span", { class: "muted" }, "Enter the address and an app password, then Save."),
+      nt.last_sent_at ? h("span", { class: "muted" }, `last email sent ${ago(nt.last_sent_at)}`) : null),
+    nt.last_error ? h("div", { class: "callout", style: { marginTop: "10px" } }, nt.last_error) : null,
+    nt.enabled && !nt.configured ? h("div", { class: "callout", style: { marginTop: "10px" } }, "The switch is on, but nothing can be sent until the address and app password are saved.") : null,
+    h("div", { class: "row", style: { marginTop: "10px" } }, mailAddr, mailPass,
+      h("button", { class: "btn primary", onclick: () => {
+        if (!/^\S+@\S+\.\S+$/.test(mailAddr.value.trim())) return toast("Type your full Gmail address", true);
+        if (mailPass.value.replace(/\s/g, "").length < 8) return toast("Paste the app password Google gave you", true);
+        saveKeys({ NOTIFY_EMAIL: mailAddr.value.trim(), NOTIFY_EMAIL_PASSWORD: mailPass.value }, "Email details saved");
+      } }, "Save"),
+      h("button", { class: "btn", disabled: !nt.configured, onclick: () => act(() => api("/api/notify/test", {}), "Test email sent. Check your inbox.") }, "Send test email"),
+      k.NOTIFY_EMAIL.source === "dashboard" ? h("button", { class: "btn danger", onclick: () => saveKeys({ NOTIFY_EMAIL: "", NOTIFY_EMAIL_PASSWORD: "" }, "Email details removed") }, "Remove") : null),
+    h("p", { class: "muted", style: { fontSize: "12px", marginBottom: 0 } },
+      `The subject always starts with "${nt.subject}". The email lists how many clips, and each clip's niche and account. It never contains links. `,
+      "A Gmail app password is a separate 16-letter password for one app: create it at myaccount.google.com/apppasswords (2-Step Verification must be on). Your normal Gmail password will not work here."));
+
   // Phone page
   const ph = cn.phone;
   let qrImg = null;
@@ -772,7 +798,7 @@ async function viewConnections() {
 
   return h("div", { class: "grid" }, h("div", { class: "section-head" }, h("h1", {}, "Connections"),
     h("span", { class: "muted" }, "Keys are stored only on this computer (data/secrets, never committed).")),
-    upCard, tiktokCard, phoneCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
+    upCard, tiktokCard, phoneCard, mailCard, h("div", { class: "grid two" }, claudeCard, twitchCard));
 }
 
 // ---------------------------------------------------------------- boot

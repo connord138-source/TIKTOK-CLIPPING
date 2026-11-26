@@ -22,6 +22,11 @@ user's control room, and Claude sessions operate it via the CLI and the agents i
   (`via: "uploadpost"`, posts to TikTok + Reels + Shorts). `planner.plan()` plans per account.
 - `clipfarm/uploadpost.py`: profiles sync, scheduling clips at slot times with captions,
   status polling, cancel. Clip status `scheduled` = handed to Upload-Post, not live yet.
+- `clipfarm/notify.py`: the "clips ready" email, one per run, from the user's own Gmail to
+  itself (set up in Connections). The subject must keep starting with exactly
+  `[Clip Farm] Clips ready`: another of the user's Claude channels watches Gmail for it. The
+  body carries the count and each clip's niche and account, and never a link, id or code.
+  The test button uses a different subject on purpose.
 
 ## Hard rules (do not violate without the user changing config or saying so in-session)
 1. **Posting.** The user dropped the never-post rule on 2026-11-25 and chose Upload-Post as

@@ -1009,3 +1009,111 @@ def test_automatic_posting_only_for_profiles_switched_on(fake_up, farm_root, mon
     assert times[0] != times[1]                                            # each clip gets its own slot time
     assert uploadpost.post_ready() == {"sent": [], "errors": []}           # already scheduled: nothing sent twice
     assert all(c["status"] == "scheduled" for c in Store.all(Store.clips))
+
+
+# ---------------------------------------------------------------- "clips ready" email
+from clipfarm import notify  # noqa: E402
+
+
+class FakeSMTP:
+    sent, logins, fail = [], [], None
+
+    def __init__(self, host, port, timeout=None, context=None):
+        FakeSMTP.where = (host, port)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def login(self, user, password):
+        if FakeSMTP.fail:
+            raise FakeSMTP.fail
+        FakeSMTP.logins.append((user, password))
+
+    def send_message(self, msg):
+        FakeSMTP.sent.append(msg)
+
+
+@pytest.fixture
+def mail(monkeypatch, clean_config):
+    FakeSMTP.sent, FakeSMTP.logins, FakeSMTP.fail = [], [], None
+    monkeypatch.setattr(notify.smtplib, "SMTP_SSL", FakeSMTP)
+    monkeypatch.setenv("NOTIFY_EMAIL", "me@example.com")
+    monkeypatch.setenv("NOTIFY_EMAIL_PASSWORD", "abcd efgh ijkl mnop")
+    cfg = core.load_config()
+    cfg["notify"] = {"email": {"enabled": True}}
+    core.save_config(cfg)
+    notify._last.update(sent_at=None, error=None)
+    return FakeSMTP
+
+
+def test_one_email_per_run_names_count_niche_and_account_without_links(mail, fake_up):
+    acct = uploadpost.sync_profiles()[0]                      # one account named "Main page" takes every niche
+    Store.upsert(Store.clips, {"id": "c0001", "status": "rendered", "niche": "gta6", "hook": "Gator ate the car https://evil.example/x"})
+    Store.upsert(Store.clips, {"id": "c0002", "status": "approved", "niche": "gta6", "hook": "Five stars in 40 seconds", "score": 90})
+    Store.upsert(Store.clips, {"id": "c0003", "status": "rejected", "niche": "gta6", "hook": "Menu screen"})
+    Store.upsert(Store.clips, {"id": "c0004", "status": "failed", "hook": "Broken"})
+    out = notify.clips_ready(["c0001", "c0002", "c0003", "c0004"])
+    assert out == {"sent": True, "clips": 2} and len(mail.sent) == 1          # one email for the whole run
+    msg = mail.sent[0]
+    assert msg["Subject"].startswith("[Clip Farm] Clips ready") and msg["Subject"] == "[Clip Farm] Clips ready: 2 new"
+    assert msg["From"] == "me@example.com" and msg["To"] == "me@example.com"
+    assert mail.logins == [("me@example.com", "abcdefghijklmnop")] and mail.where == ("smtp.gmail.com", 465)
+    body = msg.get_content()
+    assert "2 new clips are ready" in body and "Gator ate the car" in body and "Five stars in 40 seconds" in body
+    assert body.count("Niche: GTA 6") == 2 and body.count("Account: Main page") == 2
+    assert "waiting for your review" in body and "approved and ready to post" in body and "dashboard" in body
+    assert "http" not in body and "evil.example" not in body and "c0001" not in body and "Menu screen" not in body
+    assert Store.get(Store.clips, "c0002")["account_id"] == acct["id"]
+    assert notify.clips_ready(["c0001", "c0002"]) == {"sent": False} and len(mail.sent) == 1   # never announced twice
+    assert notify.status()["last_sent_at"] and notify.status()["last_error"] is None
+
+
+def test_email_is_off_by_default_and_needs_credentials(mail, monkeypatch):
+    Store.upsert(Store.clips, {"id": "c0001", "status": "rendered", "hook": "h"})
+    cfg = core.load_config()
+    cfg["notify"] = {"email": {"enabled": False}}
+    core.save_config(cfg)
+    assert notify.clips_ready(["c0001"]) == {"sent": False} and not mail.sent
+    cfg["notify"] = {"email": {"enabled": True}}
+    core.save_config(cfg)
+    monkeypatch.delenv("NOTIFY_EMAIL_PASSWORD")
+    assert notify.clips_ready(["c0001"]) == {"sent": False} and not mail.sent
+    assert Store.get(Store.clips, "c0001").get("notified_at") is None           # it will be announced once email works
+    assert notify.clips_ready([]) == {"sent": False}
+
+
+def test_a_run_that_makes_clips_sends_exactly_one_email(mail, monkeypatch):
+    made = iter([["c0001", "c0002"], ["c0003"]])
+
+    def fake_produce(cand):
+        ids = next(made)
+        for cid in ids:
+            Store.upsert(Store.clips, {"id": cid, "status": "rendered", "hook": f"hook {cid[-1]}", "niche": "gta6"})
+        return ids
+    monkeypatch.setattr(pipeline, "produce_candidate", fake_produce)
+    monkeypatch.setattr(pipeline, "select_candidates", lambda n: [{"id": "yt:a", "status": "new"}, {"id": "yt:b", "status": "new"}])
+    out = pipeline.run_produce(3)
+    assert out["rendered"] == 3 and out["emailed"] is True and len(mail.sent) == 1
+    assert mail.sent[0]["Subject"] == "[Clip Farm] Clips ready: 3 new" and "3 new clips are ready" in mail.sent[0].get_content()
+
+
+def test_mail_failure_never_breaks_a_run_and_test_button_explains_it(mail):
+    import smtplib
+    Store.upsert(Store.clips, {"id": "c0001", "status": "rendered", "hook": "h"})
+    mail.fail = smtplib.SMTPAuthenticationError(535, b"bad credentials")
+    out = notify.clips_ready(["c0001"])
+    assert out["sent"] is False and "app password" in out["error"]
+    assert Store.get(Store.clips, "c0001").get("notified_at") is None
+    with pytest.raises(notify.NotifyError, match="app password"):
+        notify.send_test()
+    mail.fail = None
+    notify.send_test()
+    assert mail.sent[-1]["Subject"] == "[Clip Farm] Test email"               # a test never looks like real clips
+    assert not mail.sent[-1]["Subject"].startswith("[Clip Farm] Clips ready")
+    view = server.connections_view()
+    assert "abcd" not in json.dumps(view) and "mnop" not in json.dumps(view)     # nothing of the password leaves the server
+    assert view["keys"]["NOTIFY_EMAIL"]["hint"] == "me@example.com" and view["keys"]["NOTIFY_EMAIL_PASSWORD"]["hint"] is None
+    assert view["notify"]["configured"] and view["notify"]["subject"] == "[Clip Farm] Clips ready"

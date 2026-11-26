@@ -19,7 +19,7 @@ import traceback
 import uuid
 from datetime import datetime, timezone
 
-from . import accounts, analytics, brain, moments, niches, planner, render, rights, scout, tiktok, uploadpost
+from . import accounts, analytics, brain, moments, niches, notify, planner, render, rights, scout, tiktok, uploadpost
 from .core import (DATA_DIR, ROOT, WORK_DIR, Store, _job_ctx, hours_since, load_config, log, mutate,
                    now_iso, read_json)
 
@@ -167,7 +167,9 @@ def run_produce(max_renders: int | None = None) -> dict:
             Store.update(Store.candidates, cand["id"], status="failed", notes=str(e)[:300])
             log(f"produce {cand['id']} failed: {e}")
     log(f"produce: {len(made)} clips rendered from {len(sources)} sources ({failed} failed)")
-    return {"rendered": len(made), "clips": made, "sources": len(sources), "failed": failed}
+    emailed = notify.clips_ready(made)   # one email for the whole run
+    return {"rendered": len(made), "clips": made, "sources": len(sources), "failed": failed,
+            "emailed": bool(emailed.get("sent"))}
 
 
 # ---------------------------------------------------------------- trends + scout
@@ -278,10 +280,12 @@ def _clip_url(p: dict) -> dict:
                          campaign_id=p.get("campaign_id"), start=p.get("start"), end=p.get("end"),
                          niche=p.get("niche") or None)
     try:
-        return {"clips": produce_candidate(cand)}
+        made = produce_candidate(cand)
     except Exception as e:
         Store.update(Store.candidates, cand["id"], status="failed", notes=str(e)[:300])
         raise
+    notify.clips_ready(made)
+    return {"clips": made}
 
 
 def start_job(kind: str, params: dict | None = None) -> dict:
